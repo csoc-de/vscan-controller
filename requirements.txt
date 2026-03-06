@@ -1,6 +1,0 @@
-lxml~=5.3.1
-schedule~=1.2.2
-python-gvm~=25.1.1
-python-json-logger~=3.2.1
-cryptography~=44.0.2
-xmltodict~=0.14.2
