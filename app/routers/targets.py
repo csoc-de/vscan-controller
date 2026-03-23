@@ -1,14 +1,13 @@
-from typing import Dict, List, Any, Union, Optional
-from uuid import UUID
+from typing import Dict, List, Any, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.gvm_tools.gvm import status_response_code_ok
 from app.gvm_tools.targets import GVMTargets
-from app.models.target import Target, GetTargetsResponse, TargetCreate, TargetUpdate
+from app.models.target import Target, TargetCreate, TargetUpdate, GetTargetResponse, GetTargetsResponse
 from app.routers.auth import authorization
-from app.routers.respone import UNAUTHORIZED, ERROR_SERVER_RESPONSE
+from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUEST
 
 
 class TargetsRouter(APIRouter):
@@ -23,19 +22,19 @@ class TargetsRouter(APIRouter):
         # GET Target
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
-        http_responses.update(ERROR_SERVER_RESPONSE)
+        http_responses.update(INTERNAL_SERVER_ERROR)
         self.add_api_route(
             "/{uuid}",
-            self.get_targets,
+            self.get_target,
             methods=["GET"],
-            response_model=GetTargetsResponse,
+            response_model=GetTargetResponse,
             responses=http_responses
         )
 
         # GET Targets
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
-        http_responses.update(ERROR_SERVER_RESPONSE)
+        http_responses.update(INTERNAL_SERVER_ERROR)
         self.add_api_route(
             "",
             self.get_targets,
@@ -47,7 +46,8 @@ class TargetsRouter(APIRouter):
         # POST Create Targets
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
-        http_responses.update(ERROR_SERVER_RESPONSE)
+        http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(BAD_REQUEST)
         self.add_api_route(
             "",
             self.create_target,
@@ -59,9 +59,9 @@ class TargetsRouter(APIRouter):
         # PUT Target
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
-        http_responses.update(ERROR_SERVER_RESPONSE)
+        http_responses.update(INTERNAL_SERVER_ERROR)
         self.add_api_route(
-            "",
+            "/{uuid}",
             self.update_target,
             methods=["PUT"],
             responses=http_responses,
@@ -70,9 +70,9 @@ class TargetsRouter(APIRouter):
         # DELETE Target
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
-        http_responses.update(ERROR_SERVER_RESPONSE)
+        http_responses.update(INTERNAL_SERVER_ERROR)
         self.add_api_route(
-            "",
+            "/{uuid}",
             self.delete_target,
             methods=["DELETE"],
             responses=http_responses,
@@ -98,7 +98,8 @@ class TargetsRouter(APIRouter):
             )
         return {"target": Target.from_xml(tostring(target[0]))}
 
-    async def get_targets(self, filter_str: str, trash: bool) -> Dict[str, List[Target]]:
+    async def get_targets(self, filter_str: Optional[str] = None, trash: Optional[bool] = False) -> Dict[
+        str, List[Target]]:
         resp = self._gvm_targets.get_targets(filter_str, trash)
         if not status_response_code_ok(resp, 200):
             raise HTTPException(
@@ -112,6 +113,12 @@ class TargetsRouter(APIRouter):
         return {"targets": res}
 
     async def create_target(self, target: TargetCreate) -> Any:
+        if target.port_range is None and target.port_list_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="one of port_list_id or port_range are required"
+            )
+
         resp = self._gvm_targets.create_target(
             target.name,
             asset_hosts_filter=target.asset_hosts_filter,
@@ -136,9 +143,9 @@ class TargetsRouter(APIRouter):
                 detail="status code not created"
             )
 
-    async def update_target(self, target: TargetUpdate) -> Any:
+    async def update_target(self, uuid: str, target: TargetUpdate) -> Any:
         resp = self._gvm_targets.update_target(
-            target.target_id,
+            uuid,
             name=target.name,
             comment=target.comment,
             hosts=target.hosts,
@@ -160,8 +167,8 @@ class TargetsRouter(APIRouter):
                 detail="status code not ok"
             )
 
-    async def delete_target(self, target_id: Union[str, UUID], ultimate: Optional[bool] = False) -> Any:
-        resp = self._gvm_targets.delete_target(target_id, ultimate=ultimate)
+    async def delete_target(self, uuid: str, ultimate: Optional[bool] = False) -> Any:
+        resp = self._gvm_targets.delete_target(uuid, ultimate=ultimate)
         if not status_response_code_ok(resp, 200):
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -19,7 +19,7 @@ class GVMTargets:
             gvm.authenticate(self.user, self.password)
             return gvm.get_target(target_id)
 
-    def get_targets(self, filter_str: str = None, trash: bool = False) -> Any:
+    def get_targets(self, filter_str: Optional[str] = None, trash: Optional[bool] = False) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)
             return gvm.get_targets(filter_string=filter_str, trash=trash)

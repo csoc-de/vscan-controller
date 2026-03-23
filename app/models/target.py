@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import List, Optional, Union
-from uuid import UUID
 
 from pydantic import BaseModel
 from pydantic_xml import BaseXmlModel, attr, element, wrapped
@@ -58,7 +57,7 @@ class Target(BaseXmlModel, tag="target"):
     alive_tests: AliveTests = element()
 
 
-# response models
+# response and request models
 class GetTargetsResponse(BaseModel):
     targets: List[Target]
 
@@ -73,32 +72,31 @@ class TargetCreate(BaseModel):
     hosts: Optional[list[str]] = None
     comment: Optional[str] = None
     exclude_hosts: Optional[list[str]] = None
-    ssh_credential_id: Optional[Union[str, UUID]] = None
+    ssh_credential_id: Optional[str] = None
     ssh_credential_port: Optional[Union[int, str]] = None
-    smb_credential_id: Optional[Union[str, UUID]] = None
-    esxi_credential_id: Optional[Union[str, UUID]] = None
-    snmp_credential_id: Optional[Union[str, UUID]] = None
+    smb_credential_id: Optional[str] = None
+    esxi_credential_id: Optional[str] = None
+    snmp_credential_id: Optional[str] = None
     alive_test: Optional[str] = None
     allow_simultaneous_ips: Optional[bool] = None
     reverse_lookup_only: Optional[bool] = None
     reverse_lookup_unify: Optional[bool] = None
     port_range: Optional[str] = None
-    port_list_id: Optional[Union[str, UUID]] = None
+    port_list_id: Optional[str] = None
 
 
 class TargetUpdate(BaseModel):
-    target_id: Union[str, UUID]
     name: Optional[str] = None
     comment: Optional[str] = None
     hosts: Optional[list[str]] = None
     exclude_hosts: Optional[list[str]] = None
-    ssh_credential_id: Optional[Union[str, UUID]] = None
+    ssh_credential_id: Optional[str] = None
     ssh_credential_port: Optional[Union[str, int]] = None
-    smb_credential_id: Optional[Union[str, UUID]] = None
-    esxi_credential_id: Optional[Union[str, UUID]] = None
-    snmp_credential_id: Optional[Union[str, UUID]] = None
+    smb_credential_id: Optional[str] = None
+    esxi_credential_id: Optional[str] = None
+    snmp_credential_id: Optional[str] = None
     alive_test: Optional[str] = None
     allow_simultaneous_ips: Optional[bool] = None
     reverse_lookup_only: Optional[bool] = None
     reverse_lookup_unify: Optional[bool] = None
-    port_list_id: Optional[Union[str, UUID]] = None
+    port_list_id: Optional[str] = None
