@@ -1,0 +1,104 @@
+from datetime import datetime
+from typing import List, Optional, Union
+from uuid import UUID
+
+from pydantic import BaseModel
+from pydantic_xml import BaseXmlModel, attr, element, wrapped
+
+
+class Owner(BaseXmlModel, tag="owner"):
+    name: str = element()
+
+
+class Permission(BaseXmlModel, tag="permission"):
+    name: str = element()
+
+
+class PortList(BaseXmlModel, tag="port_list"):
+    id: str = attr()
+    name: str = element()
+    trash: bool = element()
+
+
+class Credential(BaseXmlModel):
+    id: str = attr(default="")
+    name: str = element(default="")
+    port: Optional[str] = element(default=None)
+    trash: bool = element()
+
+
+class AliveTests(BaseXmlModel, tag="alive_tests"):
+    text: Optional[str]
+    alive_test: str = element()
+
+
+class Target(BaseXmlModel, tag="target"):
+    id: str = attr()
+    owner: Owner = element()
+    name: str = element()
+    comment: str = element(default="")
+    creation_time: datetime = element()
+    modification_time: datetime = element()
+    writable: bool = element()
+    in_use: bool = element()
+    permissions: List[Permission] = wrapped("permissions", element())
+    hosts: List[str] = element()
+    exclude_hosts: List[str] = element(default=[])
+    max_hosts: int = element()
+    port_list: PortList = element()
+    ssh_credential: Credential = element()
+    smb_credential: Credential = element()
+    esxi_credential: Credential = element()
+    snmp_credential: Credential = element()
+    ssh_elevate_credential: Credential = element()
+    krb5_credential: Credential = element()
+    reverse_lookup_only: bool = element()
+    reverse_lookup_unify: bool = element()
+    allow_simultaneous_ips: bool = element()
+    alive_tests: AliveTests = element()
+
+
+# response models
+class GetTargetsResponse(BaseModel):
+    targets: List[Target]
+
+
+class GetTargetResponse(BaseModel):
+    target: Target
+
+
+class TargetCreate(BaseModel):
+    name: str
+    asset_hosts_filter: Optional[str] = None
+    hosts: Optional[list[str]] = None
+    comment: Optional[str] = None
+    exclude_hosts: Optional[list[str]] = None
+    ssh_credential_id: Optional[Union[str, UUID]] = None
+    ssh_credential_port: Optional[Union[int, str]] = None
+    smb_credential_id: Optional[Union[str, UUID]] = None
+    esxi_credential_id: Optional[Union[str, UUID]] = None
+    snmp_credential_id: Optional[Union[str, UUID]] = None
+    alive_test: Optional[str] = None
+    allow_simultaneous_ips: Optional[bool] = None
+    reverse_lookup_only: Optional[bool] = None
+    reverse_lookup_unify: Optional[bool] = None
+    port_range: Optional[str] = None
+    port_list_id: Optional[Union[str, UUID]] = None
+
+
+class TargetUpdate(BaseModel):
+    target_id: Union[str, UUID]
+    name: Optional[str] = None
+    comment: Optional[str] = None
+    hosts: Optional[list[str]] = None
+    exclude_hosts: Optional[list[str]] = None
+    ssh_credential_id: Optional[Union[str, UUID]] = None
+    ssh_credential_port: Optional[Union[str, int]] = None
+    smb_credential_id: Optional[Union[str, UUID]] = None
+    esxi_credential_id: Optional[Union[str, UUID]] = None
+    snmp_credential_id: Optional[Union[str, UUID]] = None
+    alive_test: Optional[str] = None
+    allow_simultaneous_ips: Optional[bool] = None
+    reverse_lookup_only: Optional[bool] = None
+    reverse_lookup_unify: Optional[bool] = None
+    port_list_id: Optional[Union[str, UUID]] = None
