@@ -1,4 +1,4 @@
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -151,7 +151,7 @@ class TargetsRouter(APIRouter):
             )
         return {"id": resp.get("id")}
 
-    async def update_target(self, uuid: str, target: TargetUpdate) -> Any:
+    async def update_target(self, uuid: str, target: TargetUpdate) -> None:
         resp = self._gvm_targets.update_target(
             uuid,
             name=target.name,
@@ -175,7 +175,7 @@ class TargetsRouter(APIRouter):
                 detail="status code not ok"
             )
 
-    async def delete_target(self, uuid: str, ultimate: Optional[bool] = False) -> Any:
+    async def delete_target(self, uuid: str, ultimate: Optional[bool] = False) -> None:
         resp = self._gvm_targets.delete_target(uuid, ultimate=ultimate)
         if not status_response_code_ok(resp, 200):
             raise HTTPException(

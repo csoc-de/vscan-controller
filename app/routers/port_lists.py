@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Dict, List, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -37,7 +37,7 @@ class PortListsRouter(APIRouter):
             filter_str: Optional[str] = None,
             details: Optional[bool] = False,
             trash: Optional[bool] = False
-    ) -> Any:
+    ) -> Dict[str, List[PortList]]:
         resp = self._gvm_port_lists.get_port_lists(filter_str=filter_str, details=details, trash=trash)
         if not status_response_code_ok(resp, 200):
             raise HTTPException(
