@@ -5,7 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.gvm_tools.gvm import status_response_code_ok
 from app.gvm_tools.targets import GVMTargets
-from app.models.target import Target, TargetCreate, TargetUpdate, GetTargetResponse, GetTargetsResponse
+from app.models.target import Target, TargetCreate, TargetUpdate, GetTargetResponse, GetTargetsResponse, \
+    CreateTargetResponse
 from app.routers.auth import authorization
 from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUEST
 
@@ -53,6 +54,8 @@ class TargetsRouter(APIRouter):
             self.create_target,
             methods=["POST"],
             status_code=201,
+            response_model=CreateTargetResponse,
+            response_description="uuid of the created target",
             responses=http_responses
         )
 
@@ -64,6 +67,8 @@ class TargetsRouter(APIRouter):
             "/{uuid}",
             self.update_target,
             methods=["PUT"],
+            status_code=204,
+            response_model=None,
             responses=http_responses,
         )
 
@@ -75,6 +80,8 @@ class TargetsRouter(APIRouter):
             "/{uuid}",
             self.delete_target,
             methods=["DELETE"],
+            status_code=204,
+            response_model=None,
             responses=http_responses,
         )
 
@@ -112,7 +119,7 @@ class TargetsRouter(APIRouter):
             res.append(Target.from_xml(tostring(t)))
         return {"targets": res}
 
-    async def create_target(self, target: TargetCreate) -> Any:
+    async def create_target(self, target: TargetCreate) -> Dict[str, str]:
         if target.port_range is None and target.port_list_id is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -142,6 +149,7 @@ class TargetsRouter(APIRouter):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="status code not created"
             )
+        return {"id": resp.get("id")}
 
     async def update_target(self, uuid: str, target: TargetUpdate) -> Any:
         resp = self._gvm_targets.update_target(

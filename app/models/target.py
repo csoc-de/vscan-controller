@@ -66,6 +66,10 @@ class GetTargetResponse(BaseModel):
     target: Target
 
 
+class CreateTargetResponse(BaseModel):
+    id: str
+
+
 class TargetCreate(BaseModel):
     name: str
     asset_hosts_filter: Optional[str] = None
