@@ -23,7 +23,7 @@ def main():
             GVMPortLists(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD)
         )
         uvicorn.run(app.fastapi, host=HOST, port=PORT, log_level="info")
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         print(e)
         print(traceback.format_exc())
 

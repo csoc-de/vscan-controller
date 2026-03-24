@@ -1,7 +1,7 @@
 [MAIN]
 
 # Disable specific checks
-disable=missing-module-docstring,missing-function-docstring
+disable=missing-module-docstring,missing-function-docstring,missing-class-docstring,too-many-arguments,too-many-locals,too-few-public-methods,duplicate-code
 
 # Analyse import fallback blocks. This can be used to support both Python 2 and
 # 3 compatible code, which means that the block might have code that exists
