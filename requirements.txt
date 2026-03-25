@@ -1,6 +1,7 @@
-lxml~=5.3.1
-schedule~=1.2.2
-python-gvm~=25.1.1
-python-json-logger~=3.2.1
-cryptography~=44.0.2
-xmltodict~=0.14.2
+fastapi==0.135.2
+pydantic==2.12.5
+pydantic_xml==2.19.0
+python-dotenv==1.2.2
+uvicorn==0.42.0
+python-gvm==26.11.1
+structlog==25.5.0

@@ -2,3 +2,6 @@
 .idea
 vulnscanner.db
 testdb.db
+/gvm_socket/*
+.run
+.env
