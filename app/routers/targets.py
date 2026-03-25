@@ -102,7 +102,7 @@ class TargetsRouter(APIRouter):
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="target not found"
             )
-        elif len(target) > 1:
+        if len(target) > 1:
             self._log.error("multiple targets with same uuid found")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

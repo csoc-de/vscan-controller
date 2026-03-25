@@ -5,6 +5,7 @@ from structlog.types import EventDict
 from app.config import VERSION
 
 
+# pylint: disable=unused-argument
 def add_log_level_upper(
         logger: Any, method_name: str, event_dict: EventDict
 ) -> EventDict:
@@ -19,6 +20,7 @@ def add_log_level_upper(
     return event_dict
 
 
+# pylint: disable=unused-argument
 def add_and_modify_parameters(logger: str, method_name: str, event_dict: EventDict) -> EventDict:
     if "module" in event_dict:
         event_dict["package"] = event_dict["module"]

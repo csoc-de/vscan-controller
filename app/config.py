@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 try:
-    from app.build_info import VERSION, COMMIT, BUILD_AT
+    from app.build_info import VERSION, COMMIT, BUILD_AT  # pylint: disable=unused-import
 except ImportError:
     VERSION = "{version}"
     COMMIT = "{commit}"
