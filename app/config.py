@@ -2,6 +2,13 @@ import os
 
 from dotenv import load_dotenv
 
+try:
+    from app.build_info import VERSION, COMMIT, BUILD_AT
+except ImportError:
+    VERSION = "{version}"
+    COMMIT = "{commit}"
+    BUILD_AT = "{build_at}"
+
 load_dotenv()
 API_KEY: str = os.getenv("API_KEY", "1234567890123456789")
 HOST: str = os.getenv("HOST", "localhost")

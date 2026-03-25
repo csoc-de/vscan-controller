@@ -2,6 +2,7 @@ from typing import Dict
 
 from fastapi import FastAPI
 
+from app.config import VERSION, COMMIT, BUILD_AT
 from app.gvm_tools.port_lists import GVMPortLists
 from app.gvm_tools.targets import GVMTargets
 from app.routers.port_lists import PortListsRouter
@@ -17,4 +18,4 @@ class App:
 
     @staticmethod
     def health() -> Dict[str, str]:
-        return {"status": "ok"}
+        return {"status": "ok", "version": VERSION, "commit": COMMIT, "build_at": BUILD_AT}
