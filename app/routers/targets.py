@@ -2,8 +2,9 @@ from typing import Dict, List, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.gvm import status_response_code_ok
+from app.gvm_tools.gvm import status_response_code_ok, get_status_response_code
 from app.gvm_tools.targets import GVMTargets
 from app.models.target import Target, TargetCreate, TargetUpdate, GetTargetResponse, GetTargetsResponse, \
     CreateTargetResponse
@@ -12,13 +13,15 @@ from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUES
 
 
 class TargetsRouter(APIRouter):
-    def __init__(self, gvm_targets: GVMTargets) -> None:
+    def __init__(self, gvm_targets: GVMTargets, log: BoundLogger) -> None:
         super().__init__(
             prefix="/v1/targets",
             tags=["targets"],
             dependencies=[Depends(authorization)]
         )
         self._gvm_targets = gvm_targets
+        self._log = log
+        #        self._tag.
 
         # GET Target
         http_responses = {}
@@ -88,6 +91,7 @@ class TargetsRouter(APIRouter):
     async def get_target(self, uuid: str) -> Dict[str, Target]:
         resp = self._gvm_targets.get_target(uuid)
         if not status_response_code_ok(resp, 200):
+            self._log.error("status code not ok", status_code=get_status_response_code(resp))
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="status code not ok"
@@ -99,6 +103,7 @@ class TargetsRouter(APIRouter):
                 detail="target not found"
             )
         elif len(target) > 1:
+            self._log.error("multiple targets with same uuid found")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="multiple targets with same uuid found"
@@ -109,6 +114,7 @@ class TargetsRouter(APIRouter):
         str, List[Target]]:
         resp = self._gvm_targets.get_targets(filter_str, trash)
         if not status_response_code_ok(resp, 200):
+            self._log.error("status code not ok", status_code=get_status_response_code(resp))
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="status code not ok"
@@ -145,6 +151,7 @@ class TargetsRouter(APIRouter):
             port_list_id=target.port_list_id
         )
         if not status_response_code_ok(resp, 201):
+            self._log.error("status code not created", status_code=get_status_response_code(resp))
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="status code not created"
@@ -170,6 +177,7 @@ class TargetsRouter(APIRouter):
             port_list_id=target.port_list_id
         )
         if not status_response_code_ok(resp, 200):
+            self._log.error("status code not ok", status_code=get_status_response_code(resp))
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="status code not ok"
@@ -178,6 +186,7 @@ class TargetsRouter(APIRouter):
     async def delete_target(self, uuid: str, ultimate: Optional[bool] = False) -> None:
         resp = self._gvm_targets.delete_target(uuid, ultimate=ultimate)
         if not status_response_code_ok(resp, 200):
+            self._log.error("status code not ok", status_code=get_status_response_code(resp))
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="status code not ok"
