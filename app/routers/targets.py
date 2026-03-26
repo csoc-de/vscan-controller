@@ -6,7 +6,7 @@ from structlog.stdlib import BoundLogger
 
 from app.gvm_tools.gvm import status_response_code_ok, get_status_response_code
 from app.gvm_tools.targets import GVMTargets
-from app.models.target import Target, TargetCreate, TargetUpdate, GetTargetResponse, GetTargetsResponse, \
+from app.models.targets import Target, TargetCreate, TargetUpdate, GetTargetResponse, GetTargetsResponse, \
     CreateTargetResponse
 from app.routers.auth import authorization
 from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUEST
@@ -21,7 +21,6 @@ class TargetsRouter(APIRouter):
         )
         self._gvm_targets = gvm_targets
         self._log = log
-        #        self._tag.
 
         # GET Target
         http_responses = {}
@@ -132,24 +131,7 @@ class TargetsRouter(APIRouter):
                 detail="one of port_list_id or port_range are required"
             )
 
-        resp = self._gvm_targets.create_target(
-            target.name,
-            asset_hosts_filter=target.asset_hosts_filter,
-            hosts=target.hosts,
-            comment=target.comment,
-            exclude_hosts=target.exclude_hosts,
-            ssh_credential_id=target.ssh_credential_id,
-            ssh_credential_port=target.ssh_credential_port,
-            smb_credential_id=target.smb_credential_id,
-            esxi_credential_id=target.esxi_credential_id,
-            snmp_credential_id=target.snmp_credential_id,
-            alive_test=target.alive_test,
-            allow_simultaneous_ips=target.allow_simultaneous_ips,
-            reverse_lookup_only=target.reverse_lookup_only,
-            reverse_lookup_unify=target.reverse_lookup_unify,
-            port_range=target.port_range,
-            port_list_id=target.port_list_id
-        )
+        resp = self._gvm_targets.create_target(**target.__dict__)
         if not status_response_code_ok(resp, 201):
             self._log.error("status code not created", status_code=get_status_response_code(resp))
             raise HTTPException(
@@ -159,23 +141,7 @@ class TargetsRouter(APIRouter):
         return {"id": resp.get("id")}
 
     async def update_target(self, uuid: str, target: TargetUpdate) -> None:
-        resp = self._gvm_targets.update_target(
-            uuid,
-            name=target.name,
-            comment=target.comment,
-            hosts=target.hosts,
-            exclude_hosts=target.exclude_hosts,
-            ssh_credential_id=target.ssh_credential_id,
-            ssh_credential_port=target.ssh_credential_port,
-            smb_credential_id=target.smb_credential_id,
-            esxi_credential_id=target.esxi_credential_id,
-            snmp_credential_id=target.snmp_credential_id,
-            alive_test=target.alive_test,
-            allow_simultaneous_ips=target.allow_simultaneous_ips,
-            reverse_lookup_only=target.reverse_lookup_only,
-            reverse_lookup_unify=target.reverse_lookup_unify,
-            port_list_id=target.port_list_id
-        )
+        resp = self._gvm_targets.update_target(uuid, **target.__dict__)
         if not status_response_code_ok(resp, 200):
             self._log.error("status code not ok", status_code=get_status_response_code(resp))
             raise HTTPException(
