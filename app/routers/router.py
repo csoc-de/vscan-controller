@@ -4,24 +4,37 @@ from fastapi import FastAPI
 from structlog.stdlib import BoundLogger
 
 from app.config import VERSION, COMMIT, BUILD_AT
+from app.gvm_tools.configs import GVMConfigs
 from app.gvm_tools.port_lists import GVMPortLists
+from app.gvm_tools.scanners import GVMScanners
 from app.gvm_tools.targets import GVMTargets
+from app.gvm_tools.tasks import GVMTasks
+from app.routers.configs import ConfigsRouter
 from app.routers.port_lists import PortListsRouter
+from app.routers.scanners import ScannersRouter
 from app.routers.targets import TargetsRouter
+from app.routers.tasks import TasksRouter
 
 
 class App:
-    def __init__(self, gvm_targets: GVMTargets, gvm_port_lists: GVMPortLists, log: BoundLogger) -> None:
+    # pylint: disable=too-many-positional-arguments
+    def __init__(
+            self,
+            gvm_targets: GVMTargets,
+            gvm_port_lists: GVMPortLists,
+            gvm_tasks: GVMTasks,
+            gvm_configs: GVMConfigs,
+            gvm_scanners: GVMScanners,
+            log: BoundLogger
+    ) -> None:
         self.fastapi = FastAPI()
         self.fastapi.add_api_route("/health", self.health, methods=["GET"])
         self.fastapi.include_router(TargetsRouter(gvm_targets, log))
         self.fastapi.include_router(PortListsRouter(gvm_port_lists, log))
+        self.fastapi.include_router(TasksRouter(gvm_tasks, log))
+        self.fastapi.include_router(ConfigsRouter(gvm_configs, log))
+        self.fastapi.include_router(ScannersRouter(gvm_scanners, log))
         self._log = log
-
-        self._log.debug("Test Debug", test="test1")
-        self._log.info("Test Info", test="test2")
-        self._log.warning("Test Warning", test="test3")
-        self._log.error("Test Error", test="test4")
 
     @staticmethod
     def health() -> Dict[str, str]:

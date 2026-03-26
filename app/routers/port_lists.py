@@ -15,7 +15,7 @@ class PortListsRouter(APIRouter):
     def __init__(self, gvm_port_lists: GVMPortLists, log: BoundLogger) -> None:
         super().__init__(
             prefix="/v1/port-lists",
-            tags=["Port Lists"],
+            tags=["port_lists"],
             dependencies=[Depends(authorization)]
         )
         self._gvm_port_lists = gvm_port_lists

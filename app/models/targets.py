@@ -1,16 +1,9 @@
-from datetime import datetime
 from typing import List, Optional, Union
 
 from pydantic import BaseModel
-from pydantic_xml import BaseXmlModel, attr, element, wrapped
+from pydantic_xml import BaseXmlModel, attr, element
 
-
-class Owner(BaseXmlModel, tag="owner"):
-    name: str = element()
-
-
-class Permission(BaseXmlModel, tag="permission"):
-    name: str = element()
+from app.models.base import BaseXmlGvmModel
 
 
 class PortList(BaseXmlModel, tag="port_list"):
@@ -31,16 +24,7 @@ class AliveTests(BaseXmlModel, tag="alive_tests"):
     alive_test: str = element()
 
 
-class Target(BaseXmlModel, tag="target"):
-    id: str = attr()
-    owner: Owner = element()
-    name: str = element()
-    comment: str = element(default="")
-    creation_time: datetime = element()
-    modification_time: datetime = element()
-    writable: bool = element()
-    in_use: bool = element()
-    permissions: List[Permission] = wrapped("permissions", element())
+class Target(BaseXmlGvmModel, tag="target"):
     hosts: List[str] = element()
     exclude_hosts: List[str] = element(default=[])
     max_hosts: int = element()
