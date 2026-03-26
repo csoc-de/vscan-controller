@@ -7,11 +7,13 @@ from app.config import VERSION, COMMIT, BUILD_AT
 from app.gvm_tools.configs import GVMConfigs
 from app.gvm_tools.port_lists import GVMPortLists
 from app.gvm_tools.scanners import GVMScanners
+from app.gvm_tools.schedules import GVMSchedules
 from app.gvm_tools.targets import GVMTargets
 from app.gvm_tools.tasks import GVMTasks
 from app.routers.configs import ConfigsRouter
 from app.routers.port_lists import PortListsRouter
 from app.routers.scanners import ScannersRouter
+from app.routers.schedules import SchedulesRouter
 from app.routers.targets import TargetsRouter
 from app.routers.tasks import TasksRouter
 
@@ -25,6 +27,7 @@ class App:
             gvm_tasks: GVMTasks,
             gvm_configs: GVMConfigs,
             gvm_scanners: GVMScanners,
+            gvm_schedules: GVMSchedules,
             log: BoundLogger
     ) -> None:
         self.fastapi = FastAPI()
@@ -34,6 +37,7 @@ class App:
         self.fastapi.include_router(TasksRouter(gvm_tasks, log))
         self.fastapi.include_router(ConfigsRouter(gvm_configs, log))
         self.fastapi.include_router(ScannersRouter(gvm_scanners, log))
+        self.fastapi.include_router(SchedulesRouter(gvm_schedules, log))
         self._log = log
 
     @staticmethod
