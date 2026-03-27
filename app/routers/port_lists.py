@@ -1,10 +1,11 @@
+# pylint: disable=raise-missing-from
 from typing import Dict, List, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.gvm import status_response_code_ok, get_status_response_code
 from app.gvm_tools.port_lists import GVMPortLists
 from app.models.port_lists import PortList, GetPortListsResponse
 from app.routers.auth import authorization
@@ -40,13 +41,16 @@ class PortListsRouter(APIRouter):
             details: Optional[bool] = False,
             trash: Optional[bool] = False
     ) -> Dict[str, List[PortList]]:
-        resp = self._gvm_port_lists.get_port_lists(filter_str=filter_str, details=details, trash=trash)
-        if not status_response_code_ok(resp, 200):
-            self._log.error("status code not ok", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not ok"
-            )
+        try:
+            resp = self._gvm_port_lists.get_port_lists(filter_str=filter_str, details=details, trash=trash)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
         port_lists = resp.findall("./port_list")
         res = []
         for l in port_lists:

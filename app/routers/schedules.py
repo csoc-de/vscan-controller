@@ -1,10 +1,11 @@
+# pylint: disable=raise-missing-from
 from typing import Dict, List, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.gvm import status_response_code_ok, get_status_response_code
 from app.gvm_tools.schedules import GVMSchedules
 from app.models.schedules import Schedule, ScheduleCreate, ScheduleUpdate, GetScheduleResponse, GetSchedulesResponse, \
     CreateScheduleResponse
@@ -88,19 +89,23 @@ class SchedulesRouter(APIRouter):
         )
 
     async def get_schedule(self, uuid: str, tasks: Optional[bool] = False) -> Dict[str, Schedule]:
-        resp = self._gvm_schedules.get_schedule(uuid, tasks=tasks)
-        if not status_response_code_ok(resp, 200):
-            self._log.error("status code not ok", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not ok"
-            )
+        try:
+            resp = self._gvm_schedules.get_schedule(uuid, tasks=tasks)
+        except GvmResponseError as e:
+            match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="schedule not found"
+                    )
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(  # pylint: disable=raise-missing-from
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
+
         schedule = resp.findall("./schedule")
-        if len(schedule) == 0:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="schedule not found"
-            )
         if len(schedule) > 1:
             self._log.error("multiple schedules with same uuid found")
             raise HTTPException(
@@ -114,15 +119,17 @@ class SchedulesRouter(APIRouter):
             filter_str: Optional[str] = None,
             trash: Optional[bool] = False,
             tasks: Optional[bool] = False
-    ) -> Dict[
-        str, List[Schedule]]:
-        resp = self._gvm_schedules.get_schedules(filter_string=filter_str, trash=trash, tasks=tasks)
-        if not status_response_code_ok(resp, 200):
-            self._log.error("status code not ok", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not ok"
-            )
+    ) -> Dict[str, List[Schedule]]:
+        try:
+            resp = self._gvm_schedules.get_schedules(filter_string=filter_str, trash=trash, tasks=tasks)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
         schedules = resp.findall("./schedule")
         res = []
         for s in schedules:
@@ -131,29 +138,38 @@ class SchedulesRouter(APIRouter):
         return {"schedules": res}
 
     async def create_schedule(self, schedule: ScheduleCreate) -> Dict[str, str]:
-        resp = self._gvm_schedules.create_schedule(**schedule.__dict__)
-        if not status_response_code_ok(resp, 201):
-            self._log.error("status code not created", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not created"
-            )
+        try:
+            resp = self._gvm_schedules.create_schedule(**schedule.__dict__)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
         return {"id": resp.get("id")}
 
     async def update_schedule(self, uuid: str, schedule: ScheduleUpdate) -> None:
-        resp = self._gvm_schedules.update_schedule(uuid, **schedule.__dict__)
-        if not status_response_code_ok(resp, 200):
-            self._log.error("status code not ok", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not ok"
-            )
+        try:
+            _ = self._gvm_schedules.update_schedule(uuid, **schedule.__dict__)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
 
     async def delete_schedule(self, uuid: str, ultimate: Optional[bool] = False) -> None:
-        resp = self._gvm_schedules.delete_schedule(uuid, ultimate=ultimate)
-        if not status_response_code_ok(resp, 200):
-            self._log.error("status code not ok", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not ok"
-            )
+        try:
+            _ = self._gvm_schedules.delete_schedule(uuid, ultimate=ultimate)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )

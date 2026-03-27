@@ -1,10 +1,11 @@
+# pylint: disable=raise-missing-from
 from typing import Dict, List, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.gvm import status_response_code_ok, get_status_response_code
 from app.gvm_tools.scanners import GVMScanners
 from app.models.scanners import Scanner, GetScannerResponse
 from app.routers.auth import authorization
@@ -40,13 +41,16 @@ class ScannersRouter(APIRouter):
             trash: Optional[bool] = None,
             details: Optional[bool] = None,
     ) -> Dict[str, List[Scanner]]:
-        resp = self.gvm_scanners.get_scanners(filter_string=filter_string, trash=trash, details=details)
-        if not status_response_code_ok(resp, 200):
-            self._log.error("status code not ok", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not ok"
-            )
+        try:
+            resp = self.gvm_scanners.get_scanners(filter_string=filter_string, trash=trash, details=details)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
         scanners = resp.findall("./scanner")
         res = []
         for s in scanners:

@@ -1,10 +1,11 @@
+# pylint: disable=raise-missing-from
 from typing import Dict, List, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.gvm import status_response_code_ok, get_status_response_code
 from app.gvm_tools.targets import GVMTargets
 from app.models.targets import Target, TargetCreate, TargetUpdate, GetTargetResponse, GetTargetsResponse, \
     CreateTargetResponse
@@ -88,19 +89,22 @@ class TargetsRouter(APIRouter):
         )
 
     async def get_target(self, uuid: str) -> Dict[str, Target]:
-        resp = self._gvm_targets.get_target(uuid)
-        if not status_response_code_ok(resp, 200):
-            self._log.error("status code not ok", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not ok"
-            )
+        try:
+            resp = self._gvm_targets.get_target(uuid)
+        except GvmResponseError as e:
+            match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="target not found"
+                    )
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
         target = resp.findall("./target")
-        if len(target) == 0:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="target not found"
-            )
         if len(target) > 1:
             self._log.error("multiple targets with same uuid found")
             raise HTTPException(
@@ -111,13 +115,16 @@ class TargetsRouter(APIRouter):
 
     async def get_targets(self, filter_str: Optional[str] = None, trash: Optional[bool] = False) -> Dict[
         str, List[Target]]:
-        resp = self._gvm_targets.get_targets(filter_str, trash)
-        if not status_response_code_ok(resp, 200):
-            self._log.error("status code not ok", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not ok"
-            )
+        try:
+            resp = self._gvm_targets.get_targets(filter_str, trash)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
         targets = resp.findall("./target")
         res = []
         for t in targets:
@@ -130,30 +137,38 @@ class TargetsRouter(APIRouter):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="one of port_list_id or port_range are required"
             )
-
-        resp = self._gvm_targets.create_target(**target.__dict__)
-        if not status_response_code_ok(resp, 201):
-            self._log.error("status code not created", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not created"
-            )
+        try:
+            resp = self._gvm_targets.create_target(**target.__dict__)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
         return {"id": resp.get("id")}
 
     async def update_target(self, uuid: str, target: TargetUpdate) -> None:
-        resp = self._gvm_targets.update_target(uuid, **target.__dict__)
-        if not status_response_code_ok(resp, 200):
-            self._log.error("status code not ok", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not ok"
-            )
+        try:
+            _ = self._gvm_targets.update_target(uuid, **target.__dict__)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
 
     async def delete_target(self, uuid: str, ultimate: Optional[bool] = False) -> None:
-        resp = self._gvm_targets.delete_target(uuid, ultimate=ultimate)
-        if not status_response_code_ok(resp, 200):
-            self._log.error("status code not ok", status_code=get_status_response_code(resp))
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="status code not ok"
-            )
+        try:
+            _ = self._gvm_targets.delete_target(uuid, ultimate=ultimate)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
