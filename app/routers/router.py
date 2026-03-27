@@ -1,3 +1,4 @@
+# pylint: disable=raise-missing-from
 from typing import Dict
 
 from fastapi import FastAPI
