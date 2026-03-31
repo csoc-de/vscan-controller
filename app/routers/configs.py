@@ -1,5 +1,5 @@
 # pylint: disable=raise-missing-from
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -43,7 +43,7 @@ class ConfigsRouter(APIRouter):
             families: Optional[bool] = None,
             preferences: Optional[bool] = None,
             tasks: Optional[bool] = None,
-    ) -> Dict[str, List[Config]]:
+    ) -> Dict[str, list[Config]]:
         try:
             resp = self.gvm_configs.get_configs(filter_string=filter_string, trash=trash, details=details,
                                                 families=families, preferences=preferences, tasks=tasks)

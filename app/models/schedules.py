@@ -1,19 +1,26 @@
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
-from pydantic_xml import element
+from pydantic_xml import element, attr, wrapped, BaseXmlModel
 
 from app.models.base import BaseXmlGvmModel
+
+
+class Task(BaseXmlModel, tag="task"):
+    id: str = attr()
+    name: Optional[str] = element(default=None)
+    permissions: Optional[str] = element(default=None)
 
 
 class Schedule(BaseXmlGvmModel, tag="schedule"):
     icalendar: str = element()
     timezone: str = element()
+    tasks: Optional[list[Task]] = wrapped("tasks", element(tag="task"), default=None)
 
 
 # response and request models
 class GetSchedulesResponse(BaseModel):
-    schedules: List[Schedule]
+    schedules: list[Schedule]
 
 
 class GetScheduleResponse(BaseModel):

@@ -1,5 +1,5 @@
 # pylint: disable=raise-missing-from
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -40,7 +40,7 @@ class ScannersRouter(APIRouter):
             filter_string: Optional[str] = None,
             trash: Optional[bool] = None,
             details: Optional[bool] = None,
-    ) -> Dict[str, List[Scanner]]:
+    ) -> Dict[str, list[Scanner]]:
         try:
             resp = self.gvm_scanners.get_scanners(filter_string=filter_string, trash=trash, details=details)
         except GvmResponseError as e:
