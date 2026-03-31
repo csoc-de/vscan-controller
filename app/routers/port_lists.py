@@ -1,5 +1,5 @@
 # pylint: disable=raise-missing-from
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -40,7 +40,7 @@ class PortListsRouter(APIRouter):
             filter_str: Optional[str] = None,
             details: Optional[bool] = False,
             trash: Optional[bool] = False
-    ) -> Dict[str, List[PortList]]:
+    ) -> Dict[str, list[PortList]]:
         try:
             resp = self._gvm_port_lists.get_port_lists(filter_str=filter_str, details=details, trash=trash)
         except GvmResponseError as e:

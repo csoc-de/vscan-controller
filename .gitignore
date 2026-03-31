@@ -5,3 +5,4 @@ testdb.db
 /gvm_socket/*
 .run
 .env
+sbom.xml

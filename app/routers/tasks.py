@@ -1,5 +1,5 @@
 # pylint: disable=raise-missing-from
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -10,7 +10,7 @@ from app.gvm_tools.tasks import GVMTasks
 from app.models.tasks import Task, TaskCreate, TaskUpdate, GetTaskResponse, GetTasksResponse, \
     CreateTaskResponse
 from app.routers.auth import authorization
-from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUEST
+from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUEST, NOT_FOUND
 
 
 class TasksRouter(APIRouter):
@@ -27,6 +27,7 @@ class TasksRouter(APIRouter):
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
         http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
         self.add_api_route(
             "/{uuid}",
             self.get_task,
@@ -66,6 +67,7 @@ class TasksRouter(APIRouter):
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
         http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
         self.add_api_route(
             "/{uuid}",
             self.update_task,
@@ -79,10 +81,53 @@ class TasksRouter(APIRouter):
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
         http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
         self.add_api_route(
             "/{uuid}",
             self.delete_task,
             methods=["DELETE"],
+            status_code=204,
+            response_model=None,
+            responses=http_responses,
+        )
+
+        # POST Start Task
+        http_responses = {}
+        http_responses.update(UNAUTHORIZED)
+        http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
+        self.add_api_route(
+            "/{uuid}/start",
+            self.start_task,
+            methods=["POST"],
+            status_code=204,
+            response_model=None,
+            responses=http_responses,
+        )
+
+        # POST Stop Task
+        http_responses = {}
+        http_responses.update(UNAUTHORIZED)
+        http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
+        self.add_api_route(
+            "/{uuid}/stop",
+            self.stop_task,
+            methods=["POST"],
+            status_code=204,
+            response_model=None,
+            responses=http_responses,
+        )
+
+        # POST Resume Task
+        http_responses = {}
+        http_responses.update(UNAUTHORIZED)
+        http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
+        self.add_api_route(
+            "/{uuid}/resume",
+            self.resume_task,
+            methods=["POST"],
             status_code=204,
             response_model=None,
             responses=http_responses,
@@ -115,7 +160,7 @@ class TasksRouter(APIRouter):
 
     async def get_tasks(self, filter_str: Optional[str] = None, trash: Optional[bool] = False,
                         details: Optional[bool] = False) -> Dict[
-        str, List[Task]]:
+        str, list[Task]]:
         try:
             resp = self._gvm_tasks.get_tasks(filter_str, trash, details)
         except GvmResponseError as e:
@@ -150,6 +195,11 @@ class TasksRouter(APIRouter):
             _ = self._gvm_tasks.update_task(uuid, **task.__dict__)
         except GvmResponseError as e:
             match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="target not found"
+                    )
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status)
                     raise HTTPException(
@@ -162,6 +212,62 @@ class TasksRouter(APIRouter):
             _ = self._gvm_tasks.delete_task(uuid, ultimate=ultimate)
         except GvmResponseError as e:
             match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="target not found"
+                    )
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
+
+    async def start_task(self, uuid: str) -> None:
+        try:
+            _ = self._gvm_tasks.start_task(uuid)
+        except GvmResponseError as e:
+            match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="target not found"
+                    )
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
+
+    async def resume_task(self, uuid: str) -> None:
+        try:
+            _ = self._gvm_tasks.start_task(uuid)
+        except GvmResponseError as e:
+            match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="target not found"
+                    )
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
+
+    async def stop_task(self, uuid: str) -> None:
+        try:
+            _ = self._gvm_tasks.start_task(uuid)
+        except GvmResponseError as e:
+            match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="target not found"
+                    )
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status)
                     raise HTTPException(

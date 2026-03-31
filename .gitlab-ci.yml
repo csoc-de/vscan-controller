@@ -11,6 +11,7 @@ variables:
 stages:
   - build
   - lint
+  - check
   - deploy
 
 build:
@@ -32,6 +33,41 @@ linter:
   script:
     - pylint ${CI_PROJECT_DIR}/app
 
+sbom:
+  image: ${HARBOR_HOST}/dockerhub/library/python:latest
+  stage: check
+  interruptible: true
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  tags:
+    - default
+  needs:
+    - job: build
+  variables:
+    DTRACK_ID: ${DTRACK_PID}
+    SBOM_CREATE_PAYLOAD: |
+      cat > payload.json <<HERE
+      {
+      "project": "${DTRACK_PID}",
+      "bom": "$(cat sbom.xml |base64 -)"
+      }
+      HERE
+    SBOM_UPLOAD_COMMAND: 'curl -X "PUT" "https://dtrack-api.dev.csoc.host/api/v1/bom" -H "Content-Type: application/json" -H "X-API-Key: ${DTRACK_APIKEY}" -d @payload.json'
+  before_script:
+    - python3 -m venv /builds/${CI_PROJECT_PATH}/venv
+    - cd /builds/${CI_PROJECT_PATH}
+    - source venv/bin/activate
+    - python -m pip install -r requirements.txt
+    - python -m pip install cyclonedx-bom
+  script:
+    - cyclonedx-py environment --gather-license-texts -o sbom.xml --of XML -v --validate /builds/${CI_PROJECT_PATH}/venv
+    - 'eval "$SBOM_CREATE_PAYLOAD"'
+    - 'eval "$SBOM_UPLOAD_COMMAND"'
+  artifacts:
+    when: always
+    paths:
+      - sbom.xml
+    expire_in: 2 days
 
 release-latest:
   stage: deploy

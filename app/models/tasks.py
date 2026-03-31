@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional, Union, Sequence
+from typing import Optional, Union, Sequence
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -26,25 +26,29 @@ class Preference(BaseXmlModel, tag="preference"):
 class Config(BaseXmlModel, tag="config"):
     id: str = attr()
     name: Optional[str] = element(default=None)
-    trash: int = element()
+    permissions: Optional[str] = element(default=None)
+    trash: bool = element()
 
 
 class Target(BaseXmlModel, tag="target"):
     id: str = attr()
     name: str = element()
-    trash: int = element()
+    permissions: Optional[str] = element(default=None)
+    trash: bool = element()
 
 
 class Scanner(BaseXmlModel, tag="scanner"):
     id: str = attr()
     name: str = element()
+    permissions: Optional[str] = element(default=None)
     type: int = element()
-    trash: int = element()
+    trash: bool = element(default=False)
 
 
 class Schedule(BaseXmlModel, tag="schedule"):
     id: Optional[str] = attr()
     name: Optional[str] = element(default=None)
+    permissions: Optional[str] = element(default=None)
     trash: Optional[int] = element()
 
 
@@ -53,11 +57,36 @@ class ReportCount(BaseXmlModel, tag="report_count"):
     finished: str = element()
 
 
+class ReportResultCount(BaseXmlModel, tag="result_count"):
+    false_positive: int = element(default=0)
+    log: int = element(default=0)
+    info: int = element(default=0)
+    warning: int = element(default=0)
+    hole: int = element(default=0)
+
+
 class Report(BaseXmlModel, tag="report"):
     id: str = attr()
     timestamp: datetime = element()
     scan_start: datetime = element(default=None)
     scan_end: datetime = element(default=None)
+    result_count: Optional[ReportResultCount] = element(tag="result_count", default=None)
+    severity: Optional[float] = element(default=None)
+
+
+class ObserverGroup(BaseXmlModel, tag="group"):
+    id: str = attr()
+    name: Optional[str] = element(default=None)
+
+
+class ObserverRule(BaseXmlModel, tag="rule"):
+    id: str = attr()
+    name: Optional[str] = element(default=None)
+
+
+class Observers(BaseXmlModel, tag="observers"):
+    groups: Optional[list[ObserverGroup]] = element(tag="group", default=None)
+    rules: Optional[list[ObserverRule]] = element(tag="rule", default=None)
 
 
 class Task(BaseXmlGvmModel, tag="task"):
@@ -65,6 +94,7 @@ class Task(BaseXmlGvmModel, tag="task"):
     usage_type: str = element()
     config: Config = element()
     target: Target = element()
+    hosts_ordering: Optional[str] = element(default=None)
     scanner: Scanner = element()
     status: str = element()
     progress: int = element()
@@ -72,16 +102,17 @@ class Task(BaseXmlGvmModel, tag="task"):
     trend: Optional[str] = element(default=None)
     schedule: Schedule = element()
     schedule_periods: int = element()
-    current_report: Optional[Report] = wrapped("current_report", element(tag="report"), default=None)
-    observers: Optional[str] = element(default=None)
+    current_report: Optional[Report] = wrapped("current_report", element(default=None))
+    last_report: Optional[Report] = wrapped("last_report", element(default=None))
+    observers: Optional[list[Observers]] = element(default=None)
     average_duration: Optional[int] = element(default=None)
     result_count: Optional[int] = element(default=None)
-    preferences: List[Preference] = wrapped("preferences", element(tag="preference"))
+    preferences: list[Preference] = wrapped("preferences", element(tag="preference"))
 
 
 # response and request models
 class GetTasksResponse(BaseModel):
-    tasks: List[Task]
+    tasks: list[Task]
 
 
 class GetTaskResponse(BaseModel):

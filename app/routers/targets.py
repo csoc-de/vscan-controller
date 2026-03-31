@@ -1,5 +1,5 @@
 # pylint: disable=raise-missing-from
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -10,7 +10,7 @@ from app.gvm_tools.targets import GVMTargets
 from app.models.targets import Target, TargetCreate, TargetUpdate, GetTargetResponse, GetTargetsResponse, \
     CreateTargetResponse
 from app.routers.auth import authorization
-from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUEST
+from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUEST, NOT_FOUND
 
 
 class TargetsRouter(APIRouter):
@@ -27,6 +27,7 @@ class TargetsRouter(APIRouter):
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
         http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
         self.add_api_route(
             "/{uuid}",
             self.get_target,
@@ -66,6 +67,7 @@ class TargetsRouter(APIRouter):
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
         http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
         self.add_api_route(
             "/{uuid}",
             self.update_target,
@@ -79,6 +81,7 @@ class TargetsRouter(APIRouter):
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
         http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
         self.add_api_route(
             "/{uuid}",
             self.delete_target,
@@ -114,7 +117,7 @@ class TargetsRouter(APIRouter):
         return {"target": Target.from_xml(tostring(target[0]))}
 
     async def get_targets(self, filter_str: Optional[str] = None, trash: Optional[bool] = False) -> Dict[
-        str, List[Target]]:
+        str, list[Target]]:
         try:
             resp = self._gvm_targets.get_targets(filter_str, trash)
         except GvmResponseError as e:
@@ -154,6 +157,11 @@ class TargetsRouter(APIRouter):
             _ = self._gvm_targets.update_target(uuid, **target.__dict__)
         except GvmResponseError as e:
             match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="target not found"
+                    )
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status)
                     raise HTTPException(
@@ -166,6 +174,11 @@ class TargetsRouter(APIRouter):
             _ = self._gvm_targets.delete_target(uuid, ultimate=ultimate)
         except GvmResponseError as e:
             match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="target not found"
+                    )
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status)
                     raise HTTPException(

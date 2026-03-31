@@ -1,5 +1,5 @@
 # pylint: disable=raise-missing-from
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -10,7 +10,7 @@ from app.gvm_tools.schedules import GVMSchedules
 from app.models.schedules import Schedule, ScheduleCreate, ScheduleUpdate, GetScheduleResponse, GetSchedulesResponse, \
     CreateScheduleResponse
 from app.routers.auth import authorization
-from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUEST
+from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUEST, NOT_FOUND
 
 
 class SchedulesRouter(APIRouter):
@@ -27,6 +27,7 @@ class SchedulesRouter(APIRouter):
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
         http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
         self.add_api_route(
             "/{uuid}",
             self.get_schedule,
@@ -66,6 +67,7 @@ class SchedulesRouter(APIRouter):
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
         http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
         self.add_api_route(
             "/{uuid}",
             self.update_schedule,
@@ -79,6 +81,7 @@ class SchedulesRouter(APIRouter):
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
         http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
         self.add_api_route(
             "/{uuid}",
             self.delete_schedule,
@@ -119,7 +122,7 @@ class SchedulesRouter(APIRouter):
             filter_str: Optional[str] = None,
             trash: Optional[bool] = False,
             tasks: Optional[bool] = False
-    ) -> Dict[str, List[Schedule]]:
+    ) -> Dict[str, list[Schedule]]:
         try:
             resp = self._gvm_schedules.get_schedules(filter_string=filter_str, trash=trash, tasks=tasks)
         except GvmResponseError as e:
@@ -133,7 +136,6 @@ class SchedulesRouter(APIRouter):
         schedules = resp.findall("./schedule")
         res = []
         for s in schedules:
-            print(tostring(s))
             res.append(Schedule.from_xml(tostring(s)))
         return {"schedules": res}
 
@@ -155,6 +157,11 @@ class SchedulesRouter(APIRouter):
             _ = self._gvm_schedules.update_schedule(uuid, **schedule.__dict__)
         except GvmResponseError as e:
             match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="target not found"
+                    )
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status)
                     raise HTTPException(
@@ -167,6 +174,11 @@ class SchedulesRouter(APIRouter):
             _ = self._gvm_schedules.delete_schedule(uuid, ultimate=ultimate)
         except GvmResponseError as e:
             match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="target not found"
+                    )
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status)
                     raise HTTPException(

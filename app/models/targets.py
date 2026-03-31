@@ -1,7 +1,7 @@
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 from pydantic import BaseModel
-from pydantic_xml import BaseXmlModel, attr, element
+from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
 from app.models.base import BaseXmlGvmModel
 
@@ -24,11 +24,18 @@ class AliveTests(BaseXmlModel, tag="alive_tests"):
     alive_test: str = element()
 
 
+class Task(BaseXmlModel, tag="task"):
+    id: str = attr()
+    name: Optional[str] = element(default=None)
+    permissions: Optional[str] = element(default=None)
+
+
 class Target(BaseXmlGvmModel, tag="target"):
-    hosts: List[str] = element()
-    exclude_hosts: List[str] = element(default=[])
+    hosts: list[str] = element()
+    exclude_hosts: list[str] = element(default=[])
     max_hosts: int = element()
     port_list: PortList = element()
+    port_range: Optional[str] = element(default=None)
     ssh_credential: Credential = element()
     smb_credential: Credential = element()
     esxi_credential: Credential = element()
@@ -39,11 +46,12 @@ class Target(BaseXmlGvmModel, tag="target"):
     reverse_lookup_unify: bool = element()
     allow_simultaneous_ips: bool = element()
     alive_tests: AliveTests = element()
+    tasks: Optional[list[Task]] = wrapped("tasks", element(tag="task"), default=None)
 
 
 # response and request models
 class GetTargetsResponse(BaseModel):
-    targets: List[Target]
+    targets: list[Target]
 
 
 class GetTargetResponse(BaseModel):

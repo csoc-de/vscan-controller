@@ -87,3 +87,27 @@ class GVMTasks:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)
             return gvm.delete_task(task_id, ultimate=ultimate)
+
+    def start_task(
+            self,
+            task_id: Union[str, UUID],
+    ) -> Any:
+        with GMP(connection=self.socket, transform=self.transform) as gvm:
+            gvm.authenticate(self.user, self.password)
+            return gvm.start_task(task_id)
+
+    def resume_task(
+            self,
+            task_id: Union[str, UUID],
+    ) -> Any:
+        with GMP(connection=self.socket, transform=self.transform) as gvm:
+            gvm.authenticate(self.user, self.password)
+            return gvm.resume_task(task_id)
+
+    def stop_task(
+            self,
+            task_id: Union[str, UUID],
+    ) -> Any:
+        with GMP(connection=self.socket, transform=self.transform) as gvm:
+            gvm.authenticate(self.user, self.password)
+            return gvm.stop_task(task_id)
