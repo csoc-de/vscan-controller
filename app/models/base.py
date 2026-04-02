@@ -43,20 +43,3 @@ class CertificateInfo(BaseXmlModel, search_mode="unordered"):
     expiration_time: datetime = element()
     issuer: str = element()
     md5_fingerprint: str = element()
-
-
-class ResultCountElement(BaseXmlModel, search_mode="unordered"):
-    count: int
-    deprecated: Optional[bool] = attr(default=None)
-
-
-class ResultCount(BaseXmlModel, search_mode="unordered"):
-    log: ResultCountElement = element(tag="log")
-    info: ResultCountElement = element(tag="info")
-    low: ResultCountElement = element(tag="low")
-    medium: ResultCountElement = element(tag="medium")
-    warning: ResultCountElement = element(tag="warning")
-    high: ResultCountElement = element(tag="high")
-    critical: ResultCountElement = element(tag="critical")
-    hole: ResultCountElement = element(tag="hole")
-    false_positive: ResultCountElement = element(tag="false_positive")
