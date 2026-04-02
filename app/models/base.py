@@ -43,3 +43,11 @@ class CertificateInfo(BaseXmlModel):
     expiration_time: datetime = element()
     issuer: str = element()
     md5_fingerprint: str = element()
+
+
+class ResultCount(BaseXmlModel, tag="result_count"):
+    false_positive: int = element(default=0)
+    log: int = element(default=0)
+    info: int = element(default=0)
+    warning: int = element(default=0)
+    hole: int = element(default=0)

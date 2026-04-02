@@ -57,20 +57,12 @@ class ReportCount(BaseXmlModel, tag="report_count"):
     finished: str = element()
 
 
-class ReportResultCount(BaseXmlModel, tag="result_count"):
-    false_positive: int = element(default=0)
-    log: int = element(default=0)
-    info: int = element(default=0)
-    warning: int = element(default=0)
-    hole: int = element(default=0)
-
-
 class Report(BaseXmlModel, tag="report"):
     id: str = attr()
     timestamp: datetime = element()
     scan_start: datetime = element(default=None)
     scan_end: datetime = element(default=None)
-    result_count: Optional[ReportResultCount] = element(tag="result_count", default=None)
+    result_count: Optional[ResultCount] = element(tag="result_count", default=None)
     severity: Optional[float] = element(default=None)
 
 

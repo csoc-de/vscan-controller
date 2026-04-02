@@ -9,6 +9,7 @@ from gvm.transforms import EtreeCheckCommandTransform
 from app.config import GREENBONE_SOCKET_PATH, GREENBONE_USER, GREENBONE_PASSWORD, HOST, PORT, LOG_LEVEL
 from app.gvm_tools.configs import GVMConfigs
 from app.gvm_tools.port_lists import GVMPortLists
+from app.gvm_tools.reports import GVMReports
 from app.gvm_tools.scanners import GVMScanners
 from app.gvm_tools.schedules import GVMSchedules
 from app.gvm_tools.targets import GVMTargets
@@ -61,6 +62,7 @@ def main():
             GVMConfigs(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
             GVMScanners(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
             GVMSchedules(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            GVMReports(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
             log=logger
         )
         uvicorn.run(app.fastapi, host=HOST, port=PORT, log_level="info")
