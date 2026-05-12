@@ -29,7 +29,7 @@ class ReportReportFormatParam(BaseXmlModel, tag="param"):
 
 
 class ReportReportFieldOrder(BaseXmlModel, tag="order"):
-    order: str = element()
+    order: str
 
 
 class ReportReportField(BaseXmlModel, tag="field"):
@@ -390,12 +390,17 @@ class ReportReportErrors(BaseXmlModel, tag="errors"):
 
 class ReportReport(BaseXmlModel, tag="report"):
     id: str = attr()
-    type: str = attr()
+    type: Optional[str] = attr(default=None)
     gmp: ReportReportGMP = element()
-    report_format_param: ReportReportFormatParam = wrapped("report_format", element(tag="param"))
+    report_format_param: Optional[ReportReportFormatParam] = wrapped(
+        "report_format",
+        element(tag="param"),
+        default=None
+    )
     sort_field: ReportReportField = wrapped("sort", element(tag="field"))
     filters: ReportReportFilters = element()
     delta: Optional[ReportReportDelta] = element(default=None)
+    scan_run_status: Optional[str] = element(tag="scan_run_status")
     timezone: Optional[str] = element(default=None)
     timezone_abbrev: Optional[str] = element(default=None)
     permissions: Optional[list[Permission]] = wrapped("permissions",
@@ -425,20 +430,21 @@ class Report(BaseXmlModel, tag="report"):
     format_id: str = attr()
     extension: str = attr()
     content_type: str = attr()
-    type: str = attr()
+    type: Optional[str] = attr(default=None)
     owner: Owner = element()
     name: str = element()
-    comment: str = element()
+    comment: Optional[str] = element(default=None)
     creation_time: datetime = element()
     modification_time: datetime = element()
     writable: bool = element()
-    un_use: bool = element()
+    in_use: bool = element()
     task: Task = element()
-    report_format: ReportFormat = element()
+    report_format: Optional[ReportFormat] = element(default=None)
+    report: ReportReport = element()
 
 
 class GetReportResponse(BaseModel):
-    reports: Report
+    report: Report
 
 
 class GetReportsResponse(BaseModel):

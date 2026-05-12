@@ -57,6 +57,7 @@ class GVMReports:
             filter_id: Optional[str] = None,
             delta_report_id: Optional[Union[str, UUID]] = None,
             report_format_id: Optional[Union[str, ReportFormatType]] = None,
+            report_config_id: Optional[str] = None,
             ignore_pagination: Optional[bool] = None,
             details: Optional[bool] = True,
     ) -> Any:
@@ -64,7 +65,8 @@ class GVMReports:
             gvm.authenticate(self.user, self.password)
             return gvm.get_report(report_id, filter_string=filter_string, filter_id=filter_id,
                                   delta_report_id=delta_report_id, report_format_id=report_format_id,
-                                  ignore_pagination=ignore_pagination, details=details)
+                                  report_config_id=report_config_id, ignore_pagination=ignore_pagination,
+                                  details=details)
 
     def get_reports(
             self,

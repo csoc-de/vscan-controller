@@ -7,9 +7,9 @@ from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
 from app.gvm_tools.reports import GVMReports
-from app.models.reports import Report, GetReportsResponse
+from app.models.reports import Report, GetReportsResponse, GetReportResponse
 from app.routers.auth import authorization
-from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR
+from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND
 
 
 class ReportsRouter(APIRouter):
@@ -22,7 +22,20 @@ class ReportsRouter(APIRouter):
         self.gvm_reports = gvm_reports
         self._log = log
 
-        # GET Port Lists
+        # GET Report
+        http_responses = {}
+        http_responses.update(UNAUTHORIZED)
+        http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
+        self.add_api_route(
+            "/{uuid}",
+            self.get_report,
+            methods=["GET"],
+            response_model=GetReportResponse,
+            responses=http_responses
+        )
+
+        # GET Reports
         http_responses = {}
         http_responses.update(UNAUTHORIZED)
         http_responses.update(INTERNAL_SERVER_ERROR)
@@ -33,6 +46,45 @@ class ReportsRouter(APIRouter):
             response_model=GetReportsResponse,
             responses=http_responses
         )
+
+        # POST Import Report
+        http_responses = {}
+        http_responses.update(UNAUTHORIZED)
+        http_responses.update(INTERNAL_SERVER_ERROR)
+        self.add_api_route(
+            "/import",
+            self.import_report,
+            methods=["POST"],
+            status_code=204,
+            response_model=None,
+            responses=http_responses,
+        )
+
+    async def get_report(self, uuid: str) -> Dict[str, Report]:
+        try:
+            resp = self.gvm_reports.get_report(uuid)
+        except GvmResponseError as e:
+            match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="report not found"
+                    )
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
+        report = resp.findall("./report")
+        print(tostring(report[0]))
+        if len(report) > 1:
+            self._log.error("multiple reports with same uuid found")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="multiple reports with same uuid found"
+            )
+        return {"report": Report.from_xml(tostring(report[0]))}
 
     async def get_reports(
             self,
@@ -62,3 +114,22 @@ class ReportsRouter(APIRouter):
             print(tostring(r))
             res.append(Report.from_xml(tostring(r)))
         return {"reports": res}
+
+    async def import_report(
+            self,
+            report: str,
+            task_id: str,
+            *,
+            in_assets: Optional[bool] = None,
+    ):
+        try:
+            resp = self.gvm_reports.import_report(report, task_id, in_assets=in_assets)
+            print(resp)
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="status code not ok"
+                    )
