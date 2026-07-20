@@ -1,7 +1,7 @@
-fastapi==0.135.2
-pydantic==2.12.5
-pydantic_xml==2.19.0
+fastapi==0.139.0
+pydantic==2.13.4
+pydantic_xml==2.21.0
 python-dotenv==1.2.2
-uvicorn==0.42.0
-python-gvm==26.11.1
-structlog==25.5.0
+uvicorn==0.51.0
+python-gvm==27.5.0
+structlog==26.1.0
