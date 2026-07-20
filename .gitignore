@@ -6,3 +6,5 @@ testdb.db
 .run
 .env
 sbom.xml
+
+__pycache__
