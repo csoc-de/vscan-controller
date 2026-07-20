@@ -1,0 +1,493 @@
+<report id="a5f95af4-fa6d-4201-8d7d-4a9c31ba9a15" format_id="" config_id="" extension=""
+    content_type="application/xml">
+    <owner>
+        <name>admin</name>
+    </owner>
+    <name>2026-07-07T13:05:49Z</name>
+    <comment />
+    <creation_time>2026-07-07T13:05:49Z</creation_time>
+    <modification_time>2026-07-07T13:23:36Z</modification_time>
+    <writable>0</writable>
+    <in_use>0</in_use>
+    <task id="6b099e87-69d5-442e-8440-3704c7dfd856">
+        <name>Task:Scan local Network:6b099e87-69d5-442e-8440-3704c7dfd856</name>
+    </task>
+    <report id="a5f95af4-fa6d-4201-8d7d-4a9c31ba9a15">
+        <gmp>
+            <version>22.7</version>
+        </gmp>
+        <sort>
+            <field>severity<order>descending</order></field>
+        </sort>
+        <filters id="">
+            <term>levels=chml rows=100 min_qod=70 first=1 sort-reverse=severity result_hosts_only=0</term>
+            <filter>Critical</filter>
+            <filter>High</filter>
+            <filter>Medium</filter>
+            <filter>Low</filter>
+            <keywords>
+                <keyword>
+                    <column>apply_overrides</column>
+                    <relation>=</relation>
+                    <value>0</value>
+                </keyword>
+                <keyword>
+                    <column>levels</column>
+                    <relation>=</relation>
+                    <value>chml</value>
+                </keyword>
+                <keyword>
+                    <column>rows</column>
+                    <relation>=</relation>
+                    <value>100</value>
+                </keyword>
+                <keyword>
+                    <column>min_qod</column>
+                    <relation>=</relation>
+                    <value>70</value>
+                </keyword>
+                <keyword>
+                    <column>first</column>
+                    <relation>=</relation>
+                    <value>1</value>
+                </keyword>
+                <keyword>
+                    <column>sort-reverse</column>
+                    <relation>=</relation>
+                    <value>severity</value>
+                </keyword>
+                <keyword>
+                    <column>result_hosts_only</column>
+                    <relation>=</relation>
+                    <value>0</value>
+                </keyword>
+            </keywords>
+        </filters>
+        <scan_run_status>Done</scan_run_status>
+        <hosts>
+            <count>1</count>
+        </hosts>
+        <closed_cves>
+            <count>0</count>
+        </closed_cves>
+        <vulns>
+            <count>40</count>
+        </vulns>
+        <os>
+            <count>1</count>
+        </os>
+        <apps>
+            <count>3</count>
+        </apps>
+        <ssl_certs>
+            <count>0</count>
+        </ssl_certs>
+        <task id="6b099e87-69d5-442e-8440-3704c7dfd856">
+            <name>Task:Scan local Network:6b099e87-69d5-442e-8440-3704c7dfd856</name>
+            <comment />
+            <target id="255018b7-0929-449b-9588-2265fa04be91">
+                <trash>0</trash>
+                <name>Target:Scan local Network:255018b7-0929-449b-9588-2265fa04be91</name>
+                <comment />
+            </target>
+            <progress>100</progress>
+        </task>
+        <timestamp>2026-07-07T13:05:49Z</timestamp>
+        <scan_start>2026-07-07T13:06:03Z</scan_start>
+        <timezone>Coordinated Universal Time</timezone>
+        <timezone_abbrev>UTC</timezone_abbrev>
+        <ports start="1" max="100">
+            <count>4</count>
+            <port>general/icmp<host>192.168.100.144</host><severity>2.1</severity><threat>Low</threat></port>
+            <port>general/tcp<host>192.168.100.144</host><severity>2.6</severity><threat>Low</threat></port>
+            <port>6379/tcp<host>192.168.100.144</host><severity>7.5</severity><threat>High</threat></port>
+            <port>22/tcp<host>192.168.100.144</host><severity>2.6</severity><threat>Low</threat></port>
+        </ports>
+        <results start="1" max="-1">
+            <result id="5bf060d7-0a86-4cb0-89ff-211e3e245117">
+                <name>Redis Server No Password (TCP)</name>
+                <owner>
+                    <name>admin</name>
+                </owner>
+                <modification_time>2026-07-07T13:08:21Z</modification_time>
+                <comment />
+                <creation_time>2026-07-07T13:08:21Z</creation_time>
+                <host>192.168.100.144<asset asset_id="72263a69-03bb-4fda-80b7-d427663c06cf" /><hostname /></host>
+                <port>6379/tcp</port>
+                <nvt oid="1.3.6.1.4.1.25623.1.0.105291">
+                    <type>nvt</type>
+                    <name>Redis Server No Password (TCP)</name>
+                    <family>Databases</family>
+                    <cvss_base>7.5</cvss_base>
+                    <severities score="7.5">
+                        <severity type="cvss_base_v2">
+                            <origin />
+                            <date>2015-06-05T13:48:46Z</date>
+                            <score>7.5</score>
+                            <value>AV:N/AC:L/Au:N/C:P/I:P/A:P</value>
+                        </severity>
+                    </severities>
+                    <tags>cvss_base_vector=AV:N/AC:L/Au:N/C:P/I:P/A:P|summary=The remote Redis
+                        server is not protected with a password.|insight=It was possible to login
+                        without a password.|affected=|impact=This issue may be exploited by a remote
+                        attacker to gain\n access to sensitive information or modify system
+                        configuration.|solution=Set password.|vuldetect=Evaluates if the remote
+                        Redis server is protected by a\n password.\n\n Notes:\n\n - No scan result
+                        is expected if localhost (127.0.0.1) was scanned (self scanning)\n\n - If
+                        the scanned network is e.g. a private LAN / private WAN which contains
+                        systems not accessible\n to the public (access restricted) and it is
+                        accepted that the service is accessible without\n authentication please set
+                        the \'Network type\' configuration of the following VT to e.g.\n \'Private
+                        LAN\' or \'Private WAN\':\n\n Global variable settings (OID:
+                        1.3.6.1.4.1.25623.1.0.12288)|solution_type=Workaround</tags>
+                    <solution type="Workaround">Set password.</solution>
+                </nvt>
+                <scan_nvt_version>2025-11-25T05:40:35Z</scan_nvt_version>
+                <threat>High</threat>
+                <severity>7.5</severity>
+                <qod>
+                    <value>99</value>
+                    <type />
+                </qod>
+                <description>Redis Server is not protected with a password.\n</description>
+                <original_threat>High</original_threat>
+                <original_severity>7.5</original_severity>
+                <compliance>undefined</compliance>
+            </result>
+            <result id="f50e8fb7-e18a-4971-bff9-c751616c4df0">
+                <name>TCP Timestamps Information Disclosure</name>
+                <owner>
+                    <name>admin</name>
+                </owner>
+                <modification_time>2026-07-07T13:09:26Z</modification_time>
+                <comment />
+                <creation_time>2026-07-07T13:09:26Z</creation_time>
+                <host>192.168.100.144<asset asset_id="72263a69-03bb-4fda-80b7-d427663c06cf" /><hostname /></host>
+                <port>general/tcp</port>
+                <nvt oid="1.3.6.1.4.1.25623.1.0.80091">
+                    <type>nvt</type>
+                    <name>TCP Timestamps Information Disclosure</name>
+                    <family>General</family>
+                    <cvss_base>2.6</cvss_base>
+                    <severities score="2.6">
+                        <severity type="cvss_base_v2">
+                            <origin />
+                            <date>2008-10-24T21:33:44Z</date>
+                            <score>2.6</score>
+                            <value>AV:N/AC:H/Au:N/C:P/I:N/A:N</value>
+                        </severity>
+                    </severities>
+                    <tags>cvss_base_vector=AV:N/AC:H/Au:N/C:P/I:N/A:N|summary=The remote host
+                        implements TCP timestamps and therefore allows\n to compute the
+                        uptime.|insight=The remote host implements TCP timestamps, as defined by\n
+                        RFC1323/RFC7323.|affected=TCP implementations that implement
+                        RFC1323/RFC7323.|impact=A side effect of this feature is that the uptime of
+                        the remote\n host can sometimes be computed.|solution=To disable TCP
+                        timestamps on linux add the line\n \'net.ipv4.tcp_timestamps = 0\' to
+                        /etc/sysctl.conf. Execute \'sysctl -p\' to apply the settings at\n
+                        runtime.\n\n To disable TCP timestamps on Windows execute \'netsh int tcp
+                        set global timestamps=disabled\'\n\n Starting with Windows Server 2008 and
+                        Vista, the timestamp can not be completely disabled.\n\n The default
+                        behavior of the TCP/IP stack on this Systems is to not use the Timestamp
+                        options when\n initiating TCP connections, but use them if the TCP peer that
+                        is initiating communication includes\n them in their synchronize (SYN)
+                        segment.\n\n See the references for more information.|vuldetect=Special IP
+                        packets are forged and sent with a little delay in\n between to the target
+                        IP. The responses are searched for a timestamps. If found, the timestamps\n
+                        are reported.|solution_type=Mitigation</tags>
+                    <solution type="Mitigation">To disable TCP timestamps on linux add the line\n
+                        \'net.ipv4.tcp_timestamps = 0\' to /etc/sysctl.conf. Execute \'sysctl -p\'
+                        to apply the settings at\n runtime.\n\n To disable TCP timestamps on Windows
+                        execute \'netsh int tcp set global timestamps=disabled\'\n\n Starting with
+                        Windows Server 2008 and Vista, the timestamp can not be completely
+                        disabled.\n\n The default behavior of the TCP/IP stack on this Systems is to
+                        not use the Timestamp options when\n initiating TCP connections, but use
+                        them if the TCP peer that is initiating communication includes\n them in
+                        their synchronize (SYN) segment.\n\n See the references for more
+                        information.</solution>
+                    <refs>
+                        <ref type="url" id="https://datatracker.ietf.org/doc/html/rfc1323" />
+                        <ref type="url" id="https://datatracker.ietf.org/doc/html/rfc7323" />
+                        <ref type="url"
+                            id="https://web.archive.org/web/20151213072445/http://www.microsoft.com/en-us/download/details.aspx?id=9152" />
+                        <ref type="url" id="https://www.fortiguard.com/psirt/FG-IR-16-090" />
+                    </refs>
+                </nvt>
+                <scan_nvt_version>2023-12-15T16:10:08Z</scan_nvt_version>
+                <threat>Low</threat>
+                <severity>2.6</severity>
+                <qod>
+                    <value>80</value>
+                    <type />
+                </qod>
+                <description>It was detected that the host implements RFC1323/RFC7323.\n\nThe
+                    following timestamps were retrieved with a delay of 1 seconds
+                    in-between:\nPacket 1: 1056278159\nPacket 2: 1056279211\n</description>
+                <original_threat>Low</original_threat>
+                <original_severity>2.6</original_severity>
+                <compliance>undefined</compliance>
+            </result>
+            <result id="45c2807c-017b-457a-80ee-fcd2e893674d">
+                <name>Weak MAC Algorithm(s) Supported (SSH)</name>
+                <owner>
+                    <name>admin</name>
+                </owner>
+                <modification_time>2026-07-07T13:09:36Z</modification_time>
+                <comment />
+                <creation_time>2026-07-07T13:09:36Z</creation_time>
+                <detection>
+                    <result id="a8c3df12-9775-4419-a324-1f8c0c29b614">
+                        <details>
+                            <detail>
+                                <name>product</name>
+                                <value>cpe:/a:ietf:secure_shell_protocol</value>
+                            </detail>
+                            <detail>
+                                <name>location</name>
+                                <value>22/tcp</value>
+                            </detail>
+                            <detail>
+                                <name>source_oid</name>
+                                <value>1.3.6.1.4.1.25623.1.0.105565</value>
+                            </detail>
+                            <detail>
+                                <name>source_name</name>
+                                <value>SSH Protocol Algorithms Supported</value>
+                            </detail>
+                        </details>
+                    </result>
+                </detection>
+                <host>192.168.100.144<asset asset_id="72263a69-03bb-4fda-80b7-d427663c06cf" /><hostname /></host>
+                <port>22/tcp</port>
+                <nvt oid="1.3.6.1.4.1.25623.1.0.105610">
+                    <type>nvt</type>
+                    <name>Weak MAC Algorithm(s) Supported (SSH)</name>
+                    <family>SSL and TLS</family>
+                    <cvss_base>2.6</cvss_base>
+                    <severities score="2.6">
+                        <severity type="cvss_base_v2">
+                            <origin />
+                            <date>2016-04-19T09:49:32Z</date>
+                            <score>2.6</score>
+                            <value>AV:N/AC:H/Au:N/C:P/I:N/A:N</value>
+                        </severity>
+                    </severities>
+                    <tags>cvss_base_vector=AV:N/AC:H/Au:N/C:P/I:N/A:N|summary=The remote SSH server
+                        is configured to allow / support weak MAC\n
+                        algorithm(s).|insight=|affected=|impact=|solution=Disable the reported weak
+                        MAC algorithm(s).|vuldetect=Checks the supported MAC algorithms
+                        (client-to-server and\n server-to-client) of the remote SSH server.\n\n
+                        Currently weak MAC algorithms are defined as the following:\n\n - MD5 based
+                        algorithms\n\n - 96-bit based algorithms\n\n - 64-bit based algorithms\n\n -
+                        \'none\' algorithm|solution_type=Mitigation</tags>
+                    <solution type="Mitigation">Disable the reported weak MAC algorithm(s).</solution>
+                    <refs>
+                        <ref type="url" id="https://www.rfc-editor.org/rfc/rfc6668" />
+                        <ref type="url" id="https://www.rfc-editor.org/rfc/rfc4253#section-6.4" />
+                    </refs>
+                </nvt>
+                <scan_nvt_version>2024-06-14T05:05:48Z</scan_nvt_version>
+                <threat>Low</threat>
+                <severity>2.6</severity>
+                <qod>
+                    <value>80</value>
+                    <type />
+                </qod>
+                <description>The remote SSH server supports the following weak client-to-server MAC
+                    algorithm(s):\n\numac-64-etm@openssh.com\numac-64@openssh.com\n\n\nThe remote
+                    SSH server supports the following weak server-to-client MAC
+                    algorithm(s):\n\numac-64-etm@openssh.com\numac-64@openssh.com\n</description>
+                <original_threat>Low</original_threat>
+                <original_severity>2.6</original_severity>
+                <compliance>undefined</compliance>
+            </result>
+            <result id="e89da060-1944-403d-bd21-3b0703a6dcf4">
+                <name>ICMP Timestamp Reply Information Disclosure</name>
+                <owner>
+                    <name>admin</name>
+                </owner>
+                <modification_time>2026-07-07T13:09:21Z</modification_time>
+                <comment />
+                <creation_time>2026-07-07T13:09:21Z</creation_time>
+                <host>192.168.100.144<asset asset_id="72263a69-03bb-4fda-80b7-d427663c06cf" /><hostname /></host>
+                <port>general/icmp</port>
+                <nvt oid="1.3.6.1.4.1.25623.1.0.103190">
+                    <type>nvt</type>
+                    <name>ICMP Timestamp Reply Information Disclosure</name>
+                    <family>General</family>
+                    <cvss_base>2.1</cvss_base>
+                    <severities score="2.1">
+                        <severity type="cvss_base_v2">
+                            <origin />
+                            <date>2011-07-15T11:32:07Z</date>
+                            <score>2.1</score>
+                            <value>AV:L/AC:L/Au:N/C:P/I:N/A:N</value>
+                        </severity>
+                    </severities>
+                    <tags>cvss_base_vector=AV:L/AC:L/Au:N/C:P/I:N/A:N|summary=The remote host
+                        responded to an ICMP timestamp request.|insight=The Timestamp Reply is an
+                        ICMP message which replies to a\n Timestamp message. It consists of the
+                        originating timestamp sent by the sender of the Timestamp as\n well as a
+                        receive timestamp and a transmit timestamp.|affected=|impact=This
+                        information could theoretically be used to exploit weak\n time-based random
+                        number generators in other services.|solution=Various mitigations are
+                        possible:\n\n - Disable the support for ICMP timestamp on the remote host
+                        completely\n\n - Protect the remote host by a firewall, and block ICMP
+                        packets passing through the firewall in\n either direction (either
+                        completely or only for untrusted networks)|vuldetect=Sends an ICMP Timestamp
+                        (Type 13) request and checks if a\n Timestamp Reply (Type 14) is
+                        received.|solution_type=Mitigation</tags>
+                    <solution type="Mitigation">Various mitigations are possible:\n\n - Disable the
+                        support for ICMP timestamp on the remote host completely\n\n - Protect the
+                        remote host by a firewall, and block ICMP packets passing through the
+                        firewall in\n either direction (either completely or only for untrusted
+                        networks)</solution>
+                    <refs>
+                        <ref type="cve" id="CVE-1999-0524" />
+                        <ref type="url" id="https://datatracker.ietf.org/doc/html/rfc792" />
+                        <ref type="url" id="https://datatracker.ietf.org/doc/html/rfc2780" />
+                        <ref type="cert-bund" id="CB-K15/1514" />
+                        <ref type="cert-bund" id="CB-K14/0632" />
+                        <ref type="dfn-cert" id="DFN-CERT-2014-0658" />
+                    </refs>
+                </nvt>
+                <scan_nvt_version>2025-01-21T05:37:33Z</scan_nvt_version>
+                <threat>Low</threat>
+                <severity>2.1</severity>
+                <qod>
+                    <value>80</value>
+                    <type />
+                </qod>
+                <description>The following response / ICMP packet has been received:\n- ICMP Type:
+                    14\n- ICMP Code: 0\n</description>
+                <original_threat>Low</original_threat>
+                <original_severity>2.1</original_severity>
+                <compliance>undefined</compliance>
+            </result>
+        </results>
+        <result_count>41 <full>41</full>
+            <filtered>4</filtered>
+            <critical>
+                <full>3</full>
+                <filtered>0</filtered>
+            </critical>
+            <hole deprecated="1">
+                <full>7</full>
+                <filtered>1</filtered>
+            </hole><high>
+                <full>7</full>
+                <filtered>1</filtered>
+            </high><info deprecated="1">
+                <full>6</full>
+                <filtered>3</filtered>
+            </info><low>
+                <full>6</full>
+                <filtered>3</filtered>
+            </low><log>
+                <full>17</full>
+                <filtered>0</filtered>
+            </log><warning deprecated="1">
+                <full>8</full>
+                <filtered>0</filtered>
+            </warning><medium>
+                <full>8</full>
+                <filtered>0</filtered>
+            </medium><false_positive>
+                <full>0</full>
+                <filtered>0</filtered>
+            </false_positive>
+        </result_count>
+        <severity>
+            <full>9.9</full>
+            <filtered>7.5</filtered>
+        </severity>
+        <host>
+            <ip>192.168.100.144</ip>
+            <asset asset_id="72263a69-03bb-4fda-80b7-d427663c06cf" />
+            <start>2026-07-07T13:06:43Z</start>
+            <end>2026-07-07T13:23:30Z</end>
+            <port_count>
+                <page>2</page>
+            </port_count>
+            <result_count>
+                <page>4</page>
+                <critical>
+                    <page>0</page>
+                </critical>
+                <hole deprecated="1">
+                    <page>1</page>
+                </hole>
+                <high>
+                    <page>1</page>
+                </high>
+                <warning deprecated="1">
+                    <page>0</page>
+                </warning>
+                <medium>
+                    <page>0</page>
+                </medium>
+                <info deprecated="1">
+                    <page>3</page>
+                </info>
+                <low>
+                    <page>3</page>
+                </low>
+                <log>
+                    <page>0</page>
+                </log>
+                <false_positive>
+                    <page>0</page>
+                </false_positive>
+            </result_count>
+            <detail>
+                <name>EXIT_CODE</name>
+                <value>EXIT_NOTVULN</value>
+                <source>
+                    <type>nvt</type>
+                    <name>1.3.6.1.4.1.25623.1.0.802434</name>
+                    <description />
+                </source>
+                <extra />
+            </detail>
+            <detail>
+                <name>Services</name>
+                <value>22,tcp,ssh,Remote SSH server banner: SSH-2.0-OpenSSH_9.6p1
+                    Ubuntu-3ubuntu13.16\nRemote SSH supported authentication:
+                    password,publickey\nRemote SSH text/login banner: (not available)\n\nThis is
+                    probably (a):\n\n- OpenSSH\n\nConcluded from remote connection attempt with
+                    credentials:\n\nLogin: OpenVASVT\nPassword: OpenVASVT</value>
+                <source>
+                    <type>nvt</type>
+                    <name>1.3.6.1.4.1.25623.1.0.10267</name>
+                    <description>Service detection (1.3.6.1.4.1.25623.1.0.10267)</description>
+                </source>
+                <extra />
+            </detail>
+            <detail>
+                <name>best_os_cpe</name>
+                <value>cpe:/o:canonical:ubuntu_linux:24.04</value>
+                <source>
+                    <type>nvt</type>
+                    <name>1.3.6.1.4.1.25623.1.0.105586;</name>
+                    <description>Operating System (OS) Detection (SSH Banner)</description>
+                </source>
+                <extra />
+            </detail>
+            <detail>
+                <name>Services</name>
+                <value>6379,tcp,redis,A Redis server seems to be running on this port.</value>
+                <source>
+                    <type>nvt</type>
+                    <name>1.3.6.1.4.1.25623.1.0.17975</name>
+                    <description>Service detection (1.3.6.1.4.1.25623.1.0.17975)</description>
+                </source>
+                <extra />
+            </detail>
+        </host>
+        <tls_certificates />
+        <scan_end>2026-07-07T13:23:35Z</scan_end>
+        <errors>
+            <count>0</count>
+        </errors>
+    </report>
+</report>
