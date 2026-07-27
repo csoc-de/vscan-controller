@@ -6,12 +6,15 @@ from typing import Optional
 from pydantic import BaseModel
 from pydantic_xml import element, attr, BaseXmlModel, wrapped
 
-
-class Owner(BaseXmlModel, tag="owner"):
-    name: str = element()
+from app.models.base import Permission, UserTags, ResultCount, Owner
 
 
 class Task(BaseXmlModel, tag="task"):
+    id: str = attr()
+    name: str = element()
+
+
+class ReportFormat(BaseXmlModel, tag="report_format"):
     id: str = attr()
     name: str = element()
 
@@ -20,9 +23,18 @@ class ReportReportGMP(BaseXmlModel, tag="gmp"):
     version: str = element()
 
 
+class ReportReportFormatParam(BaseXmlModel, tag="param"):
+    name: str = element()
+    value: str = element()
+
+
+class ReportReportFieldOrder(BaseXmlModel, tag="order"):
+    order: str
+
+
 class ReportReportField(BaseXmlModel, tag="field"):
     text: str
-    order: Optional[str] = element(tag="order", default=None)
+    order: ReportReportFieldOrder = element()
 
 
 class ReportReportFilterKeyword(BaseXmlModel, tag="keyword"):
@@ -31,63 +43,76 @@ class ReportReportFilterKeyword(BaseXmlModel, tag="keyword"):
     value: str = element()
 
 
+class ReportReportFiltersDelta(BaseXmlModel, tag="delta"):
+    changed: str = element()
+    gone: str = element()
+    new: str = element()
+    same: str = element()
+
+
 class ReportReportFilters(BaseXmlModel, tag="filters"):
-    id: Optional[str] = attr(default=None)
     term: str = element()
+    phrase: Optional[str] = element(default=None)
+    notes: Optional[int] = element(default=None)
+    overrides: Optional[int] = element(default=None)
+    result_hosts_only: Optional[int] = element(default=None)
+    min_qod: Optional[str] = element(default=None)
+    delta: Optional[ReportReportFiltersDelta] = element(default=None)
     filter: list[str] = element()
-    keywords: list[ReportReportFilterKeyword] = wrapped("keywords", element(tag="keyword"), default=[])
+    keywords: list[ReportReportFilterKeyword] = wrapped("keywords", element(tag="keyword"))
+
+
+class ReportReportDeltaReport(BaseXmlModel, tag="report"):
+    id: str = attr()
+    scan_run_status: str = element()
+    timestamp: datetime = element()
+    scan_start: datetime = element()
+    scan_end: datetime = element()
+
+
+class ReportReportDelta(BaseXmlModel, tag="delta"):
+    report: ReportReportDeltaReport = element()
 
 
 class ReportReportFullFiltered(BaseXmlModel):
-    full: float = element()
-    filtered: float = element()
-
-
-class ReportReportResultCountDetail(BaseXmlModel):
     full: int = element()
     filtered: int = element()
 
 
-class ReportReportResultCount(BaseXmlModel, tag="result_count"):
-    text: Optional[str] = None
-    full: Optional[int] = element(default=None)
-    filtered: Optional[int] = element(default=None)
-    critical: Optional[ReportReportResultCountDetail] = element(default=None)
-    high: Optional[ReportReportResultCountDetail] = element(default=None)
-    medium: Optional[ReportReportResultCountDetail] = element(default=None)
-    low: Optional[ReportReportResultCountDetail] = element(default=None)
-    hole: Optional[ReportReportResultCountDetail] = element(default=None)
-    info: Optional[ReportReportResultCountDetail] = element(default=None)
-    log: Optional[ReportReportResultCountDetail] = element(default=None)
-    warning: Optional[ReportReportResultCountDetail] = element(default=None)
-    false_positive: Optional[ReportReportResultCountDetail] = element(default=None)
+class ReportReportResultCount(ResultCount, tag="result_count"):
+    full: int = element()
+    filtered: int = element()
 
 
 class ReportReportTaskTarget(BaseXmlModel, tag="target"):
     id: str = attr()
-    trash: int = element()
+    trash: bool = element()
     name: str = element()
-    comment: Optional[str] = element(default=None)
+    comment: str = element()
 
 
 class ReportReportTask(BaseXmlModel, tag="task"):
     id: str = attr()
     name: str = element()
-    comment: Optional[str] = element(default=None)
-    target: Optional[ReportReportTaskTarget] = element(tag="target", default=None)
-    progress: Optional[int] = element(default=None)
+    target: ReportReportTaskTarget = element(tag="target")
+    progress: str = element()
+    user_tags: Optional[UserTags] = element(tag="user_tags")
 
 
-class ReportReportPortsPort(BaseXmlModel, tag="port", search_mode="unordered"):
-    text: Optional[str] = element(tag="text", default=None)
+class ReportReportPortsPort(BaseXmlModel, tag="port"):
     host: str = element()
-    severity: float = element()
+    severity: str = element()
     threat: str = element()
 
 
 class ReportReportPorts(BaseXmlModel, tag="ports"):
-    count: int = element(tag="count", default=0)
-    ports: list[ReportReportPortsPort] = element(tag="port", default=[])
+    start: int = attr()
+    max: int = attr()
+    ports: list[ReportReportPortsPort] = element(tag="port")
+
+
+class ReportReportResultReport(BaseXmlModel, tag="report"):
+    id: str = attr()
 
 
 class ReportReportAsset(BaseXmlModel, tag="asset"):
@@ -95,22 +120,21 @@ class ReportReportAsset(BaseXmlModel, tag="asset"):
 
 
 class ReportReportResultHost(BaseXmlModel, tag="host"):
-    ip: Optional[str] = None
-    asset: ReportReportAsset = element(tag="asset")
     hostname: Optional[str] = element(default=None)
+    asset: ReportReportAsset = element(tag="asset")
 
 
 class ReportReportResultNVTSeverity(BaseXmlModel, tag="severity"):
     type: str = attr()
-    origin: Optional[str] = element(default=None)
+    origin: str = element()
     date: datetime = element()
     score: float = element()
     value: str = element()
 
 
 class ReportReportResultNVTSeverities(BaseXmlModel, tag="severities"):
-    score: float = attr()
-    severity: list[ReportReportResultNVTSeverity] = element(tag="severity", default=[])
+    score: str = element()
+    severities: list[ReportReportResultNVTSeverity] = element(tag="severity")
 
 
 class ReportReportResultNVTReference(BaseXmlModel, tag="ref"):
@@ -120,19 +144,104 @@ class ReportReportResultNVTReference(BaseXmlModel, tag="ref"):
 
 class ReportReportResultNVT(BaseXmlModel, tag="nvt"):
     oid: str = attr()
-    type: str = element()
     name: str = element()
-    family: Optional[str] = element(default=None)
-    cvss_base: float = element()
+    type: str = element()
+    cvss_base: str = element()
     severities: ReportReportResultNVTSeverities = element()
+    cpe: str = element()
     tags: str = element()
-    solution: Optional[str] = element(default=None)
-    refs: list[ReportReportResultNVTReference] = wrapped("refs", element(tag="ref"), default=[])
+    refs: list[ReportReportResultNVTReference] = element(tag="ref")
 
 
 class ReportReportResultQOD(BaseXmlModel, tag="qod"):
     value: int = element()
-    type: Optional[str] = element(default=None)
+    type: str = element()
+
+
+class ReportReportResultDeltaNoteNVT(BaseXmlModel, tag="nvt"):
+    oid: str = attr()
+    name: str = element()
+    type: str = element()
+
+
+class ReportReportResultDeltaNoteText(BaseXmlModel, tag="text"):
+    excerpt: bool = attr()
+
+
+class ReportReportResultDeltaNoteTask(BaseXmlModel, tag="task"):
+    id: str = attr()
+
+
+class ReportReportResultDeltaNoteResultNVT(BaseXmlModel, tag="nvt"):
+    oid: str = attr()
+    name: str = element()
+    type: str = element()
+    cvss_base: str = element()
+    severities: ReportReportResultNVTSeverities = element()
+    cve: Optional[str] = element(default=None)
+
+
+class ReportReportResultDeltaNoteOrOverwriteResult(BaseXmlModel, tag="result"):
+    id: str = attr()
+    host: ReportReportResultHost = element()
+    port: str = element()
+    nvt: ReportReportResultDeltaNoteResultNVT = element()
+    severity: str = element()
+    threat: str = element()
+    qod: ReportReportResultQOD = element()
+    description: str = element()
+
+
+class ReportReportResultNote(BaseXmlModel, tag="note"):
+    id: str = attr()
+    permissions: list[Permission] = wrapped("permissions", element(tag="permission"))
+    owner: Owner = element(tag="owner")
+    nvt: ReportReportResultDeltaNoteNVT = element()
+    text: ReportReportResultDeltaNoteText = element()
+    creation_time: datetime = element()
+    modification_time: datetime = element()
+    writable: bool = element()
+    in_use: bool = element()
+    active: bool = element()
+    orphan: bool = element()
+    user_tags: Optional[UserTags] = element(tag="user_tags", default=None)
+    hosts: Optional[str] = element(default=None)
+    port: Optional[str] = element(default=None)
+    severity: Optional[float] = element(default=None)
+    task: Optional[ReportReportResultDeltaNoteTask] = element(default=None)
+    end_time: Optional[datetime] = element(default=None)
+    result: Optional[ReportReportResultDeltaNoteOrOverwriteResult] = element(default=None)
+
+
+class ReportReportResultOverwrite(BaseXmlModel, tag="overwrite"):
+    id: str = attr()
+    permissions: list[Permission] = wrapped("permissions", element(tag="permission"))
+    owner: Owner = element(tag="owner")
+    nvt: ReportReportResultDeltaNoteNVT = element()
+    creation_time: datetime = element()
+    modification_time: datetime = element()
+    writable: bool = element()
+    in_use: bool = element()
+    user_tags: Optional[UserTags] = element(tag="user_tags", default=None)
+    active: bool = element()
+    orphan: bool = element()
+    text: ReportReportResultDeltaNoteText = element()
+    severity: str = element()
+    threat: str = element()
+    new_severity: str = element()
+    new_threat: str = element()
+    hosts: Optional[str] = element(default=None)
+    port: Optional[str] = element(default=None)
+    task: Optional[ReportReportResultDeltaNoteTask] = element(default=None)
+    end_time: Optional[datetime] = element(default=None)
+    result: Optional[ReportReportResultDeltaNoteOrOverwriteResult] = element(default=None)
+
+
+class ReportReportResultDelta(BaseXmlModel, tag="delta"):
+    result: Optional[ReportReportResult] = element()
+    diff: str = element()
+    notes: Optional[list[ReportReportResultNote]] = element(tag="note", default=None)
+    overwrites: Optional[list[ReportReportResultOverwrite]] = element(tag="overwrite", default=None)
 
 
 class ReportReportResultDetectionResultDetail(BaseXmlModel, tag="detail"):
@@ -142,72 +251,86 @@ class ReportReportResultDetectionResultDetail(BaseXmlModel, tag="detail"):
 
 class ReportReportResultDetectionResult(BaseXmlModel, tag="result"):
     id: str = attr()
-    details: list[ReportReportResultDetectionResultDetail] = wrapped("details", element(tag="detail"), default=[])
+    details: Optional[list[ReportReportResultDetectionResultDetail]] = element(tag="detail", default=None)
 
 
 class ReportReportResultDetection(BaseXmlModel, tag="detection"):
-    result: ReportReportResultDetectionResult = element()
+    result: ReportReportResultDetection = element()
 
 
-class ReportReportResult(BaseXmlModel, tag="result", search_mode="unordered"):
+class ReportReportResultTicket(BaseXmlModel, tag="ticket"):
+    id: str = attr()
+
+
+class ReportReportResult(BaseXmlModel, tag="result"):
     id: str = attr()
     name: str = element()
     owner: Owner = element(tag="owner")
-    modification_time: datetime = element()
-    comment: Optional[str] = element(default=None)
+    comment: str = element()
     creation_time: datetime = element()
+    modification_time: datetime = element()
+    user_tags: Optional[UserTags] = element(tag="user_tags", default=None)
+    report: Optional[ReportReportResultReport] = element(tag="report", default=None)
+    task: Optional[ReportReportTask] = element(tag="task", default=None)
     host: ReportReportResultHost = element()
     port: str = element()
+    path: Optional[str] = element()
     nvt: ReportReportResultNVT = element()
     scan_nvt_version: str = element()
     threat: str = element()
-    severity: float = element()
+    severity: str = element()
     qod: ReportReportResultQOD = element()
-    description: str = element()
     original_threat: Optional[str] = element(default=None)
-    original_severity: Optional[float] = element(default=None)
-    compliance: Optional[str] = element(default=None)
+    original_severity: Optional[str] = element(default=None)
+    description: str = element()
+    delta: Optional[ReportReportResultDelta] = element(default=None)
     detection: Optional[ReportReportResultDetection] = element(default=None)
+    notes: Optional[list[ReportReportResultNote]] = element(tag="note", default=None)
+    overwrites: Optional[list[ReportReportResultOverwrite]] = element(tag="overwrite", default=None)
+    tickets: Optional[ReportReportResultTicket] = element(tag="tickets", default=None)
 
 
 class ReportReportResults(BaseXmlModel, tag="results"):
     start: int = attr()
     max: int = attr()
-    results: list[ReportReportResult] = element(tag="result", default=[])
+    results: list[ReportReportResult] = element(tag="result")
 
 
 class ReportReportHosts(BaseXmlModel, tag="hosts"):
-    count: int = element(tag="count")
+    start: Optional[int] = attr(default=None)
+    max: Optional[int] = attr(default=None)
+    count: Optional[int] = attr(default=None)
+
+
+class ReportReportCount(BaseXmlModel):
+    count: int = element()
 
 
 class ReportReportHostResultSeverity(BaseXmlModel, tag="page"):
+    text: str
     page: int = element()
 
 
 class ReportReportHostResultCount(BaseXmlModel, tag="result_count"):
     page: int = element()
-    critical: Optional[ReportReportHostResultSeverity] = element(tag="critical", default=None)
-    hole: Optional[ReportReportHostResultSeverity] = element(tag="hole", default=None)
-    high: Optional[ReportReportHostResultSeverity] = element(tag="high", default=None)
-    warning: Optional[ReportReportHostResultSeverity] = element(tag="warning", default=None)
-    medium: Optional[ReportReportHostResultSeverity] = element(tag="medium", default=None)
-    info: Optional[ReportReportHostResultSeverity] = element(tag="info", default=None)
-    low: Optional[ReportReportHostResultSeverity] = element(tag="low", default=None)
-    log: Optional[ReportReportHostResultSeverity] = element(tag="log", default=None)
-    false_positive: Optional[ReportReportHostResultSeverity] = element(tag="false_positive", default=None)
+    hole: ReportReportHostResultSeverity = element(tag="hole")
+    warning: ReportReportHostResultSeverity = element(tag="warning")
+    info: ReportReportHostResultSeverity = element(tag="info")
+    log: ReportReportHostResultSeverity = element(tag="log")
+    false_positive: ReportReportHostResultSeverity = element(tag="false_positive")
 
 
 class ReportReportHostDetailSource(BaseXmlModel, tag="source"):
     type: str = element()
     name: str = element()
-    description: Optional[str] = element(default=None)
+    description: str = element()
 
 
 class ReportReportHostDetail(BaseXmlModel, tag="detail"):
     name: str = element()
     value: str = element()
     source: ReportReportHostDetailSource = element(tag="source")
-    extra: Optional[str] = element(default=None)
+    extra: str = element()
 
 
 class ReportReportHost(BaseXmlModel, tag="host"):
@@ -217,7 +340,7 @@ class ReportReportHost(BaseXmlModel, tag="host"):
     end: datetime = element()
     port_count: ReportReportHostResultSeverity = element(tag="port_count")
     result_count: ReportReportHostResultCount = element(tag="result_count")
-    details: list[ReportReportHostDetail] = element(tag="detail", default=[])
+    details: list[ReportReportHostDetail] = element(tag="detail")
 
 
 class ReportReportTLSCertificateCertificate(BaseXmlModel, tag="certificate"):
@@ -229,54 +352,85 @@ class ReportReportTLSCertificateHost(BaseXmlModel, tag="host"):
     hostname: str = element()
 
 
-class ReportReportTLSCertificate(BaseXmlModel, tag="tls_certificates"):
-    name: Optional[str] = element(default=None)
-    certificate: Optional[ReportReportTLSCertificateCertificate] = element(tag="certificate", default=None)
-    sha256_fingerprint: Optional[str] = element(default=None)
-    md5_fingerprint: Optional[str] = element(default=None)
-    valid: Optional[bool] = element(default=None)
-    activation_time: Optional[datetime] = element(default=None)
-    expiration_time: Optional[datetime] = element(default=None)
-    subject_dn: Optional[str] = element(default=None)
-    issuer_dn: Optional[str] = element(default=None)
-    serial: Optional[str] = element(default=None)
-    host: Optional[ReportReportTLSCertificateHost] = element(default=None)
-    ports: Optional[list[str]] = wrapped("ports", element(tag="port", default=None), default=None)
+class ReportReportTLSCertificate(BaseXmlModel, tag="tls_certificate"):
+    name: str = element()
+    certificate: ReportReportTLSCertificateCertificate = element(tag="certificate")
+    sha256_fingerprint: str = element()
+    md5_fingerprint: str = element()
+    valid: bool = element()
+    activation_time: datetime = element()
+    expiration_time: datetime = element()
+    subject_dn: str = element()
+    issuer_dn: str = element()
+    serial: str = element()
+    host: ReportReportTLSCertificateHost = element()
+    ports: list[str] = wrapped("ports", element(tag="port"))
+
+
+class ReportReportErrorNVT(BaseXmlModel, tag="nvt"):
+    oid: str = attr()
+    name: str = element()
+    type: str = element()
+    cvss_base: str = element()
+
+
+class ReportReportError(BaseXmlModel, tag="error"):
+    host: ReportReportResultHost = element(tag="host")
+    port: str = element()
+    description: str = element()
+    nvt: ReportReportErrorNVT = element()
+    scan_nvt_version: str = element()
+    severity: float = element()
 
 
 class ReportReportErrors(BaseXmlModel, tag="errors"):
     count: int = element()
+    errors: list[ReportReportError] = element(tag="error")
 
 
-class ReportReport(BaseXmlModel, tag="report", search_mode="unordered"):
+class ReportReport(BaseXmlModel, tag="report"):
     id: str = attr()
+    type: Optional[str] = attr(default=None)
     gmp: ReportReportGMP = element()
+    report_format_param: Optional[ReportReportFormatParam] = wrapped(
+        "report_format",
+        element(tag="param"),
+        default=None
+    )
     sort_field: ReportReportField = wrapped("sort", element(tag="field"))
     filters: ReportReportFilters = element()
-    scan_run_status: Optional[str] = element(tag="scan_run_status", default=None)
-    hosts: Optional[ReportReportHosts] = element(tag="hosts", default=None)
-    closed_cves: Optional[ReportReportHosts] = element(tag="closed_cves", default=None)
-    vulns: Optional[ReportReportHosts] = element(tag="vulns", default=None)
-    os: Optional[ReportReportHosts] = element(tag="os", default=None)
-    apps: Optional[ReportReportHosts] = element(tag="apps", default=None)
-    ssl_certs: Optional[ReportReportHosts] = element(tag="ssl_certs", default=None)
-    task: Optional[ReportReportTask] = element(tag="task", default=None)
-    timestamp: Optional[datetime] = element(default=None)
-    scan_start: Optional[datetime] = element(default=None)
+    delta: Optional[ReportReportDelta] = element(default=None)
+    scan_run_status: Optional[str] = element(tag="scan_run_status")
     timezone: Optional[str] = element(default=None)
     timezone_abbrev: Optional[str] = element(default=None)
-    ports: Optional[ReportReportPorts] = element(tag="ports", default=None)
-    results: Optional[ReportReportResults] = element(tag="results", default=None)
-    result_count: Optional[ReportReportResultCount] = element(tag="result_count", default=None)
+    permissions: Optional[list[Permission]] = wrapped("permissions",
+                                                      element(tag="permission", default=None))
+    user_tags: Optional[UserTags] = element(default=None)
+    scan_result_status: Optional[str] = element(default=None)
+    result_count: Optional[ReportReportResultCount] = element(default=None)
     severity: Optional[ReportReportFullFiltered] = element(tag="severity", default=None)
-    host: Optional[ReportReportHost] = element(tag="host", default=None)
+    task: Optional[ReportReportTask] = element(tag="task", default=None)
+    ports: Optional[list[ReportReportPortsPort]] = element(tag="port", default=None)
+    results: Optional[ReportReportResults] = element(tag="results", default=None)
+    closed_cves: Optional[ReportReportCount] = element(tag="closed_cves", default=None)
+    vulns: Optional[ReportReportCount] = element(tag="vulns", default=None)
+    os: Optional[ReportReportCount] = element(tag="os", default=None)
+    apps: Optional[ReportReportCount] = element(tag="apps", default=None)
+    ssl_certs: Optional[ReportReportCount] = element(tag="ssl_certs", default=None)
+    hosts: Optional[list[ReportReportHost]] = element(tag="host", default=None)
     tls_certificates: Optional[ReportReportTLSCertificate] = element(tag="tls_certificates", default=None)
+    timestamp: Optional[datetime] = element(default=None)
+    scan_start: Optional[datetime] = element(default=None)
     scan_end: Optional[datetime] = element(default=None)
     errors: Optional[ReportReportErrors] = element(default=None)
 
 
-class Report(BaseXmlModel, tag="report", search_mode="unordered"):
+class Report(BaseXmlModel, tag="report"):
     id: str = attr()
+    format_id: str = attr()
+    extension: str = attr()
+    content_type: str = attr()
+    type: Optional[str] = attr(default=None)
     owner: Owner = element()
     name: str = element()
     comment: Optional[str] = element(default=None)
@@ -285,7 +439,8 @@ class Report(BaseXmlModel, tag="report", search_mode="unordered"):
     writable: bool = element()
     in_use: bool = element()
     task: Task = element()
-    inner_report: ReportReport = element(tag="report")
+    report_format: Optional[ReportFormat] = element(default=None)
+    report: ReportReport = element()
 
 
 class GetReportResponse(BaseModel):

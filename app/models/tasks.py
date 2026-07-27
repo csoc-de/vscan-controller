@@ -6,7 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel
 from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
-from app.models.base import BaseXmlGvmModel, ResultCount
+from app.models.base import BaseXmlGvmModel
 
 
 class HostsOrdering(Enum):
