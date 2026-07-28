@@ -121,7 +121,7 @@ class ReportsRouter(APIRouter):
             in_assets: Optional[bool] = None,
     ):
         try:
-            resp = self.gvm_reports.import_report(report, task_id, in_assets=in_assets)
+            _ = self.gvm_reports.import_report(report, task_id, in_assets=in_assets)
         except GvmResponseError as e:
             match e.status:
                 case _:
