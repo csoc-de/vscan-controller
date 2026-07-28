@@ -39,7 +39,7 @@ unit:
   stage: test
   needs: [ ]
   before_script:
-    - pip install pytest
+    - pip install pytest pytest-cov
     - pip install -r requirements.txt
   script:
     - pytest --cov --junitxml=report.xml
