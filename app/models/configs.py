@@ -6,35 +6,35 @@ from pydantic_xml import element, attr, BaseXmlModel, wrapped
 from app.models.base import BaseXmlGvmModel
 
 
-class Scanner(BaseXmlModel, tag="scanner"):
+class Scanner(BaseXmlModel, search_mode='unordered', tag="scanner"):
     id: str = attr()
     trash: bool = element()
 
 
-class Count(BaseXmlModel):
+class Count(BaseXmlModel, search_mode='unordered'):
     text: int
     growing: Optional[bool] = element(default=None)
 
 
-class Task(BaseXmlModel, tag="task"):
+class Task(BaseXmlModel, search_mode='unordered', tag="task"):
     id: str = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
 
 
-class Family(BaseXmlModel, tag="family"):
+class Family(BaseXmlModel, search_mode='unordered', tag="family"):
     name: str = element()
     nvt_count: int = element()
     max_nvt_count: int = element()
     growing: Optional[bool] = element(default=None)
 
 
-class PreferenceNVT(BaseXmlModel, tag="nvt"):
+class PreferenceNVT(BaseXmlModel, search_mode='unordered', tag="nvt"):
     oid: str = attr()
     name: str = element()
 
 
-class Preference(BaseXmlModel, tag="preference"):
+class Preference(BaseXmlModel, search_mode='unordered', tag="preference"):
     nvt: PreferenceNVT = element()
     name: str = element()
     id: str = element()
@@ -44,7 +44,7 @@ class Preference(BaseXmlModel, tag="preference"):
     alts: list[str] = element(tag="alt")
 
 
-class NVTSelector(BaseXmlModel, tag="nvt_selector"):
+class NVTSelector(BaseXmlModel, search_mode='unordered', tag="nvt_selector"):
     name: str = element()
     include: bool = element()
     type: str = element()

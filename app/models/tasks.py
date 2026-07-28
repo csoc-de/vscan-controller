@@ -17,47 +17,47 @@ class HostsOrdering(Enum):
     REVERSE = "reverse"
 
 
-class Preference(BaseXmlModel, tag="preference"):
+class Preference(BaseXmlModel, search_mode='unordered', tag="preference"):
     name: str = element()
     scanner_name: str = element()
     value: str = element()
 
 
-class Config(BaseXmlModel, tag="config"):
+class Config(BaseXmlModel, search_mode='unordered', tag="config"):
     id: str = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
     trash: bool = element()
 
 
-class Target(BaseXmlModel, tag="target"):
+class Target(BaseXmlModel, search_mode='unordered', tag="target"):
     id: str = attr()
     name: str = element()
     permissions: Optional[str] = element(default=None)
     trash: bool = element()
 
 
-class Scanner(BaseXmlModel, tag="scanner"):
+class Scanner(BaseXmlModel, search_mode='unordered', tag="scanner"):
     id: str = attr()
     name: str = element()
     permissions: Optional[str] = element(default=None)
     type: int = element()
-    trash: bool = element(default=False)
+    trash: Optional[bool] = element(default=None)
 
 
-class Schedule(BaseXmlModel, tag="schedule"):
+class Schedule(BaseXmlModel, search_mode='unordered', tag="schedule"):
     id: Optional[str] = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
     trash: Optional[int] = element()
 
 
-class ReportCount(BaseXmlModel, tag="report_count"):
+class ReportCount(BaseXmlModel, search_mode='unordered', tag="report_count"):
     text: Optional[int]
     finished: str = element()
 
 
-class Report(BaseXmlModel, tag="report"):
+class Report(BaseXmlModel, search_mode='unordered', tag="report"):
     id: str = attr()
     timestamp: datetime = element()
     scan_start: datetime = element(default=None)
@@ -66,17 +66,17 @@ class Report(BaseXmlModel, tag="report"):
     severity: Optional[float] = element(default=None)
 
 
-class ObserverGroup(BaseXmlModel, tag="group"):
+class ObserverGroup(BaseXmlModel, search_mode='unordered', tag="group"):
     id: str = attr()
     name: Optional[str] = element(default=None)
 
 
-class ObserverRule(BaseXmlModel, tag="rule"):
+class ObserverRule(BaseXmlModel, search_mode='unordered', tag="rule"):
     id: str = attr()
     name: Optional[str] = element(default=None)
 
 
-class Observers(BaseXmlModel, tag="observers"):
+class Observers(BaseXmlModel, search_mode='unordered', tag="observers"):
     groups: Optional[list[ObserverGroup]] = element(tag="group", default=None)
     rules: Optional[list[ObserverRule]] = element(tag="rule", default=None)
 

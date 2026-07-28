@@ -77,7 +77,6 @@ class ReportsRouter(APIRouter):
                         detail="status code not ok"
                     )
         report = resp.findall("./report")
-        print(tostring(report[0]))
         if len(report) > 1:
             self._log.error("multiple reports with same uuid found")
             raise HTTPException(
@@ -111,7 +110,6 @@ class ReportsRouter(APIRouter):
         reports = resp.findall("./report")
         res = []
         for r in reports:
-            print(tostring(r))
             res.append(Report.from_xml(tostring(r)))
         return {"reports": res}
 
@@ -124,7 +122,6 @@ class ReportsRouter(APIRouter):
     ):
         try:
             resp = self.gvm_reports.import_report(report, task_id, in_assets=in_assets)
-            print(resp)
         except GvmResponseError as e:
             match e.status:
                 case _:
