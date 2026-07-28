@@ -11,6 +11,7 @@ variables:
 stages:
   - build
   - lint
+  - test
   - check
   - deploy
 
@@ -33,6 +34,20 @@ linter:
   script:
     - pylint ${CI_PROJECT_DIR}/app
 
+unit:
+  image: ${HARBOR_HOST}/dockerhub/library/python:latest
+  stage: test
+  needs: [ ]
+  before_script:
+    - pip install pytest
+    - pip install -r requirements.txt
+  script:
+    - pytest --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+    expire_in: 2 days
 sbom:
   image: ${HARBOR_HOST}/dockerhub/library/python:latest
   stage: check
