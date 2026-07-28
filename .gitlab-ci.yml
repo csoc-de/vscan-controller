@@ -46,6 +46,9 @@ unit:
   coverage: /TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/
   artifacts:
     when: always
+    paths:
+      - report.xml
+      - coverage.xml
     reports:
       junit: report.xml
       coverage_report:
