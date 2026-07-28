@@ -138,8 +138,9 @@ class ReportReportAsset(BaseXmlModel, search_mode='unordered', tag="asset"):
 
 
 class ReportReportResultHost(BaseXmlModel, search_mode='unordered', tag="host"):
-    hostname: str
+    host: str
     asset: ReportReportAsset = element(tag="asset")
+    hostname: Optional[str] = element(default=None)
 
 
 class ReportReportResultNVTSeverity(BaseXmlModel, search_mode='unordered', tag="severity"):
@@ -151,13 +152,21 @@ class ReportReportResultNVTSeverity(BaseXmlModel, search_mode='unordered', tag="
 
 
 class ReportReportResultNVTSeverities(BaseXmlModel, search_mode='unordered', tag="severities"):
-    score: Optional[str] = element(default=None)
+    score: float = attr()
     severities: list[ReportReportResultNVTSeverity] = element(tag="severity")
 
 
 class ReportReportResultNVTReference(BaseXmlModel, search_mode='unordered', tag="ref"):
     id: str = attr()
     type: str = attr()
+
+    def __eq__(self, other):
+        return self.type == other.type and self.id == other.id
+
+
+class ReportReportResultNVTSolution(BaseXmlModel, search_mode='unordered', tag="solution"):
+    solution: str
+    type: Optional[str] = attr(default=None)
 
 
 class ReportReportResultNVT(BaseXmlModel, search_mode='unordered', tag="nvt"):
@@ -169,7 +178,8 @@ class ReportReportResultNVT(BaseXmlModel, search_mode='unordered', tag="nvt"):
     severities: ReportReportResultNVTSeverities = element()
     cpe: Optional[str] = element(default=None)
     tags: str = element()
-    refs: Optional[list[ReportReportResultNVTReference]] = element(default=None, tag="ref")
+    refs: Optional[list[ReportReportResultNVTReference]] = wrapped("refs", default=None, tag="ref")
+    solution: Optional[ReportReportResultNVTSolution] = element(tag="solution")
 
 
 class ReportReportResultQOD(BaseXmlModel, search_mode='unordered', tag="qod"):
@@ -270,7 +280,8 @@ class ReportReportResultDetectionResultDetail(BaseXmlModel, search_mode='unorder
 
 class ReportReportResultDetectionResult(BaseXmlModel, search_mode='unordered', tag="result"):
     id: str = attr()
-    details: Optional[list[ReportReportResultDetectionResultDetail]] = element(tag="detail", default=None)
+    details: Optional[list[ReportReportResultDetectionResultDetail]] = wrapped(path="details", tag="detail",
+                                                                               default=None)
 
 
 class ReportReportResultDetection(BaseXmlModel, search_mode='unordered', tag="detection"):
