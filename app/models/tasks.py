@@ -6,7 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel
 from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
-from app.models.base import BaseXmlGvmModel, ResultCount
+from app.models.base import BaseXmlGvmModel
 
 
 class HostsOrdering(Enum):
@@ -54,9 +54,21 @@ class Schedule(BaseXmlModel, search_mode="unordered", tag="schedule"):
     trash: Optional[int] = element()
 
 
-class ReportCount(BaseXmlModel, search_mode="unordered", tag="report_count"):
-    count: Optional[int]
-    finished: str = element()
+class ReportResultCountElement(BaseXmlModel, search_mode="unordered"):
+    count: int
+    deprecated: Optional[bool] = attr(default=None)
+
+
+class ReportResultCount(BaseXmlModel, search_mode="unordered"):
+    log: ReportResultCountElement = element(tag="log")
+    info: ReportResultCountElement = element(tag="info")
+    low: ReportResultCountElement = element(tag="low")
+    medium: ReportResultCountElement = element(tag="medium")
+    warning: ReportResultCountElement = element(tag="warning")
+    high: ReportResultCountElement = element(tag="high")
+    critical: ReportResultCountElement = element(tag="critical")
+    hole: ReportResultCountElement = element(tag="hole")
+    false_positive: ReportResultCountElement = element(tag="false_positive")
 
 
 class Report(BaseXmlModel, search_mode="unordered", tag="report"):
@@ -64,8 +76,13 @@ class Report(BaseXmlModel, search_mode="unordered", tag="report"):
     timestamp: datetime = element()
     scan_start: datetime = element(default=None)
     scan_end: datetime = element(default=None)
-    result_count: Optional[ResultCount] = element(tag="result_count", default=None)
+    result_count: Optional[ReportResultCount] = element(tag="result_count", default=None)
     severity: Optional[float] = element(default=None)
+
+
+class ReportCount(BaseXmlModel, search_mode="unordered", tag="report_count"):
+    count: Optional[int]
+    finished: str = element()
 
 
 class ObserverGroup(BaseXmlModel, search_mode="unordered", tag="group"):
