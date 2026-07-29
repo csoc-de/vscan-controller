@@ -6,7 +6,7 @@ from typing import Optional
 from pydantic import BaseModel
 from pydantic_xml import element, attr, BaseXmlModel, wrapped
 
-from app.models.base import Permission, UserTags, Owner
+from app.models.base import Permission, UserTags, Owner, ResultCount
 
 
 class Task(BaseXmlModel, search_mode="unordered", tag="task"):
@@ -78,25 +78,10 @@ class ReportReportFullFiltered(BaseXmlModel, search_mode="unordered"):
     filtered: float = element()
 
 
-class ReportReportCountFullFiltered(BaseXmlModel, search_mode="unordered"):
-    deprecated: str
-    full: int = element()
-    filtered: int = element()
-
-
-class ReportReportResultCount(BaseXmlModel, search_mode="unordered", tag="result_count"):
+class ReportReportResultCount(ResultCount, search_mode="unordered", tag="result_count"):
     count: int
     full: int = element()
     filtered: int = element()
-    critical: ReportReportFullFiltered = element(tag="critical")
-    hole: ReportReportFullFiltered = element(tag="hole")
-    high: ReportReportFullFiltered = element(tag="high")
-    info: ReportReportFullFiltered = element(tag="info")
-    low: ReportReportFullFiltered = element(tag="low")
-    log: ReportReportFullFiltered = element(tag="log")
-    warning: ReportReportFullFiltered = element(tag="warning")
-    medium: ReportReportFullFiltered = element(tag="medium")
-    false_positive: ReportReportFullFiltered = element(tag="false_positive")
 
 
 class ReportReportTaskTarget(BaseXmlModel, search_mode="unordered", tag="target"):
