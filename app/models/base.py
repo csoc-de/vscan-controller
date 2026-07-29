@@ -45,9 +45,19 @@ class CertificateInfo(BaseXmlModel, search_mode="unordered"):
     md5_fingerprint: str = element()
 
 
+class ResultCountFullFiltered(BaseXmlModel, search_mode="unordered"):
+    deprecated: str
+    full: int = element()
+    filtered: int = element()
+
+
 class ResultCount(BaseXmlModel, search_mode="unordered", tag="result_count"):
-    false_positive: Optional[int] = element(default=None)
-    log: Optional[int] = element(default=None)
-    info: Optional[int] = element(default=None)
-    warning: Optional[int] = element(default=None)
-    hole: Optional[int] = element(default=None)
+    log: ResultCountFullFiltered = element(tag="log")
+    info: ResultCountFullFiltered = element(tag="info")
+    low: ResultCountFullFiltered = element(tag="low")
+    medium: ResultCountFullFiltered = element(tag="medium")
+    warning: ResultCountFullFiltered = element(tag="warning")
+    high: ResultCountFullFiltered = element(tag="high")
+    critical: ResultCountFullFiltered = element(tag="critical")
+    hole: ResultCountFullFiltered = element(tag="hole")
+    false_positive: ResultCountFullFiltered = element(tag="false_positive")
