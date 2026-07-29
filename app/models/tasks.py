@@ -48,12 +48,14 @@ class Scanner(BaseXmlModel, search_mode="unordered", tag="scanner"):
 class Schedule(BaseXmlModel, search_mode="unordered", tag="schedule"):
     id: Optional[str] = attr()
     name: Optional[str] = element(default=None)
+    icalendar: Optional[str] = element(default=None)
+    timezone: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
     trash: Optional[int] = element()
 
 
 class ReportCount(BaseXmlModel, search_mode="unordered", tag="report_count"):
-    text: Optional[int]
+    count: Optional[int]
     finished: str = element()
 
 
@@ -82,7 +84,7 @@ class Observers(BaseXmlModel, search_mode="unordered", tag="observers"):
 
 
 class Task(BaseXmlGvmModel, search_mode="unordered", tag="task"):
-    alterable: int = element()
+    alterable: bool = element()
     usage_type: str = element()
     config: Config = element()
     target: Target = element()
