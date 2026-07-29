@@ -6,7 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel
 from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
-from app.models.base import BaseXmlGvmModel
+from app.models.base import BaseXmlGvmModel, ResultCount
 
 
 class HostsOrdering(Enum):
@@ -17,79 +17,71 @@ class HostsOrdering(Enum):
     REVERSE = "reverse"
 
 
-class Preference(BaseXmlModel, tag="preference"):
+class Preference(BaseXmlModel, search_mode="unordered", tag="preference"):
     name: str = element()
     scanner_name: str = element()
     value: str = element()
 
 
-class Config(BaseXmlModel, tag="config"):
+class Config(BaseXmlModel, search_mode="unordered", tag="config"):
     id: str = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
     trash: bool = element()
 
 
-class Target(BaseXmlModel, tag="target"):
+class Target(BaseXmlModel, search_mode="unordered", tag="target"):
     id: str = attr()
     name: str = element()
     permissions: Optional[str] = element(default=None)
     trash: bool = element()
 
 
-class Scanner(BaseXmlModel, tag="scanner"):
+class Scanner(BaseXmlModel, search_mode="unordered", tag="scanner"):
     id: str = attr()
     name: str = element()
     permissions: Optional[str] = element(default=None)
     type: int = element()
-    trash: bool = element(default=False)
+    trash: Optional[bool] = element(default=None)
 
 
-class Schedule(BaseXmlModel, tag="schedule"):
+class Schedule(BaseXmlModel, search_mode="unordered", tag="schedule"):
     id: Optional[str] = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
     trash: Optional[int] = element()
 
 
-class ReportCount(BaseXmlModel, tag="report_count"):
+class ReportCount(BaseXmlModel, search_mode="unordered", tag="report_count"):
     text: Optional[int]
     finished: str = element()
 
 
-class ReportResultCount(BaseXmlModel, tag="result_count"):
-    false_positive: int = element(default=0)
-    log: int = element(default=0)
-    info: int = element(default=0)
-    warning: int = element(default=0)
-    hole: int = element(default=0)
-
-
-class Report(BaseXmlModel, tag="report"):
+class Report(BaseXmlModel, search_mode="unordered", tag="report"):
     id: str = attr()
     timestamp: datetime = element()
     scan_start: datetime = element(default=None)
     scan_end: datetime = element(default=None)
-    result_count: Optional[ReportResultCount] = element(tag="result_count", default=None)
+    result_count: Optional[ResultCount] = element(tag="result_count", default=None)
     severity: Optional[float] = element(default=None)
 
 
-class ObserverGroup(BaseXmlModel, tag="group"):
+class ObserverGroup(BaseXmlModel, search_mode="unordered", tag="group"):
     id: str = attr()
     name: Optional[str] = element(default=None)
 
 
-class ObserverRule(BaseXmlModel, tag="rule"):
+class ObserverRule(BaseXmlModel, search_mode="unordered", tag="rule"):
     id: str = attr()
     name: Optional[str] = element(default=None)
 
 
-class Observers(BaseXmlModel, tag="observers"):
+class Observers(BaseXmlModel, search_mode="unordered", tag="observers"):
     groups: Optional[list[ObserverGroup]] = element(tag="group", default=None)
     rules: Optional[list[ObserverRule]] = element(tag="rule", default=None)
 
 
-class Task(BaseXmlGvmModel, tag="task"):
+class Task(BaseXmlGvmModel, search_mode="unordered", tag="task"):
     alterable: int = element()
     usage_type: str = element()
     config: Config = element()

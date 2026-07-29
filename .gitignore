@@ -6,4 +6,7 @@ testdb.db
 /gvm_socket/*
 .run
 .env
+.coverage
 sbom.xml
+
+__pycache__
