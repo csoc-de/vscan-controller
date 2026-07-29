@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from app.models.tasks import Task
 
 
-def test_task_from_real_xml_file():
+def test_task_parsing_xml_to_model():
     xml_path = os.path.join(os.path.dirname(__file__), "files", "task.xml")
 
     assert os.path.exists(xml_path)
