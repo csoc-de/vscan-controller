@@ -6,25 +6,25 @@ from pydantic_xml import BaseXmlModel, attr, element, wrapped
 from app.models.base import BaseXmlGvmModel
 
 
-class PortList(BaseXmlModel, search_mode="unordered", tag="port_list"):
+class TargetPortList(BaseXmlModel, search_mode="unordered", tag="port_list"):
     id: str = attr()
     name: str = element()
     trash: bool = element()
 
 
-class Credential(BaseXmlModel, search_mode="unordered"):
+class TargetCredential(BaseXmlModel, search_mode="unordered"):
     id: Optional[str] = attr(default=None)
     name: Optional[str] = element(default=None)
     port: Optional[str] = element(default=None)
     trash: bool = element()
 
 
-class AliveTests(BaseXmlModel, search_mode="unordered", tag="alive_tests"):
+class TargetAliveTests(BaseXmlModel, search_mode="unordered", tag="alive_tests"):
     text: Optional[str]
     alive_test: str = element()
 
 
-class Task(BaseXmlModel, search_mode="unordered", tag="task"):
+class TargetTask(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
@@ -34,19 +34,19 @@ class Target(BaseXmlGvmModel, search_mode="unordered", tag="target"):
     hosts: list[str] = element()
     exclude_hosts: Optional[list[str]] = element(default=None)
     max_hosts: int = element()
-    port_list: PortList = element()
+    port_list: TargetPortList = element()
     port_range: Optional[str] = element(default=None)
-    ssh_credential: Credential = element()
-    smb_credential: Credential = element()
-    esxi_credential: Credential = element()
-    snmp_credential: Credential = element()
-    ssh_elevate_credential: Credential = element()
-    krb5_credential: Credential = element()
+    ssh_credential: TargetCredential = element()
+    smb_credential: TargetCredential = element()
+    esxi_credential: TargetCredential = element()
+    snmp_credential: TargetCredential = element()
+    ssh_elevate_credential: TargetCredential = element()
+    krb5_credential: TargetCredential = element()
     reverse_lookup_only: bool = element()
     reverse_lookup_unify: bool = element()
     allow_simultaneous_ips: bool = element()
-    alive_tests: AliveTests = element()
-    tasks: Optional[list[Task]] = wrapped("tasks", element(tag="task"), default=None)
+    alive_tests: TargetAliveTests = element()
+    tasks: Optional[list[TargetTask]] = wrapped("tasks", element(tag="task"), default=None)
 
 
 # response and request models
