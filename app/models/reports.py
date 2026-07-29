@@ -6,7 +6,7 @@ from typing import Optional
 from pydantic import BaseModel
 from pydantic_xml import element, attr, BaseXmlModel, wrapped
 
-from app.models.base import Permission, UserTags, ResultCount, Owner
+from app.models.base import Permission, UserTags, Owner
 
 
 class Task(BaseXmlModel, search_mode="unordered", tag="task"):
@@ -84,7 +84,7 @@ class ReportReportCountFullFiltered(BaseXmlModel, search_mode="unordered"):
     filtered: int = element()
 
 
-class ReportReportResultCount(ResultCount, tag="result_count"):
+class ReportReportResultCount(BaseXmlModel, search_mode="unordered", tag="result_count"):
     count: int
     full: int = element()
     filtered: int = element()
