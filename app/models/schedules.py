@@ -6,7 +6,7 @@ from pydantic_xml import element, attr, wrapped, BaseXmlModel
 from app.models.base import BaseXmlGvmModel
 
 
-class Task(BaseXmlModel, search_mode="unordered", tag="task"):
+class ScheduleTask(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
@@ -15,7 +15,7 @@ class Task(BaseXmlModel, search_mode="unordered", tag="task"):
 class Schedule(BaseXmlGvmModel, search_mode="unordered", tag="schedule"):
     icalendar: str = element()
     timezone: str = element()
-    tasks: Optional[list[Task]] = wrapped("tasks", element(tag="task"), default=None)
+    tasks: Optional[list[ScheduleTask]] = wrapped("tasks", element(tag="task"), default=None)
 
 
 # response and request models
