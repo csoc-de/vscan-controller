@@ -1,0 +1,84 @@
+<task id="ab2a4855-92da-48f3-a6e7-eda82d7a1533">
+    <owner>
+        <name>admin</name>
+    </owner>
+    <name>Task:HOME without Gast network:0bc7146f-ec89-4977-83e5-75d33a67ae62</name>
+    <comment>Scan my home network without gast network</comment>
+    <creation_time>2026-07-20T10:17:54Z</creation_time>
+    <modification_time>2026-07-20T10:17:54Z</modification_time>
+    <writable>1</writable>
+    <in_use>0</in_use>
+    <permissions>
+        <permission>
+            <name>Everything</name>
+        </permission>
+    </permissions>
+    <alterable>1</alterable>
+    <usage_type>scan</usage_type>
+    <config id="daba56c8-73ec-11df-a475-002264764cea">
+        <name>Full and fast</name>
+        <trash>0</trash>
+    </config>
+    <target id="70465d32-2f65-4c34-944b-2e8b10432aee">
+        <name>Target:HOME without Gast network:dc4f38be-bd66-4d68-b5f8-ff5cec315cbf</name>
+        <trash>0</trash>
+    </target>
+    <scanner id="08b69003-5fc2-4037-a479-93b440211c73">
+        <name>OpenVAS Default</name>
+        <type>2</type>
+        <trash>0</trash>
+    </scanner>
+    <status>New</status>
+    <progress>-1</progress>
+    <report_count>0<finished>0</finished></report_count>
+    <trend />
+    <schedule id="22a9fe85-373e-4a32-a46f-589a405d7dc2">
+        <name>Schedule:HOME without Gast network:5dd6a4ca-5733-4a5c-a5a7-fa09c83ab966</name>
+        <trash>0</trash>
+        <icalendar>
+            BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Greenbone.net//NONSGML Greenbone Security
+            Manager
+            26.23.0//EN\nBEGIN:VTIMEZONE\nTZID:/freeassociation.sourceforge.net/Europe/Berlin\nX-LIC-LOCATION:Europe/Berlin\nBEGIN:STANDARD\nTZNAME:CET\nTZOFFSETFROM:+005328\nTZOFFSETTO:+0100\nDTSTART:18930401T000000\nEND:STANDARD\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0100\nTZOFFSETTO:+0200\nDTSTART:19160430T230000\nEND:DAYLIGHT\nBEGIN:STANDARD\nTZNAME:CET\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0100\nDTSTART:19161001T010000\nEND:STANDARD\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0100\nTZOFFSETTO:+0200\nDTSTART:19170416T020000\nRRULE:FREQ=YEARLY;UNTIL=19180415T010000Z;BYDAY=3MO;BYMONTH=4\nEND:DAYLIGHT\nBEGIN:STANDARD\nTZNAME:CET\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0100\nDTSTART:19170917T030000\nRRULE:FREQ=YEARLY;UNTIL=19180916T010000Z;BYDAY=3MO;BYMONTH=9\nEND:STANDARD\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0100\nTZOFFSETTO:+0200\nDTSTART:19400401T020000\nRDATE:19430329T020000\nEND:DAYLIGHT\nBEGIN:STANDARD\nTZNAME:CET\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0100\nDTSTART:19421102T030000\nEND:STANDARD\nBEGIN:STANDARD\nTZNAME:CET\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0100\nDTSTART:19431004T030000\nRRULE:FREQ=YEARLY;UNTIL=19441002T010000Z;BYDAY=1MO;BYMONTH=10\nEND:STANDARD\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0100\nTZOFFSETTO:+0200\nDTSTART:19440403T020000\nRRULE:FREQ=YEARLY;UNTIL=19450402T010000Z;BYDAY=1MO;BYMONTH=4\nEND:DAYLIGHT\nBEGIN:DAYLIGHT\nTZNAME:CEMT\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0300\nDTSTART:19450524T020000\nEND:DAYLIGHT\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0300\nTZOFFSETTO:+0200\nDTSTART:19450924T030000\nEND:DAYLIGHT\nBEGIN:STANDARD\nTZNAME:CET\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0100\nDTSTART:19451118T030000\nRDATE:19461007T030000\nEND:STANDARD\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0100\nTZOFFSETTO:+0200\nDTSTART:19460414T020000\nEND:DAYLIGHT\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0100\nTZOFFSETTO:+0200\nDTSTART:19470406T030000\nEND:DAYLIGHT\nBEGIN:DAYLIGHT\nTZNAME:CEMT\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0300\nDTSTART:19470511T030000\nEND:DAYLIGHT\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0300\nTZOFFSETTO:+0200\nDTSTART:19470629T030000\nEND:DAYLIGHT\nBEGIN:STANDARD\nTZNAME:CET\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0100\nDTSTART:19471005T030000\nRRULE:FREQ=YEARLY;UNTIL=19491002T010000Z;BYDAY=1SU;BYMONTH=10\nEND:STANDARD\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0100\nTZOFFSETTO:+0200\nDTSTART:19480418T020000\nRDATE:19490410T020000\nRDATE:19800406T020000\nEND:DAYLIGHT\nBEGIN:STANDARD\nTZNAME:CET\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0100\nDTSTART:19800928T030000\nRRULE:FREQ=YEARLY;UNTIL=19950924T010000Z;BYDAY=-1SU;BYMONTH=9\nEND:STANDARD\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0100\nTZOFFSETTO:+0200\nDTSTART:19810329T020000\nRRULE:FREQ=YEARLY;UNTIL=20370329T010000Z;BYDAY=-1SU;BYMONTH=3\nEND:DAYLIGHT\nBEGIN:STANDARD\nTZNAME:CET\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0100\nDTSTART:19961027T030000\nRRULE:FREQ=YEARLY;UNTIL=20361026T010000Z;BYDAY=-1SU;BYMONTH=10\nEND:STANDARD\nBEGIN:STANDARD\nTZNAME:CET\nTZOFFSETFROM:+0200\nTZOFFSETTO:+0100\nDTSTART:20371025T030000\nRRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10\nEND:STANDARD\nBEGIN:DAYLIGHT\nTZNAME:CEST\nTZOFFSETFROM:+0100\nTZOFFSETTO:+0200\nDTSTART:20380328T020000\nRRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3\nEND:DAYLIGHT\nEND:VTIMEZONE\nBEGIN:VEVENT\nDTSTART;TZID=/freeassociation.sourceforge.net/Europe/Berlin:\n
+            20260720T143000\nDURATION:PT1H30M\nRRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR\nUID:352bec41-705a-4f5e-b0ea-67c7d692d5e5\nDTSTAMP:20260720T121553Z\nEND:VEVENT\nEND:VCALENDAR\n</icalendar>
+        <timezone>Europe/Berlin</timezone>
+    </schedule>
+    <schedule_periods>0</schedule_periods>
+    <observers />
+    <preferences>
+        <preference>
+            <name>Maximum concurrently executed NVTs per host</name>
+            <scanner_name>max_checks</scanner_name>
+            <value>4</value>
+        </preference>
+        <preference>
+            <name>Maximum concurrently scanned hosts</name>
+            <scanner_name>max_hosts</scanner_name>
+            <value>20</value>
+        </preference>
+        <preference>
+            <name>Add results to Asset Management</name>
+            <scanner_name>in_assets</scanner_name>
+            <value>yes</value>
+        </preference>
+        <preference>
+            <name>Apply Overrides when adding Assets</name>
+            <scanner_name>assets_apply_overrides</scanner_name>
+            <value>yes</value>
+        </preference>
+        <preference>
+            <name>Min QOD when adding Assets</name>
+            <scanner_name>assets_min_qod</scanner_name>
+            <value>70</value>
+        </preference>
+        <preference>
+            <name>Auto Delete Reports</name>
+            <scanner_name>auto_delete</scanner_name>
+            <value>keep</value>
+        </preference>
+        <preference>
+            <name>Auto Delete Reports Data</name>
+            <scanner_name>auto_delete_data</scanner_name>
+            <value>5</value>
+        </preference>
+    </preferences>
+</task>

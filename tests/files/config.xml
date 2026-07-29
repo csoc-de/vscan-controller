@@ -1,0 +1,21 @@
+<config id="daba56c8-73ec-11df-a475-002264764cea">
+    <owner>
+        <name>admin</name>
+    </owner>
+    <name>Full and fast</name>
+    <comment>Most NVT\'s; optimized by using previously collected information. Version 20201215.</comment>
+    <creation_time>2026-04-24T13:19:31Z</creation_time>
+    <modification_time>2026-07-09T10:20:15Z</modification_time>
+    <writable>0</writable>
+    <in_use>1</in_use>
+    <permissions>
+        <permission>
+            <name>Everything</name>
+        </permission>
+    </permissions>
+    <family_count>60<growing>1</growing></family_count>
+    <nvt_count>175648<growing>1</growing></nvt_count>
+    <type>0</type>
+    <usage_type>scan</usage_type>
+    <predefined>0</predefined>
+</config>

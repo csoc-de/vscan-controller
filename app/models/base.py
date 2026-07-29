@@ -4,31 +4,31 @@ from typing import Optional
 from pydantic_xml import BaseXmlModel, element, attr, wrapped
 
 
-class Permission(BaseXmlModel, tag="permission"):
+class Permission(BaseXmlModel, search_mode="unordered", tag="permission"):
     name: str = element()
 
 
-class Owner(BaseXmlModel, tag="owner"):
-    name: str = element(default="")
+class Owner(BaseXmlModel, search_mode="unordered", tag="owner"):
+    name: Optional[str] = element(default=None)
 
 
-class UserTag(BaseXmlModel, tag="tag"):
+class UserTag(BaseXmlModel, search_mode="unordered", tag="tag"):
     id: str = attr()
     name: str = element()
     value: str = element()
-    comment: str = element(default="")
+    comment: Optional[str] = element(default=None)
 
 
-class UserTags(BaseXmlModel, tag="user_tags"):
-    count: int = element(default=0)
+class UserTags(BaseXmlModel, search_mode="unordered", tag="user_tags"):
+    count: Optional[int] = element(default=None)
     tags: Optional[list[UserTag]] = element(tag="tag", default=None)
 
 
-class BaseXmlGvmModel(BaseXmlModel):
+class BaseXmlGvmModel(BaseXmlModel, search_mode="unordered"):
     id: str = attr()
     owner: Owner = element()
     name: str = element()
-    comment: str = element(default="")
+    comment: Optional[str] = element(default=None)
     creation_time: datetime = element()
     modification_time: datetime = element()
     writable: bool = element()
@@ -37,9 +37,26 @@ class BaseXmlGvmModel(BaseXmlModel):
     user_tags: Optional[UserTags] = element("user_tags", default=None)
 
 
-class CertificateInfo(BaseXmlModel):
+class CertificateInfo(BaseXmlModel, search_mode="unordered"):
     time_status: str = element()
     activation_time: datetime = element()
     expiration_time: datetime = element()
     issuer: str = element()
     md5_fingerprint: str = element()
+
+
+class ResultCountElement(BaseXmlModel, search_mode="unordered"):
+    count: int
+    deprecated: Optional[bool] = attr(default=None)
+
+
+class ResultCount(BaseXmlModel, search_mode="unordered"):
+    log: ResultCountElement = element(tag="log")
+    info: ResultCountElement = element(tag="info")
+    low: ResultCountElement = element(tag="low")
+    medium: ResultCountElement = element(tag="medium")
+    warning: ResultCountElement = element(tag="warning")
+    high: ResultCountElement = element(tag="high")
+    critical: ResultCountElement = element(tag="critical")
+    hole: ResultCountElement = element(tag="hole")
+    false_positive: ResultCountElement = element(tag="false_positive")

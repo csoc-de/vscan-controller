@@ -11,6 +11,7 @@ variables:
 stages:
   - build
   - lint
+  - test
   - check
   - deploy
 
@@ -33,6 +34,28 @@ linter:
   script:
     - pylint ${CI_PROJECT_DIR}/app
 
+unit:
+  image: ${HARBOR_HOST}/dockerhub/library/python:latest
+  stage: test
+  needs: [ ]
+  before_script:
+    - pip install pytest pytest-cov
+    - pip install -r requirements.txt
+  script:
+    - pytest --cov=. --cov-report term-missing --cov-report html:coverage.html --cov-report xml:coverage.xml --junitxml=report.xml
+  coverage: /TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/
+  artifacts:
+    when: always
+    paths:
+      - report.xml
+      - coverage.xml
+      - coverage.html
+    reports:
+      junit: report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    expire_in: 2 days
 sbom:
   image: ${HARBOR_HOST}/dockerhub/library/python:latest
   stage: check
