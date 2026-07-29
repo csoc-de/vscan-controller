@@ -51,7 +51,7 @@ class Schedule(BaseXmlModel, search_mode="unordered", tag="schedule"):
     icalendar: Optional[str] = element(default=None)
     timezone: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
-    trash: Optional[int] = element()
+    trash: Optional[bool] = element()
 
 
 class ReportResultCountElement(BaseXmlModel, search_mode="unordered"):
@@ -82,7 +82,7 @@ class Report(BaseXmlModel, search_mode="unordered", tag="report"):
 
 class ReportCount(BaseXmlModel, search_mode="unordered", tag="report_count"):
     count: Optional[int]
-    finished: str = element()
+    finished: int = element()
 
 
 class ObserverGroup(BaseXmlModel, search_mode="unordered", tag="group"):
@@ -96,6 +96,7 @@ class ObserverRule(BaseXmlModel, search_mode="unordered", tag="rule"):
 
 
 class Observers(BaseXmlModel, search_mode="unordered", tag="observers"):
+    user_list: Optional[str] = None
     groups: Optional[list[ObserverGroup]] = element(tag="group", default=None)
     rules: Optional[list[ObserverRule]] = element(tag="rule", default=None)
 
@@ -115,7 +116,7 @@ class Task(BaseXmlGvmModel, search_mode="unordered", tag="task"):
     schedule_periods: int = element()
     current_report: Optional[Report] = wrapped("current_report", element(default=None))
     last_report: Optional[Report] = wrapped("last_report", element(default=None))
-    observers: Optional[list[Observers]] = element(default=None)
+    observers: Optional[Observers] = element(default=None)
     average_duration: Optional[int] = element(default=None)
     result_count: Optional[int] = element(default=None)
     preferences: list[Preference] = wrapped("preferences", element(tag="preference"))
