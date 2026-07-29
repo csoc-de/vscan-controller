@@ -243,7 +243,7 @@ class TasksRouter(APIRouter):
 
     async def resume_task(self, uuid: str) -> None:
         try:
-            _ = self._gvm_tasks.start_task(uuid)
+            _ = self._gvm_tasks.resume_task(uuid)
         except GvmResponseError as e:
             match e.status:
                 case "404":
@@ -260,7 +260,7 @@ class TasksRouter(APIRouter):
 
     async def stop_task(self, uuid: str) -> None:
         try:
-            _ = self._gvm_tasks.start_task(uuid)
+            _ = self._gvm_tasks.stop_task(uuid)
         except GvmResponseError as e:
             match e.status:
                 case "404":
