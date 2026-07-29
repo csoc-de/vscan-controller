@@ -60,8 +60,11 @@ def test_task_from_real_xml_file():
     assert task.schedule.timezone == "Europe/Berlin"
     # icalendar ist ein großes iCalendar-Block — evtl. nur auf Existenz prüfen
     assert task.schedule.icalendar is not None
-    assert "BEGIN:VCALENDAR\\nVERSION:2.0\\nPRODID:-//Greenbone.net//NONSGML Greenbone Security" in task.schedule.icalendar
-    assert "20260720T131800\\nDURATION:PT2H42M\\nRRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR\\nUID:b867dd24-c20b-4828-adfb-fafb7c9252fa\\nDTSTAMP:20260720T131731Z\\nEND:VEVENT\\nEND:VCALENDAR\\n" in task.schedule.icalendar
+    assert ("BEGIN:VCALENDAR\\nVERSION:2.0\\nPRODID:-//Greenbone.net//NONSGML Greenbone Security"
+            in task.schedule.icalendar)
+    assert (
+            "20260720T131800\\nDURATION:PT2H42M\\nRRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR\\nUID:b867dd24-c20b-4828-adfb-fafb7c9252fa\\nDTSTAMP:20260720T131731Z\\nEND:VEVENT\\nEND:VCALENDAR\\n"
+            in task.schedule.icalendar)
 
     # --- Last Report ---
     assert task.last_report.id == "1cf07104-5cbd-440c-b06a-4388ecc4d31c"
