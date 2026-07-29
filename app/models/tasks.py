@@ -17,27 +17,27 @@ class HostsOrdering(Enum):
     REVERSE = "reverse"
 
 
-class Preference(BaseXmlModel, search_mode="unordered", tag="preference"):
+class TaskPreference(BaseXmlModel, search_mode="unordered", tag="preference"):
     name: str = element()
     scanner_name: str = element()
     value: str = element()
 
 
-class Config(BaseXmlModel, search_mode="unordered", tag="config"):
+class TaskConfig(BaseXmlModel, search_mode="unordered", tag="config"):
     id: str = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
     trash: bool = element()
 
 
-class Target(BaseXmlModel, search_mode="unordered", tag="target"):
+class TaskTarget(BaseXmlModel, search_mode="unordered", tag="target"):
     id: str = attr()
     name: str = element()
     permissions: Optional[str] = element(default=None)
     trash: bool = element()
 
 
-class Scanner(BaseXmlModel, search_mode="unordered", tag="scanner"):
+class TaskScanner(BaseXmlModel, search_mode="unordered", tag="scanner"):
     id: str = attr()
     name: str = element()
     permissions: Optional[str] = element(default=None)
@@ -45,7 +45,7 @@ class Scanner(BaseXmlModel, search_mode="unordered", tag="scanner"):
     trash: Optional[bool] = element(default=None)
 
 
-class Schedule(BaseXmlModel, search_mode="unordered", tag="schedule"):
+class TaskSchedule(BaseXmlModel, search_mode="unordered", tag="schedule"):
     id: Optional[str] = attr()
     name: Optional[str] = element(default=None)
     icalendar: Optional[str] = element(default=None)
@@ -54,72 +54,72 @@ class Schedule(BaseXmlModel, search_mode="unordered", tag="schedule"):
     trash: Optional[bool] = element()
 
 
-class ReportResultCountElement(BaseXmlModel, search_mode="unordered"):
+class TaskReportResultCountElement(BaseXmlModel, search_mode="unordered"):
     count: int
     deprecated: Optional[bool] = attr(default=None)
 
 
-class ReportResultCount(BaseXmlModel, search_mode="unordered"):
-    log: ReportResultCountElement = element(tag="log")
-    info: ReportResultCountElement = element(tag="info")
-    low: ReportResultCountElement = element(tag="low")
-    medium: ReportResultCountElement = element(tag="medium")
-    warning: ReportResultCountElement = element(tag="warning")
-    high: ReportResultCountElement = element(tag="high")
-    critical: ReportResultCountElement = element(tag="critical")
-    hole: ReportResultCountElement = element(tag="hole")
-    false_positive: ReportResultCountElement = element(tag="false_positive")
+class TaskReportResultCount(BaseXmlModel, search_mode="unordered"):
+    log: TaskReportResultCountElement = element(tag="log")
+    info: TaskReportResultCountElement = element(tag="info")
+    low: TaskReportResultCountElement = element(tag="low")
+    medium: TaskReportResultCountElement = element(tag="medium")
+    warning: TaskReportResultCountElement = element(tag="warning")
+    high: TaskReportResultCountElement = element(tag="high")
+    critical: TaskReportResultCountElement = element(tag="critical")
+    hole: TaskReportResultCountElement = element(tag="hole")
+    false_positive: TaskReportResultCountElement = element(tag="false_positive")
 
 
-class Report(BaseXmlModel, search_mode="unordered", tag="report"):
+class TaskReport(BaseXmlModel, search_mode="unordered", tag="report"):
     id: str = attr()
     timestamp: datetime = element()
     scan_start: datetime = element(default=None)
     scan_end: datetime = element(default=None)
-    result_count: Optional[ReportResultCount] = element(tag="result_count", default=None)
+    result_count: Optional[TaskReportResultCount] = element(tag="result_count", default=None)
     severity: Optional[float] = element(default=None)
 
 
-class ReportCount(BaseXmlModel, search_mode="unordered", tag="report_count"):
+class TaskReportCount(BaseXmlModel, search_mode="unordered", tag="report_count"):
     count: Optional[int]
     finished: int = element()
 
 
-class ObserverGroup(BaseXmlModel, search_mode="unordered", tag="group"):
+class TaskObserversGroup(BaseXmlModel, search_mode="unordered", tag="group"):
     id: str = attr()
     name: Optional[str] = element(default=None)
 
 
-class ObserverRule(BaseXmlModel, search_mode="unordered", tag="rule"):
+class TaskObserversRule(BaseXmlModel, search_mode="unordered", tag="rule"):
     id: str = attr()
     name: Optional[str] = element(default=None)
 
 
-class Observers(BaseXmlModel, search_mode="unordered", tag="observers"):
+class TaskObservers(BaseXmlModel, search_mode="unordered", tag="observers"):
     user_list: Optional[str] = None
-    groups: Optional[list[ObserverGroup]] = element(tag="group", default=None)
-    rules: Optional[list[ObserverRule]] = element(tag="rule", default=None)
+    groups: Optional[list[TaskObserversGroup]] = element(tag="group", default=None)
+    rules: Optional[list[TaskObserversRule]] = element(tag="rule", default=None)
 
 
 class Task(BaseXmlGvmModel, search_mode="unordered", tag="task"):
     alterable: bool = element()
     usage_type: str = element()
-    config: Config = element()
-    target: Target = element()
+    config: TaskConfig = element()
+    target: TaskTarget = element()
     hosts_ordering: Optional[str] = element(default=None)
-    scanner: Scanner = element()
+    scanner: TaskScanner = element()
     status: str = element()
     progress: int = element()
-    report_count: ReportCount = element()
+    report_count: TaskReportCount = element()
     trend: Optional[str] = element(default=None)
-    schedule: Schedule = element()
+    schedule: TaskSchedule = element()
     schedule_periods: int = element()
-    current_report: Optional[Report] = wrapped("current_report", element(default=None))
-    last_report: Optional[Report] = wrapped("last_report", element(default=None))
-    observers: Optional[Observers] = element(default=None)
+    current_report: Optional[TaskReport] = wrapped("current_report", element(default=None))
+    last_report: Optional[TaskReport] = wrapped("last_report", element(default=None))
+    observers: Optional[TaskObservers] = element(default=None)
     average_duration: Optional[int] = element(default=None)
     result_count: Optional[int] = element(default=None)
-    preferences: list[Preference] = wrapped("preferences", element(tag="preference"))
+    preferences: list[TaskPreference] = wrapped("preferences", element(tag="preference"))
 
 
 # response and request models
