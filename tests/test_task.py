@@ -31,7 +31,11 @@ def test_task_from_real_xml_file():
     assert task.report_count.finished == 1
     assert task.trend is None
     assert task.schedule_periods == 0
-    assert task.observers is None
+
+    # --- Observers ---
+    assert task.observers.user_list is None
+    assert task.observers.groups is None
+    assert task.observers.rules is None
 
     # --- Permissions ---
     assert len(task.permissions) == 1
@@ -71,16 +75,19 @@ def test_task_from_real_xml_file():
     assert task.last_report.timestamp == datetime(2026, 7, 20, 11, 18, 11, tzinfo=timezone.utc)
     assert task.last_report.scan_start == datetime(2026, 7, 20, 11, 18, 32, tzinfo=timezone.utc)
     assert task.last_report.scan_end == datetime(2026, 7, 20, 11, 44, 29, tzinfo=timezone.utc)
-    assert task.last_report.severity == "7.5"
-    assert task.last_report.result_count.critical == 0
-    assert task.last_report.result_count.hole == 1
-    assert task.last_report.result_count.high == 1
-    assert task.last_report.result_count.info == 3
-    assert task.last_report.result_count.low == 3
-    assert task.last_report.result_count.log == 37
-    assert task.last_report.result_count.warning == 0
-    assert task.last_report.result_count.medium == 0
-    assert task.last_report.result_count.false_positive == 0
+    assert task.last_report.severity == 7.5
+    assert task.last_report.result_count.critical.count == 0
+    assert task.last_report.result_count.hole.count == 1
+    assert task.last_report.result_count.hole.deprecated is True
+    assert task.last_report.result_count.high.count == 1
+    assert task.last_report.result_count.info.count == 3
+    assert task.last_report.result_count.info.deprecated is True
+    assert task.last_report.result_count.low.count == 3
+    assert task.last_report.result_count.log.count == 37
+    assert task.last_report.result_count.warning.count == 0
+    assert task.last_report.result_count.warning.deprecated is True
+    assert task.last_report.result_count.medium.count == 0
+    assert task.last_report.result_count.false_positive.count == 0
 
     # --- Preferences ---
     assert len(task.preferences) == 7
