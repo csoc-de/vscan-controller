@@ -4,27 +4,27 @@ from typing import Optional
 from pydantic_xml import BaseXmlModel, element, attr, wrapped
 
 
-class Permission(BaseXmlModel, search_mode='unordered', tag="permission"):
+class Permission(BaseXmlModel, search_mode="unordered", tag="permission"):
     name: str = element()
 
 
-class Owner(BaseXmlModel, search_mode='unordered', tag="owner"):
+class Owner(BaseXmlModel, search_mode="unordered", tag="owner"):
     name: Optional[str] = element(default=None)
 
 
-class UserTag(BaseXmlModel, search_mode='unordered', tag="tag"):
+class UserTag(BaseXmlModel, search_mode="unordered", tag="tag"):
     id: str = attr()
     name: str = element()
     value: str = element()
     comment: Optional[str] = element(default=None)
 
 
-class UserTags(BaseXmlModel, search_mode='unordered', tag="user_tags"):
+class UserTags(BaseXmlModel, search_mode="unordered", tag="user_tags"):
     count: Optional[int] = element(default=None)
     tags: Optional[list[UserTag]] = element(tag="tag", default=None)
 
 
-class BaseXmlGvmModel(BaseXmlModel, search_mode='unordered'):
+class BaseXmlGvmModel(BaseXmlModel, search_mode="unordered"):
     id: str = attr()
     owner: Owner = element()
     name: str = element()

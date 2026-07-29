@@ -9,21 +9,21 @@ from pydantic_xml import element, attr, BaseXmlModel, wrapped
 from app.models.base import Permission, UserTags, ResultCount, Owner
 
 
-class Task(BaseXmlModel, search_mode='unordered', tag="task"):
+class Task(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
     name: str = element()
 
 
-class ReportFormat(BaseXmlModel, search_mode='unordered', tag="report_format"):
+class ReportFormat(BaseXmlModel, search_mode="unordered", tag="report_format"):
     id: str = attr()
     name: str = element()
 
 
-class ReportReportGMP(BaseXmlModel, search_mode='unordered', tag="gmp"):
+class ReportReportGMP(BaseXmlModel, search_mode="unordered", tag="gmp"):
     version: str = element()
 
 
-class ReportReportFormatParam(BaseXmlModel, search_mode='unordered', tag="param"):
+class ReportReportFormatParam(BaseXmlModel, search_mode="unordered", tag="param"):
     name: str = element()
     value: str = element()
 

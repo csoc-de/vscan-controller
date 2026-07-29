@@ -17,27 +17,27 @@ class HostsOrdering(Enum):
     REVERSE = "reverse"
 
 
-class Preference(BaseXmlModel, search_mode='unordered', tag="preference"):
+class Preference(BaseXmlModel, search_mode="unordered", tag="preference"):
     name: str = element()
     scanner_name: str = element()
     value: str = element()
 
 
-class Config(BaseXmlModel, search_mode='unordered', tag="config"):
+class Config(BaseXmlModel, search_mode="unordered", tag="config"):
     id: str = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
     trash: bool = element()
 
 
-class Target(BaseXmlModel, search_mode='unordered', tag="target"):
+class Target(BaseXmlModel, search_mode="unordered", tag="target"):
     id: str = attr()
     name: str = element()
     permissions: Optional[str] = element(default=None)
     trash: bool = element()
 
 
-class Scanner(BaseXmlModel, search_mode='unordered', tag="scanner"):
+class Scanner(BaseXmlModel, search_mode="unordered", tag="scanner"):
     id: str = attr()
     name: str = element()
     permissions: Optional[str] = element(default=None)
@@ -45,7 +45,7 @@ class Scanner(BaseXmlModel, search_mode='unordered', tag="scanner"):
     trash: Optional[bool] = element(default=None)
 
 
-class Schedule(BaseXmlModel, search_mode='unordered', tag="schedule"):
+class Schedule(BaseXmlModel, search_mode="unordered", tag="schedule"):
     id: Optional[str] = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)

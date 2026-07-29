@@ -6,23 +6,23 @@ from pydantic_xml import element, attr, BaseXmlModel, wrapped
 from app.models.base import BaseXmlGvmModel
 
 
-class Scanner(BaseXmlModel, search_mode='unordered', tag="scanner"):
+class Scanner(BaseXmlModel, search_mode="unordered", tag="scanner"):
     id: str = attr()
     trash: bool = element()
 
 
-class Count(BaseXmlModel, search_mode='unordered'):
+class Count(BaseXmlModel, search_mode="unordered"):
     text: int
     growing: Optional[bool] = element(default=None)
 
 
-class Task(BaseXmlModel, search_mode='unordered', tag="task"):
+class Task(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
 
 
-class Family(BaseXmlModel, search_mode='unordered', tag="family"):
+class Family(BaseXmlModel, search_mode="unordered", tag="family"):
     name: str = element()
     nvt_count: int = element()
     max_nvt_count: int = element()

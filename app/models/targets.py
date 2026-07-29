@@ -6,25 +6,25 @@ from pydantic_xml import BaseXmlModel, attr, element, wrapped
 from app.models.base import BaseXmlGvmModel
 
 
-class PortList(BaseXmlModel, search_mode='unordered', tag="port_list"):
+class PortList(BaseXmlModel, search_mode="unordered", tag="port_list"):
     id: str = attr()
     name: str = element()
     trash: bool = element()
 
 
-class Credential(BaseXmlModel, search_mode='unordered'):
+class Credential(BaseXmlModel, search_mode="unordered"):
     id: Optional[str] = attr(default=None)
     name: Optional[str] = element(default=None)
     port: Optional[str] = element(default=None)
     trash: bool = element()
 
 
-class AliveTests(BaseXmlModel, search_mode='unordered', tag="alive_tests"):
+class AliveTests(BaseXmlModel, search_mode="unordered", tag="alive_tests"):
     text: Optional[str]
     alive_test: str = element()
 
 
-class Task(BaseXmlModel, search_mode='unordered', tag="task"):
+class Task(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
     name: Optional[str] = element(default=None)
     permissions: Optional[str] = element(default=None)
