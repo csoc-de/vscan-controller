@@ -26,7 +26,7 @@ class Target(BaseXmlModel, search_mode="unordered", tag="target"):
     permissions: Optional[str] = element(default=None)
 
 
-class PortList(BaseXmlGvmModel, tag="port_list"):
+class PortList(BaseXmlGvmModel, search_mode="unordered", tag="port_list"):
     port_count: PortCount = element()
     predefined: bool = element()
     port_ranges: Optional[list[PortRange]] = wrapped("port_ranges", element(tag="port_range"), default=None)

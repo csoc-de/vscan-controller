@@ -37,7 +37,7 @@ class BaseXmlGvmModel(BaseXmlModel, search_mode="unordered"):
     user_tags: Optional[UserTags] = element("user_tags", default=None)
 
 
-class CertificateInfo(BaseXmlModel, search_mode='unordered'):
+class CertificateInfo(BaseXmlModel, search_mode="unordered"):
     time_status: str = element()
     activation_time: datetime = element()
     expiration_time: datetime = element()
@@ -45,7 +45,7 @@ class CertificateInfo(BaseXmlModel, search_mode='unordered'):
     md5_fingerprint: str = element()
 
 
-class ResultCount(BaseXmlModel, search_mode='unordered', tag="result_count"):
+class ResultCount(BaseXmlModel, search_mode="unordered", tag="result_count"):
     false_positive: Optional[int] = element(default=None)
     log: Optional[int] = element(default=None)
     info: Optional[int] = element(default=None)

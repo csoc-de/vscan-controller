@@ -30,7 +30,7 @@ class Task(BaseXmlModel, search_mode="unordered", tag="task"):
     permissions: Optional[str] = element(default=None)
 
 
-class Target(BaseXmlGvmModel, tag="target"):
+class Target(BaseXmlGvmModel, search_mode="unordered", tag="target"):
     hosts: list[str] = element()
     exclude_hosts: Optional[list[str]] = element(default=None)
     max_hosts: int = element()

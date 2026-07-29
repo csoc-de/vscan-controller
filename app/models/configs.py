@@ -29,12 +29,12 @@ class Family(BaseXmlModel, search_mode="unordered", tag="family"):
     growing: Optional[bool] = element(default=None)
 
 
-class PreferenceNVT(BaseXmlModel, search_mode='unordered', tag="nvt"):
+class PreferenceNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
     oid: str = attr()
     name: str = element()
 
 
-class Preference(BaseXmlModel, search_mode='unordered', tag="preference"):
+class Preference(BaseXmlModel, search_mode="unordered", tag="preference"):
     nvt: PreferenceNVT = element()
     name: str = element()
     id: str = element()
@@ -44,14 +44,14 @@ class Preference(BaseXmlModel, search_mode='unordered', tag="preference"):
     alts: list[str] = element(tag="alt")
 
 
-class NVTSelector(BaseXmlModel, search_mode='unordered', tag="nvt_selector"):
+class NVTSelector(BaseXmlModel, search_mode="unordered", tag="nvt_selector"):
     name: str = element()
     include: bool = element()
     type: str = element()
     family_or_nvt: str = element()
 
 
-class Config(BaseXmlGvmModel, tag="config"):
+class Config(BaseXmlGvmModel, search_mode="unordered", tag="config"):
     max_nvt_count: Optional[int] = element(default=None)
     known_nvt_count: Optional[int] = element(default=None)
     scanner: Optional[Scanner] = element(default=None)

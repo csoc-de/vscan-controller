@@ -52,12 +52,12 @@ class Schedule(BaseXmlModel, search_mode="unordered", tag="schedule"):
     trash: Optional[int] = element()
 
 
-class ReportCount(BaseXmlModel, search_mode='unordered', tag="report_count"):
+class ReportCount(BaseXmlModel, search_mode="unordered", tag="report_count"):
     text: Optional[int]
     finished: str = element()
 
 
-class Report(BaseXmlModel, search_mode='unordered', tag="report"):
+class Report(BaseXmlModel, search_mode="unordered", tag="report"):
     id: str = attr()
     timestamp: datetime = element()
     scan_start: datetime = element(default=None)
@@ -66,22 +66,22 @@ class Report(BaseXmlModel, search_mode='unordered', tag="report"):
     severity: Optional[float] = element(default=None)
 
 
-class ObserverGroup(BaseXmlModel, search_mode='unordered', tag="group"):
+class ObserverGroup(BaseXmlModel, search_mode="unordered", tag="group"):
     id: str = attr()
     name: Optional[str] = element(default=None)
 
 
-class ObserverRule(BaseXmlModel, search_mode='unordered', tag="rule"):
+class ObserverRule(BaseXmlModel, search_mode="unordered", tag="rule"):
     id: str = attr()
     name: Optional[str] = element(default=None)
 
 
-class Observers(BaseXmlModel, search_mode='unordered', tag="observers"):
+class Observers(BaseXmlModel, search_mode="unordered", tag="observers"):
     groups: Optional[list[ObserverGroup]] = element(tag="group", default=None)
     rules: Optional[list[ObserverRule]] = element(tag="rule", default=None)
 
 
-class Task(BaseXmlGvmModel, tag="task"):
+class Task(BaseXmlGvmModel, search_mode="unordered", tag="task"):
     alterable: int = element()
     usage_type: str = element()
     config: Config = element()

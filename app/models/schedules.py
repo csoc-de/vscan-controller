@@ -12,7 +12,7 @@ class Task(BaseXmlModel, search_mode="unordered", tag="task"):
     permissions: Optional[str] = element(default=None)
 
 
-class Schedule(BaseXmlGvmModel, tag="schedule"):
+class Schedule(BaseXmlGvmModel, search_mode="unordered", tag="schedule"):
     icalendar: str = element()
     timezone: str = element()
     tasks: Optional[list[Task]] = wrapped("tasks", element(tag="task"), default=None)

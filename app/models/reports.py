@@ -28,12 +28,12 @@ class ReportReportFormatParam(BaseXmlModel, search_mode="unordered", tag="param"
     value: str = element()
 
 
-class ReportReportField(BaseXmlModel, search_mode='unordered', tag="field"):
+class ReportReportField(BaseXmlModel, search_mode="unordered", tag="field"):
     text: str
     order: str = element()
 
 
-class ReportReportFilterKeyword(BaseXmlModel, search_mode='unordered', tag="keyword"):
+class ReportReportFilterKeyword(BaseXmlModel, search_mode="unordered", tag="keyword"):
     column: str = element()
     relation: str = element()
     value: str = element()
@@ -42,14 +42,14 @@ class ReportReportFilterKeyword(BaseXmlModel, search_mode='unordered', tag="keyw
         return (self.column == other.column) and (self.relation == other.relation) and (self.value == other.value)
 
 
-class ReportReportFiltersDelta(BaseXmlModel, search_mode='unordered', tag="delta"):
+class ReportReportFiltersDelta(BaseXmlModel, search_mode="unordered", tag="delta"):
     changed: str = element()
     gone: str = element()
     new: str = element()
     same: str = element()
 
 
-class ReportReportFilters(BaseXmlModel, search_mode='unordered', tag="filters"):
+class ReportReportFilters(BaseXmlModel, search_mode="unordered", tag="filters"):
     term: str = element()
     phrase: Optional[str] = element(default=None)
     notes: Optional[int] = element(default=None)
@@ -61,7 +61,7 @@ class ReportReportFilters(BaseXmlModel, search_mode='unordered', tag="filters"):
     keywords: list[ReportReportFilterKeyword] = wrapped("keywords", element(tag="keyword"))
 
 
-class ReportReportDeltaReport(BaseXmlModel, search_mode='unordered', tag="report"):
+class ReportReportDeltaReport(BaseXmlModel, search_mode="unordered", tag="report"):
     id: str = attr()
     scan_run_status: str = element()
     timestamp: datetime = element()
@@ -69,16 +69,16 @@ class ReportReportDeltaReport(BaseXmlModel, search_mode='unordered', tag="report
     scan_end: datetime = element()
 
 
-class ReportReportDelta(BaseXmlModel, search_mode='unordered', tag="delta"):
+class ReportReportDelta(BaseXmlModel, search_mode="unordered", tag="delta"):
     report: ReportReportDeltaReport = element()
 
 
-class ReportReportFullFiltered(BaseXmlModel, search_mode='unordered'):
+class ReportReportFullFiltered(BaseXmlModel, search_mode="unordered"):
     full: float = element()
     filtered: float = element()
 
 
-class ReportReportCountFullFiltered(BaseXmlModel, search_mode='unordered'):
+class ReportReportCountFullFiltered(BaseXmlModel, search_mode="unordered"):
     deprecated: str
     full: int = element()
     filtered: int = element()
@@ -99,14 +99,14 @@ class ReportReportResultCount(ResultCount, tag="result_count"):
     false_positive: ReportReportFullFiltered = element(tag="false_positive")
 
 
-class ReportReportTaskTarget(BaseXmlModel, search_mode='unordered', tag="target"):
+class ReportReportTaskTarget(BaseXmlModel, search_mode="unordered", tag="target"):
     id: str = attr()
     trash: bool = element()
     name: str = element()
     comment: Optional[str] = element(default=None)
 
 
-class ReportReportTask(BaseXmlModel, search_mode='unordered', tag="task"):
+class ReportReportTask(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
     name: str = element()
     comment: Optional[str] = element(default=None)
@@ -115,35 +115,35 @@ class ReportReportTask(BaseXmlModel, search_mode='unordered', tag="task"):
     user_tags: Optional[UserTags] = element(default=None, tag="user_tags")
 
 
-class ReportReportPortsPort(BaseXmlModel, search_mode='unordered', tag="port"):
+class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port"):
     port: str
     host: str = element()
     severity: float = element()
     threat: str = element()
 
 
-class ReportReportPorts(BaseXmlModel, search_mode='unordered', tag="ports"):
+class ReportReportPorts(BaseXmlModel, search_mode="unordered", tag="ports"):
     start: int = attr()
     max: int = attr()
     count: int = element()
     ports: list[ReportReportPortsPort] = element(tag="port")
 
 
-class ReportReportResultReport(BaseXmlModel, search_mode='unordered', tag="report"):
+class ReportReportResultReport(BaseXmlModel, search_mode="unordered", tag="report"):
     id: str = attr()
 
 
-class ReportReportAsset(BaseXmlModel, search_mode='unordered', tag="asset"):
+class ReportReportAsset(BaseXmlModel, search_mode="unordered", tag="asset"):
     asset_id: str = attr()
 
 
-class ReportReportResultHost(BaseXmlModel, search_mode='unordered', tag="host"):
+class ReportReportResultHost(BaseXmlModel, search_mode="unordered", tag="host"):
     host: str
     asset: ReportReportAsset = element(tag="asset")
     hostname: Optional[str] = element(default=None)
 
 
-class ReportReportResultNVTSeverity(BaseXmlModel, search_mode='unordered', tag="severity"):
+class ReportReportResultNVTSeverity(BaseXmlModel, search_mode="unordered", tag="severity"):
     type: str = attr()
     origin: Optional[str] = element(default=None)
     date: datetime = element()
@@ -151,12 +151,12 @@ class ReportReportResultNVTSeverity(BaseXmlModel, search_mode='unordered', tag="
     value: str = element()
 
 
-class ReportReportResultNVTSeverities(BaseXmlModel, search_mode='unordered', tag="severities"):
+class ReportReportResultNVTSeverities(BaseXmlModel, search_mode="unordered", tag="severities"):
     score: float = attr()
     severities: list[ReportReportResultNVTSeverity] = element(tag="severity")
 
 
-class ReportReportResultNVTReference(BaseXmlModel, search_mode='unordered', tag="ref"):
+class ReportReportResultNVTReference(BaseXmlModel, search_mode="unordered", tag="ref"):
     id: str = attr()
     type: str = attr()
 
@@ -164,12 +164,12 @@ class ReportReportResultNVTReference(BaseXmlModel, search_mode='unordered', tag=
         return self.type == other.type and self.id == other.id
 
 
-class ReportReportResultNVTSolution(BaseXmlModel, search_mode='unordered', tag="solution"):
+class ReportReportResultNVTSolution(BaseXmlModel, search_mode="unordered", tag="solution"):
     solution: str
     type: Optional[str] = attr(default=None)
 
 
-class ReportReportResultNVT(BaseXmlModel, search_mode='unordered', tag="nvt"):
+class ReportReportResultNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
     oid: str = attr()
     type: str = element()
     name: str = element()
@@ -182,26 +182,26 @@ class ReportReportResultNVT(BaseXmlModel, search_mode='unordered', tag="nvt"):
     solution: Optional[ReportReportResultNVTSolution] = element(tag="solution")
 
 
-class ReportReportResultQOD(BaseXmlModel, search_mode='unordered', tag="qod"):
+class ReportReportResultQOD(BaseXmlModel, search_mode="unordered", tag="qod"):
     value: int = element()
     type: Optional[str] = element(default=None)
 
 
-class ReportReportResultDeltaNoteNVT(BaseXmlModel, search_mode='unordered', tag="nvt"):
+class ReportReportResultDeltaNoteNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
     oid: str = attr()
     name: str = element()
     type: str = element()
 
 
-class ReportReportResultDeltaNoteText(BaseXmlModel, search_mode='unordered', tag="text"):
+class ReportReportResultDeltaNoteText(BaseXmlModel, search_mode="unordered", tag="text"):
     excerpt: bool = attr()
 
 
-class ReportReportResultDeltaNoteTask(BaseXmlModel, search_mode='unordered', tag="task"):
+class ReportReportResultDeltaNoteTask(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
 
 
-class ReportReportResultDeltaNoteResultNVT(BaseXmlModel, search_mode='unordered', tag="nvt"):
+class ReportReportResultDeltaNoteResultNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
     oid: str = attr()
     name: str = element()
     type: str = element()
@@ -210,7 +210,7 @@ class ReportReportResultDeltaNoteResultNVT(BaseXmlModel, search_mode='unordered'
     cve: Optional[str] = element(default=None)
 
 
-class ReportReportResultDeltaNoteOrOverwriteResult(BaseXmlModel, search_mode='unordered', tag="result"):
+class ReportReportResultDeltaNoteOrOverwriteResult(BaseXmlModel, search_mode="unordered", tag="result"):
     id: str = attr()
     host: ReportReportResultHost = element()
     port: str = element()
@@ -221,7 +221,7 @@ class ReportReportResultDeltaNoteOrOverwriteResult(BaseXmlModel, search_mode='un
     description: str = element()
 
 
-class ReportReportResultNote(BaseXmlModel, search_mode='unordered', tag="note"):
+class ReportReportResultNote(BaseXmlModel, search_mode="unordered", tag="note"):
     id: str = attr()
     permissions: list[Permission] = wrapped("permissions", element(tag="permission"))
     owner: Owner = element(tag="owner")
@@ -242,7 +242,7 @@ class ReportReportResultNote(BaseXmlModel, search_mode='unordered', tag="note"):
     result: Optional[ReportReportResultDeltaNoteOrOverwriteResult] = element(default=None)
 
 
-class ReportReportResultOverwrite(BaseXmlModel, search_mode='unordered', tag="overwrite"):
+class ReportReportResultOverwrite(BaseXmlModel, search_mode="unordered", tag="overwrite"):
     id: str = attr()
     permissions: list[Permission] = wrapped("permissions", element(tag="permission"))
     owner: Owner = element(tag="owner")
@@ -266,33 +266,33 @@ class ReportReportResultOverwrite(BaseXmlModel, search_mode='unordered', tag="ov
     result: Optional[ReportReportResultDeltaNoteOrOverwriteResult] = element(default=None)
 
 
-class ReportReportResultDelta(BaseXmlModel, search_mode='unordered', tag="delta"):
+class ReportReportResultDelta(BaseXmlModel, search_mode="unordered", tag="delta"):
     result: Optional[ReportReportResult] = element()
     diff: str = element()
     notes: Optional[list[ReportReportResultNote]] = element(tag="note", default=None)
     overwrites: Optional[list[ReportReportResultOverwrite]] = element(tag="overwrite", default=None)
 
 
-class ReportReportResultDetectionResultDetail(BaseXmlModel, search_mode='unordered', tag="detail"):
+class ReportReportResultDetectionResultDetail(BaseXmlModel, search_mode="unordered", tag="detail"):
     name: str = element()
     value: str = element()
 
 
-class ReportReportResultDetectionResult(BaseXmlModel, search_mode='unordered', tag="result"):
+class ReportReportResultDetectionResult(BaseXmlModel, search_mode="unordered", tag="result"):
     id: str = attr()
     details: Optional[list[ReportReportResultDetectionResultDetail]] = wrapped(path="details", tag="detail",
                                                                                default=None)
 
 
-class ReportReportResultDetection(BaseXmlModel, search_mode='unordered', tag="detection"):
+class ReportReportResultDetection(BaseXmlModel, search_mode="unordered", tag="detection"):
     result: ReportReportResultDetectionResult = element()
 
 
-class ReportReportResultTicket(BaseXmlModel, search_mode='unordered', tag="ticket"):
+class ReportReportResultTicket(BaseXmlModel, search_mode="unordered", tag="ticket"):
     id: str = attr()
 
 
-class ReportReportResult(BaseXmlModel, search_mode='unordered', tag="result"):
+class ReportReportResult(BaseXmlModel, search_mode="unordered", tag="result"):
     id: str = attr()
     name: str = element()
     owner: Owner = element(tag="owner")
@@ -321,28 +321,28 @@ class ReportReportResult(BaseXmlModel, search_mode='unordered', tag="result"):
     user_tags: Optional[UserTags] = element(tag="user_tags", default=None)
 
 
-class ReportReportResults(BaseXmlModel, search_mode='unordered', tag="results"):
+class ReportReportResults(BaseXmlModel, search_mode="unordered", tag="results"):
     start: int = attr()
     max: int = attr()
     results: list[ReportReportResult] = element(tag="result")
 
 
-class ReportReportHosts(BaseXmlModel, search_mode='unordered', tag="hosts"):
+class ReportReportHosts(BaseXmlModel, search_mode="unordered", tag="hosts"):
     start: Optional[int] = attr(default=None)
     max: Optional[int] = attr(default=None)
     count: Optional[int] = attr(default=None)
 
 
-class ReportReportCount(BaseXmlModel, search_mode='unordered'):
+class ReportReportCount(BaseXmlModel, search_mode="unordered"):
     count: int = element()
 
 
-class ReportReportHostResultSeverity(BaseXmlModel, search_mode='unordered', tag="page"):
+class ReportReportHostResultSeverity(BaseXmlModel, search_mode="unordered", tag="page"):
     text: str
     page: int = element()
 
 
-class ReportReportHostResultCount(BaseXmlModel, search_mode='unordered', tag="result_count"):
+class ReportReportHostResultCount(BaseXmlModel, search_mode="unordered", tag="result_count"):
     page: int = element()
     hole: ReportReportHostResultSeverity = element(tag="hole")
     warning: ReportReportHostResultSeverity = element(tag="warning")
@@ -351,20 +351,20 @@ class ReportReportHostResultCount(BaseXmlModel, search_mode='unordered', tag="re
     false_positive: ReportReportHostResultSeverity = element(tag="false_positive")
 
 
-class ReportReportHostDetailSource(BaseXmlModel, search_mode='unordered', tag="source"):
+class ReportReportHostDetailSource(BaseXmlModel, search_mode="unordered", tag="source"):
     type: str = element()
     name: str = element()
     description: str = element()
 
 
-class ReportReportHostDetail(BaseXmlModel, search_mode='unordered', tag="detail"):
+class ReportReportHostDetail(BaseXmlModel, search_mode="unordered", tag="detail"):
     name: str = element()
     value: str = element()
     source: ReportReportHostDetailSource = element(tag="source")
     extra: str = element()
 
 
-class ReportReportHost(BaseXmlModel, search_mode='unordered', tag="host"):
+class ReportReportHost(BaseXmlModel, search_mode="unordered", tag="host"):
     ip: str = element()
     asset: ReportReportAsset = element()
     start: datetime = element()
@@ -374,16 +374,16 @@ class ReportReportHost(BaseXmlModel, search_mode='unordered', tag="host"):
     details: list[ReportReportHostDetail] = element(tag="detail")
 
 
-class ReportReportTLSCertificateCertificate(BaseXmlModel, search_mode='unordered', tag="certificate"):
+class ReportReportTLSCertificateCertificate(BaseXmlModel, search_mode="unordered", tag="certificate"):
     format: str = attr()
 
 
-class ReportReportTLSCertificateHost(BaseXmlModel, search_mode='unordered', tag="host"):
+class ReportReportTLSCertificateHost(BaseXmlModel, search_mode="unordered", tag="host"):
     ip: str = element()
     hostname: str = element()
 
 
-class ReportReportTLSCertificate(BaseXmlModel, search_mode='unordered', tag="tls_certificate"):
+class ReportReportTLSCertificate(BaseXmlModel, search_mode="unordered", tag="tls_certificate"):
     name: Optional[str] = element(default=None)
     certificate: Optional[ReportReportTLSCertificateCertificate] = element(tag="certificate", default=None)
     sha256_fingerprint: Optional[str] = element(default=None)
@@ -398,14 +398,14 @@ class ReportReportTLSCertificate(BaseXmlModel, search_mode='unordered', tag="tls
     ports: Optional[list[str]] = wrapped("ports", element(tag="port"), default=None)
 
 
-class ReportReportErrorNVT(BaseXmlModel, search_mode='unordered', tag="nvt"):
+class ReportReportErrorNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
     oid: str = attr()
     name: str = element()
     type: str = element()
     cvss_base: str = element()
 
 
-class ReportReportError(BaseXmlModel, search_mode='unordered', tag="error"):
+class ReportReportError(BaseXmlModel, search_mode="unordered", tag="error"):
     host: ReportReportResultHost = element(tag="host")
     port: str = element()
     description: str = element()
@@ -414,12 +414,12 @@ class ReportReportError(BaseXmlModel, search_mode='unordered', tag="error"):
     severity: float = element()
 
 
-class ReportReportErrors(BaseXmlModel, search_mode='unordered', tag="errors"):
+class ReportReportErrors(BaseXmlModel, search_mode="unordered", tag="errors"):
     count: int = element()
     errors: Optional[list[ReportReportError]] = element(tag="error", default=None)
 
 
-class ReportReport(BaseXmlModel, search_mode='unordered', tag="report"):
+class ReportReport(BaseXmlModel, search_mode="unordered", tag="report"):
     id: str = attr()
     type: Optional[str] = attr(default=None)
     gmp: ReportReportGMP = element()
@@ -457,7 +457,7 @@ class ReportReport(BaseXmlModel, search_mode='unordered', tag="report"):
     errors: Optional[ReportReportErrors] = element(default=None)
 
 
-class Report(BaseXmlModel, search_mode='unordered', tag="report"):
+class Report(BaseXmlModel, search_mode="unordered", tag="report"):
     id: str = attr()
     format_id: str = attr()
     extension: str = attr()

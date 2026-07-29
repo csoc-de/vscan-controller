@@ -25,7 +25,7 @@ class Config(BaseXmlModel, search_mode="unordered", tag="config"):
     permissions: Optional[str] = element(default=None)
 
 
-class Scanner(BaseXmlGvmModel, tag="scanner"):
+class Scanner(BaseXmlGvmModel, search_mode="unordered", tag="scanner"):
     host: Optional[str] = element(default=None)
     port: Optional[int] = element()
     type: Optional[int] = element()
