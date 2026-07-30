@@ -1,4 +1,6 @@
+import sys
 import traceback
+from typing import Optional, Any
 
 import structlog
 import uvicorn
@@ -6,7 +8,8 @@ from gvm.connections import UnixSocketConnection
 from gvm.protocols.gmp import GMP
 from gvm.transforms import EtreeCheckCommandTransform
 
-from app.config import GREENBONE_SOCKET_PATH, GREENBONE_USER, GREENBONE_PASSWORD, HOST, PORT, LOG_LEVEL
+from app.config import GREENBONE_SOCKET_PATH, GREENBONE_USER, GREENBONE_PASSWORD, HOST, PORT, \
+    LOG_LEVEL
 from app.gvm_tools.configs import GVMConfigs
 from app.gvm_tools.port_lists import GVMPortLists
 from app.gvm_tools.reports import GVMReports
@@ -17,11 +20,8 @@ from app.gvm_tools.tasks import GVMTasks
 from app.routers.router import App
 from app.utils.processors import add_log_level_upper, add_and_modify_parameters
 
-socket: UnixSocketConnection = UnixSocketConnection(path=GREENBONE_SOCKET_PATH)
-transform: EtreeCheckCommandTransform = EtreeCheckCommandTransform()
 
-
-def main():
+def init_logging() -> Optional[Any]:
     try:
         structlog.configure(
             processors=[
@@ -47,12 +47,22 @@ def main():
             logger_factory=structlog.PrintLoggerFactory(),
             cache_logger_on_first_use=True,
         )
-        logger = structlog.get_logger()
+        return structlog.get_logger()
     except Exception as e:  # pylint: disable=broad-exception-caught
         print(f"could not setup logger error: {e}")
         print(traceback.format_exc())
-        return
+        raise e
+
+
+def main() -> int:
     try:
+        logger = init_logging()
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        print(f"could not setup logger\n ERROR: {e}\n{traceback.format_exc()}")
+        return 1
+    try:
+        socket: UnixSocketConnection = UnixSocketConnection(path=GREENBONE_SOCKET_PATH)
+        transform: EtreeCheckCommandTransform = EtreeCheckCommandTransform()
         with GMP(connection=socket) as gmp:
             print(gmp.get_version())
         app = App(
@@ -67,9 +77,10 @@ def main():
         )
         uvicorn.run(app.fastapi, host=HOST, port=PORT, log_level="info")
     except Exception as e:  # pylint: disable=broad-exception-caught
-        logger.error(e)
-        return
+        logger.error(e, traceback=traceback.format_exc())
+        return 1
+    return 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

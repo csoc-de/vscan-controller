@@ -1,4 +1,5 @@
 # pylint: disable=raise-missing-from
+import traceback
 from typing import Dict, Optional
 from xml.etree.ElementTree import tostring
 
@@ -46,7 +47,8 @@ class ScannersRouter(APIRouter):
         except GvmResponseError as e:
             match e.status:
                 case _:
-                    self._log.error("call of adapter failed", error=e, status_code=e.status)
+                    self._log.error("call of adapter failed", error=e, status_code=e.status,
+                                    traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         detail="status code not ok"
