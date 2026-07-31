@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from app.models.reports import Report, ReportReportFilterKeyword, ReportReportResultNVTReference
 
 
-def test_report_from_real_xml_file():
+def test_report_parsing_xml_to_model():
     xml_path = os.path.join(os.path.dirname(__file__), "files", "report.xml")
 
     assert os.path.exists(xml_path)
@@ -209,3 +209,170 @@ def test_report_from_real_xml_file():
 
     if inner_report.tls_certificates:
         assert inner_report.tls_certificates.sha256_fingerprint is None
+
+
+def test_report_parsing_xml_to_model_without_reports():
+    xml_path = os.path.join(os.path.dirname(__file__), "files", "report_2.xml")
+
+    assert os.path.exists(xml_path)
+
+    with open(xml_path, "r", encoding="utf-8") as f:
+        xml_content = f.read()
+
+    report = Report.from_xml(xml_content)
+    assert report.content_type == "text/xml"
+    assert report.extension == "xml"
+    assert report.id == "8b7e9334-b914-4a77-879b-74f18841f131"
+    assert report.format_id == "a994b278-1f62-11e1-96ac-406186ea4fc5"
+    assert report.config_id == ""
+    assert report.owner.name == "admin"
+    assert report.name == "2026-07-30T14:54:16Z"
+    assert report.comment is None
+    assert report.creation_time == datetime(2026, 7, 30, 14, 54, 16, tzinfo=timezone.utc)
+    assert report.modification_time == datetime(2026, 7, 30, 14, 55, 11, tzinfo=timezone.utc)
+
+    # --- Task ---
+    assert report.task.id == "2783024a-925f-4ff9-8399-01051e794905"
+    assert report.task.name == "Task:Test 3 :a822155c-d36a-4944-9941-a9cb05890210"
+
+    # --- Report Format ---
+    assert report.report_format.id == "a994b278-1f62-11e1-96ac-406186ea4fc5"
+    assert report.report_format.name == "XML"
+
+    inner_report = report.report
+    assert inner_report.id == "8b7e9334-b914-4a77-879b-74f18841f131"
+    assert inner_report.gmp.version == "22.7"
+    assert inner_report.sort_field.text == "severity"
+    assert inner_report.sort_field.order == "descending"
+
+    assert inner_report.filters.id == "0"
+    assert (inner_report.filters.term ==
+            "apply_overrides=0 levels=chml rows=1000 min_qod=70 first=1 sort-reverse=severity result_hosts_only=0 notes=1 overrides=1")
+    assert inner_report.filters.filter[0] == "Critical"
+    assert inner_report.filters.filter[1] == "High"
+    assert inner_report.filters.filter[2] == "Medium"
+    assert inner_report.filters.filter[3] == "Low"
+
+    keyword = ReportReportFilterKeyword
+    keyword.column = "apply_overrides"
+    keyword.relation = "="
+    keyword.value = "0"
+    assert keyword in inner_report.filters.keywords
+
+    keyword = ReportReportFilterKeyword
+    keyword.column = "levels"
+    keyword.relation = "="
+    keyword.value = "chml"
+    assert keyword in inner_report.filters.keywords
+
+    keyword = ReportReportFilterKeyword
+    keyword.column = "rows"
+    keyword.relation = "="
+    keyword.value = "1000"
+    assert keyword in inner_report.filters.keywords
+
+    keyword = ReportReportFilterKeyword
+    keyword.column = "min_qod"
+    keyword.relation = "="
+    keyword.value = "70"
+    assert keyword in inner_report.filters.keywords
+
+    keyword = ReportReportFilterKeyword
+    keyword.column = "first"
+    keyword.relation = "="
+    keyword.value = "1"
+    assert keyword in inner_report.filters.keywords
+
+    keyword = ReportReportFilterKeyword
+    keyword.column = "sort-reverse"
+    keyword.relation = "="
+    keyword.value = "severity"
+    assert keyword in inner_report.filters.keywords
+
+    keyword = ReportReportFilterKeyword
+    keyword.column = "result_hosts_only"
+    keyword.relation = "="
+    keyword.value = "0"
+    assert keyword in inner_report.filters.keywords
+
+    keyword = ReportReportFilterKeyword
+    keyword.column = "notes"
+    keyword.relation = "="
+    keyword.value = "1"
+    assert keyword in inner_report.filters.keywords
+
+    keyword = ReportReportFilterKeyword
+    keyword.column = "overrides"
+    keyword.relation = "="
+    keyword.value = "1"
+    assert keyword in inner_report.filters.keywords
+
+    assert inner_report.scan_run_status == "Stopped"
+    assert inner_report.hosts.count == 0
+    assert inner_report.closed_cves.count == 0
+    assert inner_report.vulns.count == 0
+    assert inner_report.os.count == 0
+    assert inner_report.apps.count == 0
+    assert inner_report.ssl_certs.count == 0
+
+    assert inner_report.task.id == "2783024a-925f-4ff9-8399-01051e794905"
+    assert inner_report.task.name == "Task:Test 3 :a822155c-d36a-4944-9941-a9cb05890210"
+    assert inner_report.task.comment == "Test TEst Test"
+    assert inner_report.task.target.id == "c8b15140-2460-4885-9268-8b3d3da0c639"
+    assert inner_report.task.target.trash is False
+    assert inner_report.task.target.name == "Target:Test 3 :f7cc42fd-aec7-40b4-9b31-c7c0bd69c4c7"
+    assert inner_report.task.target.comment == "Test TEst Test"
+    assert inner_report.task.progress == 0
+
+    assert inner_report.timestamp == datetime(2026, 7, 30, 14, 54, 16, tzinfo=timezone.utc)
+    assert inner_report.scan_start == datetime(2026, 7, 30, 14, 54, 33, tzinfo=timezone.utc)
+    assert inner_report.timezone == "Coordinated Universal Time"
+    assert inner_report.timezone_abbrev == "UTC"
+
+    assert inner_report.ports.max == 1000
+    assert inner_report.ports.start == 1
+    assert inner_report.ports.count == 0
+
+    assert inner_report.results is not None
+
+    assert inner_report.results.max == 1000
+    assert inner_report.results.start == 1
+
+    # --- Result Count ---
+    assert inner_report.result_count.count == 0
+    assert inner_report.result_count.full == 0
+    assert inner_report.result_count.filtered == 0
+    assert inner_report.result_count.critical.full == 0
+    assert inner_report.result_count.critical.filtered == 0
+    assert inner_report.result_count.hole.full == 0
+    assert inner_report.result_count.hole.filtered == 0
+    assert inner_report.result_count.high.full == 0
+    assert inner_report.result_count.high.filtered == 0
+    assert inner_report.result_count.info.full == 0
+    assert inner_report.result_count.info.filtered == 0
+    assert inner_report.result_count.low.full == 0
+    assert inner_report.result_count.low.filtered == 0
+    assert inner_report.result_count.log.full == 0
+    assert inner_report.result_count.log.filtered == 0
+    assert inner_report.result_count.warning.full == 0
+    assert inner_report.result_count.warning.filtered == 0
+    assert inner_report.result_count.medium.full == 0
+    assert inner_report.result_count.medium.filtered == 0
+    assert inner_report.result_count.false_positive.full == 0
+    assert inner_report.result_count.false_positive.filtered == 0
+
+    # --- Severity ---
+    assert inner_report.severity.full == -99.0
+    assert inner_report.severity.filtered == -99.0
+
+    # --- TLS Certificates ---
+    assert inner_report.tls_certificates.sha256_fingerprint is None
+
+    # --- Scan End ---
+    assert inner_report.scan_end == datetime(2026, 7, 30, 14, 55, 12, tzinfo=timezone.utc)
+
+    # --- Errors ---
+    assert inner_report.errors.count == 0
+
+    # --- Empty Report Format at End ---
+    assert inner_report.report_format is None
