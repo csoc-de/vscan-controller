@@ -1,5 +1,6 @@
 # pylint: disable=raise-missing-from
 import traceback
+from ftplib import print_line
 from typing import Dict, Optional
 from xml.etree.ElementTree import tostring
 
@@ -85,7 +86,11 @@ class ReportsRouter(APIRouter):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="multiple reports with same uuid found"
             )
-        return {"report": Report.from_xml(tostring(report[0]))}
+        print(tostring(report[0]))
+        print("\n")
+        res = Report.from_xml(tostring(report[0]))
+        print(res)
+        return {"report": res}
 
     async def get_reports(
             self,

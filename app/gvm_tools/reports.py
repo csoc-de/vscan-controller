@@ -53,12 +53,12 @@ class GVMReports:
             self,
             report_id: Union[str, UUID],
             *,
-            filter_string: Optional[str] = None,
+            filter_string: Optional[str] = "levels=hmlg min_qod=0",
             filter_id: Optional[str] = None,
             delta_report_id: Optional[Union[str, UUID]] = None,
             report_format_id: Optional[Union[str, ReportFormatType]] = None,
             report_config_id: Optional[str] = None,
-            ignore_pagination: Optional[bool] = None,
+            ignore_pagination: Optional[bool] = True,
             details: Optional[bool] = True,
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
@@ -71,12 +71,12 @@ class GVMReports:
     def get_reports(
             self,
             *,
-            filter_string: Optional[str] = None,
+            filter_string: Optional[str] = "levels=hmlg min_qod=0",
             filter_id: Optional[Union[str, UUID]] = None,
             note_details: Optional[bool] = None,
             override_details: Optional[bool] = None,
-            ignore_pagination: Optional[bool] = None,
-            details: Optional[bool] = None,
+            ignore_pagination: Optional[bool] = True,
+            details: Optional[bool] = True,
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)
