@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Annotated
 
 from lxml.etree import _Element as Element
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic_xml import element, attr, BaseXmlModel, wrapped
 
 from app.models.base import Permission, UserTags, Owner
@@ -118,7 +118,7 @@ class ReportReportTask(BaseXmlModel, search_mode="unordered", tag="task"):
 
 
 class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", arbitrary_types_allowed=True):
-    host: Element = element(default=None)
+    host: Annotated[Element, Field(exclude=True)] = element(default=None)  # field is excluded (fastapi)
     # port: Optional[str] = None
     severity: Optional[float] = element(default=None)
     threat: Optional[str] = element(default=None)
