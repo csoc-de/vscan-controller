@@ -86,11 +86,7 @@ class ReportsRouter(APIRouter):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="multiple reports with same uuid found"
             )
-        print(tostring(report[0]))
-        print("\n")
-        res = Report.from_xml(tostring(report[0]))
-        print(res)
-        return {"report": res}
+        return {"report": Report.from_xml(tostring(report[0]))}
 
     async def get_reports(
             self,

@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional, Annotated
 
 from lxml.etree import _Element as Element
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 from pydantic_xml import element, attr, BaseXmlModel, wrapped
 
 from app.models.base import Permission, UserTags, Owner
@@ -118,26 +118,29 @@ class ReportReportTask(BaseXmlModel, search_mode="unordered", tag="task"):
 
 
 class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", arbitrary_types_allowed=True):
-    host: Annotated[Element, Field(exclude=True)] = element(default=None)  # field is excluded (fastapi)
+    host: Annotated[Element, Field(exclude=True)] = element(
+        field=Field(exclude=True, default=None))  # field is excluded (fastapi)
     # port: Optional[str] = None
     severity: Optional[float] = element(default=None)
     threat: Optional[str] = element(default=None)
 
+    @computed_field(return_type=Optional[str])
     @property
     def host_name(self):
         return self.host.text
 
     @host_name.setter
     def host_name(self, name: str):
-        self.host_name.text = name
+        self.host.text = name
 
+    @computed_field(return_type=Optional[str])
     @property
     def host_port(self):
         return self.host.tail
 
     @host_port.setter
     def host_port(self, port: str):
-        self.host_port.tail = port
+        self.host.tail = port
 
 
 class ReportReportPorts(BaseXmlModel, search_mode="unordered", tag="ports"):
