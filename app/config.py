@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from dotenv import load_dotenv
 
 try:
-    from app.build_info import BUILD_AT, COMMIT, VERSION
+    from app.build_info import BUILD_AT, COMMIT, VERSION  # pylint: disable=unused-import
 except ImportError:
     VERSION = "<version>"
     COMMIT = "<commit>"
