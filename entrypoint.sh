@@ -1,3 +1,7 @@
 #!/bin/bash
 
-python3 ./main.py --dev
+if [ "$DEV" = "true" ]; then
+  python3 ./main.py --dev
+else
+  python3 ./main.py
+fi
