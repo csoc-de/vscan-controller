@@ -147,7 +147,7 @@ class ReportReportPorts(BaseXmlModel, search_mode="unordered", tag="ports"):
     start: int = attr()
     max: int = attr()
     count: int = element()
-    ports: Optional[list[ReportReportPortsPort]] = element(tag="port")
+    ports: Optional[list[ReportReportPortsPort]] = element(tag="port", default=None)
 
 
 class ReportReportResultReport(BaseXmlModel, search_mode="unordered", tag="report"):
