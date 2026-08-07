@@ -147,6 +147,17 @@ class TargetsRouter(APIRouter):
             resp = self._gvm_targets.create_target(**target.__dict__)
         except GvmResponseError as e:
             match e.status:
+                case "400":
+                    if "Target exists already" in e.message:
+                        filter_str: Optional[str] = 'name="' + target.name + '"'
+                        resp = self._gvm_targets.get_targets(filter_str=filter_str, trash=False)
+                        targets = resp.findall("./target")
+                        if len(targets) > 1:
+                            raise HTTPException(
+                                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                detail="status code not ok"
+                            )
+                        return {"id": Target.from_xml(tostring(targets[0])).id}
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status,
                                     traceback=traceback.format_exc())
