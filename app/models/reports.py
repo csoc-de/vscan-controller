@@ -118,9 +118,9 @@ class ReportReportTask(BaseXmlModel, search_mode="unordered", tag="task"):
 
 
 class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", arbitrary_types_allowed=True):
+    port: Optional[str] = None
     host: Annotated[Element, Field(exclude=True)] = element(
         field=Field(exclude=True, default=None))  # field is excluded (fastapi)
-    # port: Optional[str] = None
     severity: Optional[float] = element(default=None)
     threat: Optional[str] = element(default=None)
 
@@ -136,7 +136,9 @@ class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", a
     @computed_field(return_type=Optional[str])
     @property
     def host_port(self):
-        return self.host.tail
+        if self.port is None:
+            return self.host.tail
+        return self.port
 
     @host_port.setter
     def host_port(self, port: str):

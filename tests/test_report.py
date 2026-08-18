@@ -111,26 +111,26 @@ def test_report_parsing_xml_to_model():
     assert len(inner_report.ports.ports) == 4
 
     port_0 = inner_report.ports.ports[0]
-    assert port_0.port == "general/icmp"
-    assert port_0.host == "192.168.100.144"
+    assert port_0.host_port == "general/icmp"
+    assert port_0.host_name == "192.168.100.144"
     assert port_0.severity == 2.1
     assert port_0.threat == "Low"
 
     port_1 = inner_report.ports.ports[1]
-    assert port_1.port == "general/tcp"
-    assert port_1.host == "192.168.100.144"
+    assert port_1.host_port == "general/tcp"
+    assert port_1.host_name == "192.168.100.144"
     assert port_1.severity == 2.6
     assert port_1.threat == "Low"
 
     port_2 = inner_report.ports.ports[2]
-    assert port_2.port == "6379/tcp"
-    assert port_2.host == "192.168.100.144"
+    assert port_2.host_port == "6379/tcp"
+    assert port_2.host_name == "192.168.100.144"
     assert port_2.severity == 7.5
     assert port_2.threat == "High"
 
     port_3 = inner_report.ports.ports[3]
-    assert port_3.port == "22/tcp"
-    assert port_3.host == "192.168.100.144"
+    assert port_3.host_port == "22/tcp"
+    assert port_3.host_name == "192.168.100.144"
     assert port_3.severity == 2.6
     assert port_3.threat == "Low"
 
