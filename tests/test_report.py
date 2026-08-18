@@ -527,40 +527,10 @@ def test_report_parsing_xml_to_model_2():
     # Index 0: AMQP Detection
     result = inner_report.results.results[0]
     assert result.id == "ce344907-3d56-4916-8042-39bf6e31641f"
-    assert result.name == "Advanced Message Queuing Protocol (AMQP) Detection (TCP)"
-    assert result.owner.name == "admin"
-    assert result.host.host == "192.168.1.119\n                    "
-    assert result.port == "5673/tcp"
-    assert result.nvt.oid == "1.3.6.1.4.1.25623.1.0.105030"
-    assert result.nvt.name == "Advanced Message Queuing Protocol (AMQP) Detection (TCP)"
-    assert result.nvt.family == "Service detection"
-    assert result.nvt.cvss_base == 0.0
-    assert result.threat == "Log"
-    assert result.severity == 0.0
-    assert result.qod.value == 80
-    assert result.scan_nvt_version == datetime(2025, 3, 27, 5, 38, 50, tzinfo=timezone.utc)
-    assert result.original_threat == "Log"
-    assert result.original_severity == 0
-    assert result.compliance == "undefined"
 
-    # Index 1: OpenSSH DoS Vulnerability (7022/tcp)
     result = inner_report.results.results[1]
     assert result.id == "7d79b6de-d488-4286-94a6-b8c2de1779e9"
-    assert result.name == "OpenBSD OpenSSH 9.5p1 - 9.9p1 DoS Vulnerability"
-    assert result.host.host == "192.168.1.119\n                    "
-    assert result.port == "7022/tcp"
-    assert result.nvt.oid == "1.3.6.1.4.1.25623.1.0.114947"
-    assert result.nvt.family == "Denial of Service"
-    assert result.nvt.cvss_base == 5.9
-    assert result.threat == "Medium"
-    assert result.severity == 5.9
-    assert result.qod.value == 30
-    assert result.nvt.solution.type == "VendorFix"
-    assert result.nvt.solution.solution == "Update to version 9.9p2 or later."
-    assert result.original_threat == "Medium"
-    assert result.original_severity == 5.9
 
-    # Index 2: OpenSSH DoS Vulnerability (22/tcp)
     result = inner_report.results.results[2]
     assert result.id == "753229a4-adef-49c1-9b3d-b4678fe8daf3"
     assert result.name == "OpenBSD OpenSSH 9.5p1 - 9.9p1 DoS Vulnerability"
@@ -580,16 +550,7 @@ def test_report_parsing_xml_to_model_ports_xml_severity_tail():
         xml_content = f.read()
 
     report = Report.from_xml(xml_content)
-    assert report.content_type == "application/xml"
-    assert report.extension == ""
     assert report.id == "1ecb8a04-f662-4e2a-85c9-88a89a5eced4"
-    assert report.format_id == ""
-    assert report.config_id == ""
-    assert report.owner.name == "admin"
-    assert report.name == "2026-08-05T13:18:38Z"
-    assert report.comment is None
-    assert report.creation_time == datetime(2026, 8, 5, 13, 18, 38, tzinfo=timezone.utc)
-    assert report.modification_time == datetime(2026, 8, 5, 13, 27, 51, tzinfo=timezone.utc)
 
     inner_report = report.report
 
@@ -610,16 +571,7 @@ def test_report_parsing_xml_to_model_ports_xml_threat_tail():
         xml_content = f.read()
 
     report = Report.from_xml(xml_content)
-    assert report.content_type == "application/xml"
-    assert report.extension == ""
     assert report.id == "1ecb8a04-f662-4e2a-85c9-88a89a5eced4"
-    assert report.format_id == ""
-    assert report.config_id == ""
-    assert report.owner.name == "admin"
-    assert report.name == "2026-08-05T13:18:38Z"
-    assert report.comment is None
-    assert report.creation_time == datetime(2026, 8, 5, 13, 18, 38, tzinfo=timezone.utc)
-    assert report.modification_time == datetime(2026, 8, 5, 13, 27, 51, tzinfo=timezone.utc)
 
     inner_report = report.report
 

@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional, Annotated
 
 from lxml.etree import _Element as Element  # pylint: disable=no-name-in-module
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, constr
 from pydantic_xml import element, attr, BaseXmlModel, wrapped
 
 from app.models.base import Permission, UserTags, Owner
@@ -190,7 +190,7 @@ class ReportReportAsset(BaseXmlModel, search_mode="unordered", tag="asset"):
 
 
 class ReportReportResultHost(BaseXmlModel, search_mode="unordered", tag="host"):
-    host: str
+    host: constr(strip_whitespace=True)  # type: ignore[valid-type]
     asset: ReportReportAsset = element(tag="asset")
     hostname: Optional[str] = element(default=None)
 
