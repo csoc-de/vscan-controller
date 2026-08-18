@@ -147,6 +147,14 @@ class TargetsRouter(APIRouter):
             resp = self._gvm_targets.create_target(**target.__dict__)
         except GvmResponseError as e:
             match e.status:
+                case "400":
+                    self._log.error("target already exists or new target has an invalid value", error=e,
+                                    status_code=e.status,
+                                    traceback=traceback.format_exc())
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="target already exists or new target has an invalid value"
+                    )
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status,
                                     traceback=traceback.format_exc())

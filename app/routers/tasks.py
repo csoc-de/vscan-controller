@@ -185,6 +185,14 @@ class TasksRouter(APIRouter):
             resp = self._gvm_tasks.create_task(**task.__dict__)
         except GvmResponseError as e:
             match e.status:
+                case "400":
+                    self._log.error("task already exists or new task has an invalid value", error=e,
+                                    status_code=e.status,
+                                    traceback=traceback.format_exc())
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="task already exists or new task has an invalid value"
+                    )
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status,
                                     traceback=traceback.format_exc())

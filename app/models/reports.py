@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Annotated
 
-from pydantic import BaseModel
+from lxml.etree import _Element as Element  # pylint: disable=no-name-in-module
+from pydantic import BaseModel, Field, computed_field, constr
 from pydantic_xml import element, attr, BaseXmlModel, wrapped
 
 from app.models.base import Permission, UserTags, Owner
@@ -50,6 +51,7 @@ class ReportReportFiltersDelta(BaseXmlModel, search_mode="unordered", tag="delta
 
 
 class ReportReportFilters(BaseXmlModel, search_mode="unordered", tag="filters"):
+    id: Optional[str] = attr(default=None)
     term: str = element()
     phrase: Optional[str] = element(default=None)
     notes: Optional[int] = element(default=None)
@@ -79,7 +81,7 @@ class ReportReportFullFiltered(BaseXmlModel, search_mode="unordered"):
 
 
 class ReportReportResultCountFullFiltered(BaseXmlModel, search_mode="unordered"):
-    deprecated: str
+    deprecated: Optional[str] = None
     full: int = element()
     filtered: int = element()
 
@@ -115,18 +117,68 @@ class ReportReportTask(BaseXmlModel, search_mode="unordered", tag="task"):
     user_tags: Optional[UserTags] = element(default=None, tag="user_tags")
 
 
-class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port"):
-    port: str
-    host: str = element()
-    severity: float = element()
-    threat: str = element()
+class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", arbitrary_types_allowed=True):
+    port: Optional[str] = None
+    host: Annotated[Element, Field(exclude=True)] = element(
+        field=Field(exclude=True, default=None))  # field is excluded (fastapi)
+    severity_elem: Annotated[Element, Field(exclude=True)] = element(field=Field(exclude=True, default=None),
+                                                                     tag="severity", default=None)
+    threat_elem: Annotated[Element, Field(exclude=True)] = element(field=Field(exclude=True, default=None),
+                                                                   tag="threat", default=None)
+
+    @computed_field(return_type=Optional[str])
+    @property
+    def host_name(self):
+        return self.host.text
+
+    @host_name.setter
+    def host_name(self, name: str):
+        self.host.text = name
+
+    @computed_field(return_type=Optional[str])
+    @property
+    def host_port(self):
+        if self.port is not None and self.port.strip() != "":
+            return self.port
+        if self.host is not None and self.host.tail.strip() != "":
+            return self.host.tail.strip()
+        if self.severity_elem is not None and self.severity_elem.tail.strip() != "":
+            stripped = self.severity_elem.tail.strip()
+            if stripped:
+                return stripped
+        if self.threat_elem is not None and self.threat_elem.tail.strip() != "":
+            stripped = self.threat_elem.tail.strip()
+            if stripped:
+                return stripped
+        return None
+
+    @host_port.setter
+    def host_port(self, port: str):
+        self.host.tail = port
+
+    @computed_field(return_type=Optional[float])
+    @property
+    def severity(self) -> Optional[float]:
+        if self.severity_elem is not None and self.severity_elem.text:
+            try:
+                return float(self.severity_elem.text.strip())
+            except ValueError:
+                return None
+        return None
+
+    @computed_field(return_type=Optional[str])
+    @property
+    def threat(self) -> Optional[str]:
+        if self.threat_elem is not None:
+            return self.threat_elem.text
+        return None
 
 
 class ReportReportPorts(BaseXmlModel, search_mode="unordered", tag="ports"):
     start: int = attr()
     max: int = attr()
     count: int = element()
-    ports: list[ReportReportPortsPort] = element(tag="port")
+    ports: Optional[list[ReportReportPortsPort]] = element(tag="port", default=None)
 
 
 class ReportReportResultReport(BaseXmlModel, search_mode="unordered", tag="report"):
@@ -138,7 +190,7 @@ class ReportReportAsset(BaseXmlModel, search_mode="unordered", tag="asset"):
 
 
 class ReportReportResultHost(BaseXmlModel, search_mode="unordered", tag="host"):
-    host: str
+    host: constr(strip_whitespace=True)  # type: ignore[valid-type]
     asset: ReportReportAsset = element(tag="asset")
     hostname: Optional[str] = element(default=None)
 
@@ -165,7 +217,7 @@ class ReportReportResultNVTReference(BaseXmlModel, search_mode="unordered", tag=
 
 
 class ReportReportResultNVTSolution(BaseXmlModel, search_mode="unordered", tag="solution"):
-    solution: str
+    solution: Optional[str] = None
     type: Optional[str] = attr(default=None)
 
 
@@ -310,7 +362,7 @@ class ReportReportResult(BaseXmlModel, search_mode="unordered", tag="result"):
     threat: str = element()
     severity: float = element()
     qod: ReportReportResultQOD = element()
-    description: str = element()
+    description: Optional[str] = element(default=None)
     original_threat: Optional[str] = element(default=None)
     original_severity: Optional[float] = element(default=None)
     compliance: Optional[str] = element(default=None)
@@ -324,7 +376,7 @@ class ReportReportResult(BaseXmlModel, search_mode="unordered", tag="result"):
 class ReportReportResults(BaseXmlModel, search_mode="unordered", tag="results"):
     start: int = attr()
     max: int = attr()
-    results: list[ReportReportResult] = element(tag="result")
+    results: Optional[list[ReportReportResult]] = element(tag="result", default=None)
 
 
 class ReportReportHosts(BaseXmlModel, search_mode="unordered", tag="hosts"):
@@ -445,7 +497,6 @@ class ReportReport(BaseXmlModel, search_mode="unordered", tag="report"):
     apps: Optional[ReportReportCount] = element(tag="apps", default=None)
     ssl_certs: Optional[ReportReportCount] = element(tag="ssl_certs", default=None)
     task: Optional[ReportReportTask] = element(tag="task", default=None)
-    # hosts: Optional[list[ReportReportHost]] = element(tag="host", default=None)
     tls_certificates: Optional[ReportReportTLSCertificate] = element(tag="tls_certificates", default=None)
     timestamp: Optional[datetime] = element(default=None)
     scan_start: Optional[datetime] = element(default=None)
@@ -455,13 +506,15 @@ class ReportReport(BaseXmlModel, search_mode="unordered", tag="report"):
     ports: Optional[ReportReportPorts] = element(tag="ports", default=None)
     results: Optional[ReportReportResults] = element(tag="results", default=None)
     errors: Optional[ReportReportErrors] = element(default=None)
+    report_format: Optional[str] = element(tag="report_format", default=None)
 
 
 class Report(BaseXmlModel, search_mode="unordered", tag="report"):
-    id: str = attr()
-    format_id: str = attr()
-    extension: str = attr()
-    content_type: str = attr()
+    id: Optional[str] = attr(default=None)
+    format_id: Optional[str] = attr(default=None)
+    extension: Optional[str] = attr(default=None)
+    config_id: Optional[str] = attr(default=None)
+    content_type: Optional[str] = attr(default=None)
     type: Optional[str] = attr(default=None)
     owner: Owner = element()
     name: str = element()
