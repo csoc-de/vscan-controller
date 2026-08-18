@@ -1,6 +1,5 @@
 # pylint: disable=raise-missing-from
 import traceback
-from ftplib import print_line
 from typing import Dict, Optional
 from xml.etree.ElementTree import tostring
 

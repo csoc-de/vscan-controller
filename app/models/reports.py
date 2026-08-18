@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional, Annotated
 
-from lxml.etree import _Element as Element
+from lxml.etree import _Element as Element  # pylint: disable=no-name-in-module
 from pydantic import BaseModel, Field, computed_field
 from pydantic_xml import element, attr, BaseXmlModel, wrapped
 
