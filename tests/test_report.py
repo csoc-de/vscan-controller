@@ -486,35 +486,35 @@ def test_report_parsing_xml_to_model_2():
     # Port 443/tcp (Index 0)
     port_443 = inner_report.ports.ports[0]
     assert port_443.host_name == "192.168.1.119"
-    assert port_443.host_port == "443/tcp\n                "
+    assert port_443.host_port == "443/tcp"
     assert port_443.severity == 0.0
     assert port_443.threat == "Log"
 
     # Port 7022/tcp (Index 4)
     port_7022 = inner_report.ports.ports[4]
     assert port_7022.host_name == "192.168.1.119"
-    assert port_7022.host_port == "7022/tcp\n                "
+    assert port_7022.host_port == "7022/tcp"
     assert port_7022.severity == 5.9
     assert port_7022.threat == "Medium"
 
     # Port 6379/tcp (Index 9)
     port_6379 = inner_report.ports.ports[9]
     assert port_6379.host_name == "192.168.1.119"
-    assert port_6379.host_port == "6379/tcp\n                "
+    assert port_6379.host_port == "6379/tcp"
     assert port_6379.severity == 8.8
     assert port_6379.threat == "High"
 
     # Port 1515/tcp (Index 10)
     port_1515 = inner_report.ports.ports[10]
     assert port_1515.host_name == "192.168.1.119"
-    assert port_1515.host_port == "1515/tcp\n                "
+    assert port_1515.host_port == "1515/tcp"
     assert port_1515.severity == 7.5
     assert port_1515.threat == "High"
 
     # Port 22/tcp (Index 8)
     port_22 = inner_report.ports.ports[8]
     assert port_22.host_name == "192.168.1.119"
-    assert port_22.host_port == "22/tcp\n                "
+    assert port_22.host_port == "22/tcp"
     assert port_22.severity == 5.9
     assert port_22.threat == "Medium"
 
@@ -569,3 +569,63 @@ def test_report_parsing_xml_to_model_2():
     assert result.threat == "Medium"
     assert result.severity == 5.9
     assert result.qod.value == 30
+
+
+def test_report_parsing_xml_to_model_ports_xml_severity_tail():
+    xml_path = os.path.join(os.path.dirname(__file__), "files", "report_4.xml")
+
+    assert os.path.exists(xml_path)
+
+    with open(xml_path, "r", encoding="utf-8") as f:
+        xml_content = f.read()
+
+    report = Report.from_xml(xml_content)
+    assert report.content_type == "application/xml"
+    assert report.extension == ""
+    assert report.id == "1ecb8a04-f662-4e2a-85c9-88a89a5eced4"
+    assert report.format_id == ""
+    assert report.config_id == ""
+    assert report.owner.name == "admin"
+    assert report.name == "2026-08-05T13:18:38Z"
+    assert report.comment is None
+    assert report.creation_time == datetime(2026, 8, 5, 13, 18, 38, tzinfo=timezone.utc)
+    assert report.modification_time == datetime(2026, 8, 5, 13, 27, 51, tzinfo=timezone.utc)
+
+    inner_report = report.report
+
+    # Port 443/tcp (Index 0)
+    port_443 = inner_report.ports.ports[0]
+    assert port_443.host_name == "192.168.1.119"
+    assert port_443.host_port == "443/tcp"
+    assert port_443.severity == 0.0
+    assert port_443.threat == "Log"
+
+
+def test_report_parsing_xml_to_model_ports_xml_threat_tail():
+    xml_path = os.path.join(os.path.dirname(__file__), "files", "report_5.xml")
+
+    assert os.path.exists(xml_path)
+
+    with open(xml_path, "r", encoding="utf-8") as f:
+        xml_content = f.read()
+
+    report = Report.from_xml(xml_content)
+    assert report.content_type == "application/xml"
+    assert report.extension == ""
+    assert report.id == "1ecb8a04-f662-4e2a-85c9-88a89a5eced4"
+    assert report.format_id == ""
+    assert report.config_id == ""
+    assert report.owner.name == "admin"
+    assert report.name == "2026-08-05T13:18:38Z"
+    assert report.comment is None
+    assert report.creation_time == datetime(2026, 8, 5, 13, 18, 38, tzinfo=timezone.utc)
+    assert report.modification_time == datetime(2026, 8, 5, 13, 27, 51, tzinfo=timezone.utc)
+
+    inner_report = report.report
+
+    # Port 443/tcp (Index 0)
+    port_443 = inner_report.ports.ports[0]
+    assert port_443.host_name == "192.168.1.119"
+    assert port_443.host_port == "443/tcp"
+    assert port_443.severity == 0.0
+    assert port_443.threat == "Log"

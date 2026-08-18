@@ -121,8 +121,10 @@ class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", a
     port: Optional[str] = None
     host: Annotated[Element, Field(exclude=True)] = element(
         field=Field(exclude=True, default=None))  # field is excluded (fastapi)
-    severity: Optional[float] = element(default=None)
-    threat: Optional[str] = element(default=None)
+    severity_elem: Annotated[Element, Field(exclude=True)] = element(field=Field(exclude=True, default=None),
+                                                                     tag="severity", default=None)
+    threat_elem: Annotated[Element, Field(exclude=True)] = element(field=Field(exclude=True, default=None),
+                                                                   tag="threat", default=None)
 
     @computed_field(return_type=Optional[str])
     @property
@@ -136,13 +138,40 @@ class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", a
     @computed_field(return_type=Optional[str])
     @property
     def host_port(self):
-        if self.port is None:
-            return self.host.tail
-        return self.port
+        if self.port is not None and self.port.strip() != "":
+            return self.port
+        if self.host is not None and self.host.tail.strip() != "":
+            return self.host.tail.strip()
+        if self.severity_elem is not None and self.severity_elem.tail.strip() != "":
+            stripped = self.severity_elem.tail.strip()
+            if stripped:
+                return stripped
+        if self.threat_elem is not None and self.threat_elem.tail.strip() != "":
+            stripped = self.threat_elem.tail.strip()
+            if stripped:
+                return stripped
+        return None
 
     @host_port.setter
     def host_port(self, port: str):
         self.host.tail = port
+
+    @computed_field(return_type=Optional[float])
+    @property
+    def severity(self) -> Optional[float]:
+        if self.severity_elem is not None and self.severity_elem.text:
+            try:
+                return float(self.severity_elem.text.strip())
+            except ValueError:
+                return None
+        return None
+
+    @computed_field(return_type=Optional[str])
+    @property
+    def threat(self) -> Optional[str]:
+        if self.threat_elem is not None:
+            return self.threat_elem.text
+        return None
 
 
 class ReportReportPorts(BaseXmlModel, search_mode="unordered", tag="ports"):
