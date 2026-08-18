@@ -186,16 +186,13 @@ class TasksRouter(APIRouter):
         except GvmResponseError as e:
             match e.status:
                 case "400":
-                    if "Task exists already" in e.message:
-                        filter_str: Optional[str] = 'name="' + task.name + '"'
-                        resp = self._gvm_tasks.get_tasks(filter_str=filter_str, trash=False, details=False)
-                        tasks = resp.findall("./task")
-                        if len(tasks) > 1:
-                            raise HTTPException(
-                                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                                detail="status code not ok"
-                            )
-                        return {"id": Task.from_xml(tostring(tasks[0])).id}
+                    self._log.error("task already exists or new task has an invalid value", error=e,
+                                    status_code=e.status,
+                                    traceback=traceback.format_exc())
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="task already exists or new task has an invalid value"
+                    )
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status,
                                     traceback=traceback.format_exc())

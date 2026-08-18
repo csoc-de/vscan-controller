@@ -148,16 +148,13 @@ class SchedulesRouter(APIRouter):
         except GvmResponseError as e:
             match e.status:
                 case "400":
-                    if "Schedule exists already" in e.message:
-                        filter_str: Optional[str] = 'name="' + schedule.name + '"'
-                        resp = self._gvm_schedules.get_schedules(filter_string=filter_str, trash=False, tasks=False)
-                        schedules = resp.findall("./schedule")
-                        if len(schedules) > 1:
-                            raise HTTPException(
-                                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                                detail="status code not ok"
-                            )
-                        return {"id": Schedule.from_xml(tostring(schedules[0])).id}
+                    self._log.error("schedule already exists or new schedule has an invalid value", error=e,
+                                    status_code=e.status,
+                                    traceback=traceback.format_exc())
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="schedule already exists or new schedule has an invalid value"
+                    )
                 case _:
                     self._log.error("call of adapter failed", error=e, status_code=e.status,
                                     traceback=traceback.format_exc())
