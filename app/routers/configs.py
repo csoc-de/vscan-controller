@@ -48,6 +48,11 @@ class ConfigsRouter(APIRouter):
         try:
             resp = self.gvm_configs.get_configs(filter_string=filter_string, trash=trash, details=details,
                                                 families=families, preferences=preferences, tasks=tasks)
+            configs = resp.findall("./config")
+            res = []
+            for r in configs:
+                res.append(Config.from_xml(tostring(r)))
+            return {"configs": res}
         except GvmResponseError as e:
             match e.status:
                 case _:
@@ -55,10 +60,12 @@ class ConfigsRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-        configs = resp.findall("./config")
-        res = []
-        for r in configs:
-            res.append(Config.from_xml(tostring(r)))
-        return {"configs": res}
+        except Exception as e:
+            self._log.error("call of adapter or xml conversion of configs failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
