@@ -44,6 +44,11 @@ class ScannersRouter(APIRouter):
     ) -> Dict[str, list[Scanner]]:
         try:
             resp = self.gvm_scanners.get_scanners(filter_string=filter_string, trash=trash, details=details)
+            scanners = resp.findall("./scanner")
+            res = []
+            for s in scanners:
+                res.append(Scanner.from_xml(tostring(s)))
+            return {"scanners": res}
         except GvmResponseError as e:
             match e.status:
                 case _:
@@ -51,10 +56,12 @@ class ScannersRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-        scanners = resp.findall("./scanner")
-        res = []
-        for s in scanners:
-            res.append(Scanner.from_xml(tostring(s)))
-        return {"scanners": res}
+        except Exception as e:
+            self._log.error("call of adapter or xml conversion of scanners failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )

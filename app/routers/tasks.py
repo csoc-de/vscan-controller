@@ -137,6 +137,14 @@ class TasksRouter(APIRouter):
     async def get_task(self, uuid: str) -> Dict[str, Task]:
         try:
             resp = self._gvm_tasks.get_task(uuid)
+            task = resp.findall("./task")
+            if len(task) > 1:
+                self._log.error("multiple tasks with same uuid found")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="multiple tasks with same uuid found"
+                )
+            return {"task": Task.from_xml(tostring(task[0]))}
         except GvmResponseError as e:
             match e.status:
                 case "404":
@@ -149,22 +157,26 @@ class TasksRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-        task = resp.findall("./task")
-        if len(task) > 1:
-            self._log.error("multiple tasks with same uuid found")
+        except Exception as e:
+            self._log.error("call of adapter or xml conversion of task failed", error=e,
+                            traceback=traceback.format_exc())
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="multiple tasks with same uuid found"
+                detail="internal server error"
             )
-        return {"task": Task.from_xml(tostring(task[0]))}
 
     async def get_tasks(self, filter_str: Optional[str] = None, trash: Optional[bool] = False,
                         details: Optional[bool] = False) -> Dict[
         str, list[Task]]:
         try:
             resp = self._gvm_tasks.get_tasks(filter_str, trash, details)
+            tasks = resp.findall("./task")
+            res = []
+            for t in tasks:
+                res.append(Task.from_xml(tostring(t)))
+            return {"tasks": res}
         except GvmResponseError as e:
             match e.status:
                 case _:
@@ -172,17 +184,20 @@ class TasksRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-        tasks = resp.findall("./task")
-        res = []
-        for t in tasks:
-            res.append(Task.from_xml(tostring(t)))
-        return {"tasks": res}
+        except Exception as e:
+            self._log.error("call of adapter or xml conversion of tasks failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
 
     async def create_task(self, task: TaskCreate) -> Dict[str, str]:
         try:
             resp = self._gvm_tasks.create_task(**task.__dict__)
+            return {"id": resp.get("id")}
         except GvmResponseError as e:
             match e.status:
                 case "400":
@@ -198,9 +213,15 @@ class TasksRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-        return {"id": resp.get("id")}
+        except Exception as e:
+            self._log.error("call of adapter or get of task id failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
 
     async def update_task(self, uuid: str, task: TaskUpdate) -> None:
         try:
@@ -217,8 +238,15 @@ class TasksRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
+        except Exception as e:
+            self._log.error("call of adapter or update of task failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
 
     async def delete_task(self, uuid: str, ultimate: Optional[bool] = False) -> None:
         try:
@@ -235,8 +263,15 @@ class TasksRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
+        except Exception as e:
+            self._log.error("call of adapter or delete of task failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
 
     async def start_task(self, uuid: str) -> None:
         try:
@@ -253,8 +288,15 @@ class TasksRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
+        except Exception as e:
+            self._log.error("call of adapter or start of task failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
 
     async def resume_task(self, uuid: str) -> None:
         try:
@@ -271,8 +313,15 @@ class TasksRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
+        except Exception as e:
+            self._log.error("call of adapter or resume of task failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
 
     async def stop_task(self, uuid: str) -> None:
         try:
@@ -289,5 +338,12 @@ class TasksRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
+        except Exception as e:
+            self._log.error("call of adapter or stop of task failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )

@@ -95,6 +95,14 @@ class SchedulesRouter(APIRouter):
     async def get_schedule(self, uuid: str, tasks: Optional[bool] = False) -> Dict[str, Schedule]:
         try:
             resp = self._gvm_schedules.get_schedule(uuid, tasks=tasks)
+            schedule = resp.findall("./schedule")
+            if len(schedule) > 1:
+                self._log.error("multiple schedules with same uuid found")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="multiple schedules with same uuid found"
+                )
+            return {"schedule": Schedule.from_xml(tostring(schedule[0]))}
         except GvmResponseError as e:
             match e.status:
                 case "404":
@@ -107,17 +115,15 @@ class SchedulesRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(  # pylint: disable=raise-missing-from
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-
-        schedule = resp.findall("./schedule")
-        if len(schedule) > 1:
-            self._log.error("multiple schedules with same uuid found")
+        except Exception as e:
+            self._log.error("call of adapter or xml conversion of schedule failed", error=e,
+                            traceback=traceback.format_exc())
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="multiple schedules with same uuid found"
+                detail="internal server error"
             )
-        return {"schedule": Schedule.from_xml(tostring(schedule[0]))}
 
     async def get_schedules(
             self,
@@ -127,6 +133,11 @@ class SchedulesRouter(APIRouter):
     ) -> Dict[str, list[Schedule]]:
         try:
             resp = self._gvm_schedules.get_schedules(filter_string=filter_str, trash=trash, tasks=tasks)
+            schedules = resp.findall("./schedule")
+            res = []
+            for s in schedules:
+                res.append(Schedule.from_xml(tostring(s)))
+            return {"schedules": res}
         except GvmResponseError as e:
             match e.status:
                 case _:
@@ -134,17 +145,20 @@ class SchedulesRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-        schedules = resp.findall("./schedule")
-        res = []
-        for s in schedules:
-            res.append(Schedule.from_xml(tostring(s)))
-        return {"schedules": res}
+        except Exception as e:
+            self._log.error("call of adapter or xml conversion of schedules failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
 
     async def create_schedule(self, schedule: ScheduleCreate) -> Dict[str, str]:
         try:
             resp = self._gvm_schedules.create_schedule(**schedule.__dict__)
+            return {"id": resp.get("id")}
         except GvmResponseError as e:
             match e.status:
                 case "400":
@@ -160,9 +174,15 @@ class SchedulesRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-        return {"id": resp.get("id")}
+        except Exception as e:
+            self._log.error("call of adapter or get of schedule id failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
 
     async def update_schedule(self, uuid: str, schedule: ScheduleUpdate) -> None:
         try:
@@ -179,8 +199,15 @@ class SchedulesRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
+        except Exception as e:
+            self._log.error("call of adapter or update of schedule failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
 
     async def delete_schedule(self, uuid: str, ultimate: Optional[bool] = False) -> None:
         try:
@@ -197,5 +224,12 @@ class SchedulesRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
+        except Exception as e:
+            self._log.error("call of adapter or delete of schedule failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )

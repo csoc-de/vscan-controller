@@ -44,6 +44,11 @@ class PortListsRouter(APIRouter):
     ) -> Dict[str, list[PortList]]:
         try:
             resp = self._gvm_port_lists.get_port_lists(filter_str=filter_str, details=details, trash=trash)
+            port_lists = resp.findall("./port_list")
+            res = []
+            for l in port_lists:
+                res.append(PortList.from_xml(tostring(l)))
+            return {"port_lists": res}
         except GvmResponseError as e:
             match e.status:
                 case _:
@@ -51,10 +56,12 @@ class PortListsRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-        port_lists = resp.findall("./port_list")
-        res = []
-        for l in port_lists:
-            res.append(PortList.from_xml(tostring(l)))
-        return {"port_lists": res}
+        except Exception as e:
+            self._log.error("call of adapter or xml conversion of port_lists failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )

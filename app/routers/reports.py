@@ -64,6 +64,14 @@ class ReportsRouter(APIRouter):
     async def get_report(self, uuid: str) -> Dict[str, Report]:
         try:
             resp = self.gvm_reports.get_report(uuid)
+            report = resp.findall("./report")
+            if len(report) > 1:
+                self._log.error("multiple reports with same uuid found")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="multiple reports with same uuid found"
+                )
+            return {"report": Report.from_xml(tostring(report[0]))}
         except GvmResponseError as e:
             match e.status:
                 case "404":
@@ -76,16 +84,15 @@ class ReportsRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-        report = resp.findall("./report")
-        if len(report) > 1:
-            self._log.error("multiple reports with same uuid found")
+        except Exception as e:
+            self._log.error("call of adapter or xml conversion of report failed", error=e,
+                            traceback=traceback.format_exc())
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="multiple reports with same uuid found"
+                detail="internal server error"
             )
-        return {"report": Report.from_xml(tostring(report[0]))}
 
     async def get_reports(
             self,
@@ -101,6 +108,11 @@ class ReportsRouter(APIRouter):
             resp = self.gvm_reports.get_reports(filter_string=filter_string, filter_id=filter_id,
                                                 note_details=note_details, override_details=override_details,
                                                 ignore_pagination=ignore_pagination, details=details)
+            reports = resp.findall("./report")
+            res = []
+            for r in reports:
+                res.append(Report.from_xml(tostring(r)))
+            return {"reports": res}
         except GvmResponseError as e:
             match e.status:
                 case _:
@@ -108,13 +120,15 @@ class ReportsRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
-        reports = resp.findall("./report")
-        res = []
-        for r in reports:
-            res.append(Report.from_xml(tostring(r)))
-        return {"reports": res}
+        except Exception as e:
+            self._log.error("call of adapter or xml conversion of reports failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
 
     async def import_report(
             self,
@@ -132,5 +146,12 @@ class ReportsRouter(APIRouter):
                                     traceback=traceback.format_exc())
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="status code not ok"
+                        detail="internal server error"
                     )
+        except Exception as e:
+            self._log.error("import failed", error=e,
+                            traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="internal server error"
+            )
