@@ -35,11 +35,3 @@ class BaseXmlGvmModel(BaseXmlModel, search_mode="unordered"):
     in_use: bool = element()
     permissions: list[Permission] = wrapped("permissions", element(tag="permission"))
     user_tags: Optional[UserTags] = element("user_tags", default=None)
-
-
-class CertificateInfo(BaseXmlModel, search_mode="unordered"):
-    time_status: str = element()
-    activation_time: datetime = element()
-    expiration_time: datetime = element()
-    issuer: str = element()
-    md5_fingerprint: str = element()
