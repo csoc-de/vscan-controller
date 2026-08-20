@@ -23,13 +23,13 @@ class GVMTasks:
             return gvm.get_task(task_id)
 
     def get_tasks(
-            self, filter_str: Optional[str] = None,
+            self, filter_string: Optional[str] = None,
             trash: Optional[bool] = False,
             details: Optional[bool] = None
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)
-            return gvm.get_tasks(filter_string=filter_str, trash=trash, details=details)
+            return gvm.get_tasks(filter_string=filter_string, trash=trash, details=details)
 
     def create_task(
             self,

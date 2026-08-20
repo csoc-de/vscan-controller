@@ -167,11 +167,11 @@ class TasksRouter(APIRouter):
                 detail="internal server error"
             )
 
-    async def get_tasks(self, filter_str: Optional[str] = None, trash: Optional[bool] = False,
+    async def get_tasks(self, filter_string: Optional[str] = None, trash: Optional[bool] = False,
                         details: Optional[bool] = False) -> Dict[
         str, list[Task]]:
         try:
-            resp = self._gvm_tasks.get_tasks(filter_str, trash, details)
+            resp = self._gvm_tasks.get_tasks(filter_string, trash, details)
             tasks = resp.findall("./task")
             res = []
             for t in tasks:

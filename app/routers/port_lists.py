@@ -38,12 +38,12 @@ class PortListsRouter(APIRouter):
     async def get_port_lists(
             self,
             *,
-            filter_str: Optional[str] = None,
+            filter_string: Optional[str] = None,
             details: Optional[bool] = False,
             trash: Optional[bool] = False
     ) -> Dict[str, list[PortList]]:
         try:
-            resp = self._gvm_port_lists.get_port_lists(filter_str=filter_str, details=details, trash=trash)
+            resp = self._gvm_port_lists.get_port_lists(filter_string=filter_string, details=details, trash=trash)
             port_lists = resp.findall("./port_list")
             res = []
             for l in port_lists:
