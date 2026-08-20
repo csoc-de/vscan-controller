@@ -1,7 +1,7 @@
 fastapi==0.141.1
 pydantic==2.13.4
 pydantic_xml==2.21.1
-python-dotenv==1.2.2
+python-dotenv==1.2.3
 pytest==9.1.1
 uvicorn==0.52.3
 python-gvm==27.6.0
