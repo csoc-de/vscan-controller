@@ -125,10 +125,10 @@ class TargetsRouter(APIRouter):
                 detail="internal server error"
             )
 
-    async def get_targets(self, filter_str: Optional[str] = None, trash: Optional[bool] = False) -> Dict[
+    async def get_targets(self, filter_string: Optional[str] = None, trash: Optional[bool] = False) -> Dict[
         str, list[Target]]:
         try:
-            resp = self._gvm_targets.get_targets(filter_str, trash)
+            resp = self._gvm_targets.get_targets(filter_string, trash)
             targets = resp.findall("./target")
             res = []
             for t in targets:

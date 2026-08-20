@@ -127,12 +127,12 @@ class SchedulesRouter(APIRouter):
 
     async def get_schedules(
             self,
-            filter_str: Optional[str] = None,
+            filter_string: Optional[str] = None,
             trash: Optional[bool] = False,
             tasks: Optional[bool] = False
     ) -> Dict[str, list[Schedule]]:
         try:
-            resp = self._gvm_schedules.get_schedules(filter_string=filter_str, trash=trash, tasks=tasks)
+            resp = self._gvm_schedules.get_schedules(filter_string=filter_string, trash=trash, tasks=tasks)
             schedules = resp.findall("./schedule")
             res = []
             for s in schedules:

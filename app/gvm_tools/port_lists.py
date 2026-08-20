@@ -21,10 +21,10 @@ class GVMPortLists:
     def get_port_lists(
             self,
             *,
-            filter_str: Optional[str] = None,
+            filter_string: Optional[str] = None,
             details: Optional[bool] = False,
             trash: Optional[bool] = False
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)
-            return gvm.get_port_lists(filter_string=filter_str, details=details, trash=trash)
+            return gvm.get_port_lists(filter_string=filter_string, details=details, trash=trash)
