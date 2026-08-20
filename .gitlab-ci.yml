@@ -27,7 +27,7 @@ build:
 linter:
   image: ${HARBOR_HOST}/dockerhub/library/python:latest
   stage: lint
-  needs: [ ]
+  needs: []
   before_script:
     - pip install pylint
     - pip install -r requirements.txt
@@ -37,7 +37,7 @@ linter:
 unit:
   image: ${HARBOR_HOST}/dockerhub/library/python:latest
   stage: test
-  needs: [ ]
+  needs: []
   before_script:
     - pip install pytest pytest-cov
     - pip install -r requirements.txt
@@ -56,26 +56,16 @@ unit:
         coverage_format: cobertura
         path: coverage.xml
     expire_in: 2 days
+
 sbom:
   image: ${HARBOR_HOST}/dockerhub/library/python:latest
   stage: check
   interruptible: true
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_TAG
   tags:
     - default
-  needs:
-    - job: build
-  variables:
-    DTRACK_ID: ${DTRACK_PID}
-    SBOM_CREATE_PAYLOAD: |
-      cat > payload.json <<HERE
-      {
-      "project": "${DTRACK_PID}",
-      "bom": "$(cat sbom.xml |base64 -)"
-      }
-      HERE
-    SBOM_UPLOAD_COMMAND: 'curl -X "PUT" "https://dtrack-api.dev.csoc.host/api/v1/bom" -H "Content-Type: application/json" -H "X-API-Key: ${DTRACK_APIKEY}" -d @payload.json'
   before_script:
     - python3 -m venv /builds/${CI_PROJECT_PATH}/venv
     - cd /builds/${CI_PROJECT_PATH}
@@ -84,8 +74,37 @@ sbom:
     - python -m pip install cyclonedx-bom
   script:
     - cyclonedx-py environment --gather-license-texts -o sbom.xml --of XML -v --validate /builds/${CI_PROJECT_PATH}/venv
-    - 'eval "$SBOM_CREATE_PAYLOAD"'
-    - 'eval "$SBOM_UPLOAD_COMMAND"'
+    - |
+      BOM_B64=$(base64 -w 0 sbom.xml)
+      if [ -n "${CI_COMMIT_TAG}" ]; then
+        echo "Uploading SBOM: project=${CI_PROJECT_NAME}, version=${CI_COMMIT_TAG}, parent=main"
+        cat > payload.json <<PAYLOAD_EOF
+      {
+        "projectName": "${CI_PROJECT_NAME}",
+        "projectVersion": "${CI_COMMIT_TAG}",
+        "parentName": "${CI_PROJECT_NAME}",
+        "parentVersion": "main",
+        "autoCreate": true,
+        "bom": "${BOM_B64}"
+      }
+      PAYLOAD_EOF
+      else
+        echo "Uploading SBOM: project=${CI_PROJECT_NAME}, version=main (überschreibt)"
+        cat > payload.json <<PAYLOAD_EOF
+      {
+        "projectName": "${CI_PROJECT_NAME}",
+        "projectVersion": "main",
+        "autoCreate": true,
+        "isLatest": true,
+        "bom": "${BOM_B64}"
+      }
+      PAYLOAD_EOF
+      fi
+    - |
+      curl -f -X "PUT" "${DTRACK_URL}/api/v1/bom" \
+        -H "Content-Type: application/json" \
+        -H "X-API-Key: ${DTRACK_APIKEY}" \
+        -d @payload.json
   artifacts:
     when: always
     paths:
