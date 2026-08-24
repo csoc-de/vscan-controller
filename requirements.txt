@@ -4,5 +4,5 @@ pydantic_xml==2.21.1
 python-dotenv==1.2.3
 pytest==9.1.1
 uvicorn==0.52.4
-python-gvm==27.6.0
+python-gvm==27.7.0
 structlog==26.1.0
