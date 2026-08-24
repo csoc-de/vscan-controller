@@ -73,7 +73,7 @@ sbom:
     - python -m pip install -r requirements.txt
     - python -m pip install cyclonedx-bom
   script:
-    - cyclonedx-py environment --gather-license-texts -o sbom.xml --of XML -v --validate /builds/${CI_PROJECT_PATH}/venv
+    - cyclonedx-py environment --gather-license-texts --output-reproducible -o sbom.xml -v --validate /builds/${CI_PROJECT_PATH}/venv
     - |
       BOM_B64=$(base64 -w 0 sbom.xml)
       if [ -n "${CI_COMMIT_TAG}" ]; then
