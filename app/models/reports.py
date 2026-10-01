@@ -452,9 +452,9 @@ class ReportReportTLSCertificate(BaseXmlModel, search_mode="unordered", tag="tls
 
 class ReportReportErrorNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
     oid: str = attr()
-    name: str = element()
-    type: str = element()
-    cvss_base: str = element()
+    name: Optional[str] = element(default=None)
+    type: Optional[str] = element(default=None)
+    cvss_base: Optional[str] = element(default=None)
 
 
 class ReportReportError(BaseXmlModel, search_mode="unordered", tag="error"):
