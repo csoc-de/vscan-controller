@@ -8,7 +8,11 @@ from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
 from app.gvm_tools.configs import GVMConfigs
-from app.models.configs import Config, GetConfigsResponse, ImportConfigResponse
+from app.models.configs import (
+    Config,
+    GetConfigsResponse,
+    ImportConfigResponse,
+)
 from app.routers.auth import authorization
 from app.routers.response import INTERNAL_SERVER_ERROR, UNAUTHORIZED
 
@@ -23,7 +27,7 @@ class ConfigsRouter(APIRouter):
         self.gvm_configs = gvm_configs
         self._log = log
 
-        # GET Scan Config
+        # GET Scan Configs
         self.add_api_route(
             "",
             self.get_configs,
