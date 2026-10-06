@@ -3,9 +3,16 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - 8080:8080
+      - ${PORT:-8080}:${PORT:-8080}
     environment:
       DEV: true
+      API_KEY: ${API_KEY}
+      PORT: ${PORT:-8080}
+      GREENBONE_SOCKET_PATH: ${GREENBONE_SOCKET_PATH:-/run/gvmd}
+      GREENBONE_USER: ${GREENBONE_USER:-admin}
+      GREENBONE_PASSWORD: ${GREENBONE_PASSWORD:-admin}
+      LOG_LEVEL: ${LOG_LEVEL:-Debug}
+      HOST: ${HOST:-0.0.0.0}
     volumes:
       - gvmd-sock:/run/gvmd
 
@@ -14,8 +21,8 @@ services:
     ports:
       - 9392:9392
     environment:
-      PASSWORD: admin
-      USERNAME: admin
+      PASSWORD: ${GREENBONE_USER:-admin}
+      USERNAME: ${GREENBONE_PASSWORD:-admin}
       RELAYHOST: 172.17.0.1
       SMTPPORT: 25
       REDISDBS: 512 # number of Redis DBs to use
