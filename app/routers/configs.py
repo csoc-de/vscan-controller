@@ -8,7 +8,7 @@ from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
 from app.gvm_tools.configs import GVMConfigs
-from app.models.configs import Config, GetConfigsResponse
+from app.models.configs import Config, GetConfigsResponse, ImportConfigResponse
 from app.routers.auth import authorization
 from app.routers.response import INTERNAL_SERVER_ERROR, UNAUTHORIZED
 
@@ -31,6 +31,14 @@ class ConfigsRouter(APIRouter):
             response_model=GetConfigsResponse,
             responses={**UNAUTHORIZED, **INTERNAL_SERVER_ERROR},
         )
+
+        # POST Import Scan Config
+        self.add_api_route(
+            "/import",
+            self.import_scan_config,
+            methods=["POST"],
+            response_model=ImportConfigResponse,
+            responses={**UNAUTHORIZED, **INTERNAL_SERVER_ERROR},
         )
 
     async def get_configs(
@@ -80,14 +88,33 @@ class ConfigsRouter(APIRouter):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="internal server error",
             )
+
+    async def import_scan_config(
+        self, *, file: Annotated[bytes, File()]
+    ) -> ImportConfigResponse:
+        try:
+            resp = self.gvm_configs.import_scan_config(file)
+            return {"id": resp.get("id")}
+        except GvmResponseError as e:
+            match e.status:
+                case _:
+                    self._log.error(
+                        "call of adapter failed",
+                        error=e,
+                        status_code=e.status,
+                        traceback=traceback.format_exc(),
+                    )
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="internal server error"
+                        detail="internal server error",
                     )
         except Exception as e:
-            self._log.error("call of adapter or xml conversion of configs failed", error=e,
-                            traceback=traceback.format_exc())
+            self._log.error(
+                "call of adapter or xml conversion of configs failed",
+                error=e,
+                traceback=traceback.format_exc(),
+            )
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="internal server error"
+                detail="internal server error",
             )

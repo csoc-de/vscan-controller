@@ -1,4 +1,3 @@
-from typing import Optional
 
 from pydantic import BaseModel
 from pydantic_xml import BaseXmlModel, attr, element, wrapped
@@ -69,3 +68,6 @@ class Config(BaseXmlGvmModel, search_mode="unordered", tag="config"):
 
 class GetConfigsResponse(BaseModel):
     configs: list[Config]
+
+class ImportConfigResponse(BaseModel):
+    id: str

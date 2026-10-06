@@ -38,3 +38,8 @@ class GVMConfigs:
                 preferences=preferences,
                 tasks=tasks,
             )
+
+    def import_scan_config(self, config: str) -> Any:
+        with GMP(connection=self.socket, transform=self.transform) as gvm:
+            gvm.authenticate(self.user, self.password)
+            return gvm.import_scan_config(config)
