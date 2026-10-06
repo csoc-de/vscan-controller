@@ -1,7 +1,7 @@
 from typing import Optional
 
 from pydantic import BaseModel
-from pydantic_xml import element, attr, BaseXmlModel, wrapped
+from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
 from app.models.base import BaseXmlGvmModel
 
@@ -13,20 +13,20 @@ class ConfigScanner(BaseXmlModel, search_mode="unordered", tag="scanner"):
 
 class ConfigCount(BaseXmlModel, search_mode="unordered"):
     value: int
-    growing: Optional[bool] = element(default=None)
+    growing: bool | None = element(default=None)
 
 
 class ConfigTask(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
-    name: Optional[str] = element(default=None)
-    permissions: Optional[str] = element(default=None)
+    name: str | None = element(default=None)
+    permissions: str | None = element(default=None)
 
 
 class ConfigFamily(BaseXmlModel, search_mode="unordered", tag="family"):
     name: str = element()
     nvt_count: int = element()
     max_nvt_count: int = element()
-    growing: Optional[bool] = element(default=None)
+    growing: bool | None = element(default=None)
 
 
 class ConfigPreferenceNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
@@ -52,19 +52,19 @@ class ConfigNVTSelector(BaseXmlModel, search_mode="unordered", tag="nvt_selector
 
 
 class Config(BaseXmlGvmModel, search_mode="unordered", tag="config"):
-    max_nvt_count: Optional[int] = element(default=None)
-    known_nvt_count: Optional[int] = element(default=None)
-    scanner: Optional[ConfigScanner] = element(default=None)
+    max_nvt_count: int | None = element(default=None)
+    known_nvt_count: int | None = element(default=None)
+    scanner: ConfigScanner | None = element(default=None)
     family_count: ConfigCount = element()
     nvt_count: ConfigCount = element()
     type: int = element()
     usage_type: str = element()
     predefined: bool = element()
-    tasks: Optional[list[ConfigTask]] = wrapped("tasks", element(tag="task"), default=None)
-    families: Optional[list[ConfigFamily]] = wrapped("families", element(tag="family"), default=None)
-    preferences: Optional[list[ConfigPreference]] = wrapped("preferences", element(tag="preference"), default=None)
-    nvt_selectors: Optional[ConfigNVTSelector] = wrapped("nvt_selectors", element(tag="nvt_selector"), default=None)
-    deprecated: Optional[bool] = element(default=None)
+    tasks: list[ConfigTask] | None = wrapped("tasks", element(tag="task"), default=None)
+    families: list[ConfigFamily] | None = wrapped("families", element(tag="family"), default=None)
+    preferences: list[ConfigPreference] | None = wrapped("preferences", element(tag="preference"), default=None)
+    nvt_selectors: ConfigNVTSelector | None = wrapped("nvt_selectors", element(tag="nvt_selector"), default=None)
+    deprecated: bool | None = element(default=None)
 
 
 class GetConfigsResponse(BaseModel):
