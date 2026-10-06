@@ -458,12 +458,12 @@ class ReportReportErrorNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
 
 
 class ReportReportError(BaseXmlModel, search_mode="unordered", tag="error"):
-    host: ReportReportResultHost = element(tag="host")
-    port: str = element()
-    description: str = element()
-    nvt: ReportReportErrorNVT = element()
-    scan_nvt_version: str = element()
-    severity: float = element()
+    host: Optional[ReportReportResultHost] = element(tag="host", default=None)
+    port: Optional[str] = element(default=None)
+    description: Optional[str] = element(default=None)
+    nvt: Optional[ReportReportErrorNVT] = element(default=None)
+    scan_nvt_version: Optional[str] = element(default=None)
+    severity: Optional[float] = element(default=None)
 
 
 class ReportReportErrors(BaseXmlModel, search_mode="unordered", tag="errors"):
