@@ -9,14 +9,16 @@ from gvm.protocols.gmp import GMP
 from gvm.transforms import EtreeCheckCommandTransform
 
 from app.config import GREENBONE_SOCKET_PATH, GREENBONE_USER, GREENBONE_PASSWORD, HOST, PORT, \
-    LOG_LEVEL
+    LOG_LEVEL, FEEDS_METRICS_INTERVAL_SECONDS
 from app.gvm_tools.configs import GVMConfigs
+from app.gvm_tools.feeds import GVMFeeds
 from app.gvm_tools.port_lists import GVMPortLists
 from app.gvm_tools.reports import GVMReports
 from app.gvm_tools.scanners import GVMScanners
 from app.gvm_tools.schedules import GVMSchedules
 from app.gvm_tools.targets import GVMTargets
 from app.gvm_tools.tasks import GVMTasks
+from app.metrics import Metrics
 from app.routers.router import App
 from app.utils.processors import add_log_level_upper, add_and_modify_parameters
 
@@ -62,6 +64,7 @@ def main() -> int:
         return 1
     try:
         socket: UnixSocketConnection = UnixSocketConnection(path=GREENBONE_SOCKET_PATH)
+        metrics_socket: UnixSocketConnection = UnixSocketConnection(path=GREENBONE_SOCKET_PATH)
         transform: EtreeCheckCommandTransform = EtreeCheckCommandTransform()
         with GMP(connection=socket) as gmp:
             print(gmp.get_version())
@@ -73,6 +76,12 @@ def main() -> int:
             GVMScanners(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
             GVMSchedules(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
             GVMReports(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            GVMFeeds(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            Metrics(
+                GVMFeeds(metrics_socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+                FEEDS_METRICS_INTERVAL_SECONDS,
+                log=logger
+            ),
             log=logger
         )
         uvicorn.run(app.fastapi, host=HOST, port=PORT, log_level="info")
