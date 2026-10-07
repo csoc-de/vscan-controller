@@ -6,6 +6,7 @@ from structlog.stdlib import BoundLogger
 
 from app.config import VERSION, COMMIT, BUILD_AT
 from app.gvm_tools.configs import GVMConfigs
+from app.gvm_tools.feeds import GVMFeeds
 from app.gvm_tools.port_lists import GVMPortLists
 from app.gvm_tools.reports import GVMReports
 from app.gvm_tools.scanners import GVMScanners
@@ -13,6 +14,7 @@ from app.gvm_tools.schedules import GVMSchedules
 from app.gvm_tools.targets import GVMTargets
 from app.gvm_tools.tasks import GVMTasks
 from app.routers.configs import ConfigsRouter
+from app.routers.feeds import FeedsRouter
 from app.routers.port_lists import PortListsRouter
 from app.routers.reports import ReportsRouter
 from app.routers.scanners import ScannersRouter
@@ -32,6 +34,7 @@ class App:
             gvm_scanners: GVMScanners,
             gvm_schedules: GVMSchedules,
             gvm_reports: GVMReports,
+            gvm_feeds: GVMFeeds,
             log: BoundLogger
     ) -> None:
         self.fastapi = FastAPI()
@@ -43,6 +46,7 @@ class App:
         self.fastapi.include_router(ScannersRouter(gvm_scanners, log))
         self.fastapi.include_router(SchedulesRouter(gvm_schedules, log))
         self.fastapi.include_router(ReportsRouter(gvm_reports, log))
+        self.fastapi.include_router(FeedsRouter(gvm_feeds, log))
         self._log = log
 
     @staticmethod
