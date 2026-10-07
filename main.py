@@ -68,14 +68,6 @@ def main() -> int:
         transform: EtreeCheckCommandTransform = EtreeCheckCommandTransform()
         with GMP(connection=socket) as gmp:
             print(gmp.get_version())
-        feed_metrics = Metrics(
-            metrics_socket,
-            transform,
-            GREENBONE_USER,
-            GREENBONE_PASSWORD,
-            FEEDS_METRICS_INTERVAL_SECONDS,
-            log=logger
-        )
         app = App(
             GVMTargets(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
             GVMPortLists(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
@@ -85,7 +77,11 @@ def main() -> int:
             GVMSchedules(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
             GVMReports(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
             GVMFeeds(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
-            feed_metrics=feed_metrics,
+            Metrics(
+                GVMFeeds(metrics_socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+                FEEDS_METRICS_INTERVAL_SECONDS,
+                log=logger
+            ),
             log=logger
         )
         uvicorn.run(app.fastapi, host=HOST, port=PORT, log_level="info")
