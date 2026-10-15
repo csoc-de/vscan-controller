@@ -190,7 +190,7 @@ class ReportReportAsset(BaseXmlModel, search_mode="unordered", tag="asset"):
 
 
 class ReportReportResultHost(BaseXmlModel, search_mode="unordered", tag="host"):
-    host: constr(strip_whitespace=True)  # type: ignore[valid-type]
+    host: constr(strip_whitespace=True) = None  # type: ignore[valid-type]
     asset: ReportReportAsset = element(tag="asset")
     hostname: Optional[str] = element(default=None)
 
