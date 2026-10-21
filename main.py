@@ -1,6 +1,6 @@
 import sys
 import traceback
-from typing import Optional, Any
+from typing import Any
 
 import structlog
 import uvicorn
@@ -8,8 +8,15 @@ from gvm.connections import UnixSocketConnection
 from gvm.protocols.gmp import GMP
 from gvm.transforms import EtreeCheckCommandTransform
 
-from app.config import GREENBONE_SOCKET_PATH, GREENBONE_USER, GREENBONE_PASSWORD, HOST, PORT, \
-    LOG_LEVEL, FEEDS_METRICS_INTERVAL_SECONDS
+from app.config import (
+    FEEDS_METRICS_INTERVAL_SECONDS,
+    GREENBONE_PASSWORD,
+    GREENBONE_SOCKET_PATH,
+    GREENBONE_USER,
+    HOST,
+    LOG_LEVEL,
+    PORT,
+)
 from app.gvm_tools.configs import GVMConfigs
 from app.gvm_tools.feeds import GVMFeeds
 from app.gvm_tools.port_lists import GVMPortLists
@@ -20,10 +27,10 @@ from app.gvm_tools.targets import GVMTargets
 from app.gvm_tools.tasks import GVMTasks
 from app.metrics import Metrics
 from app.routers.router import App
-from app.utils.processors import add_log_level_upper, add_and_modify_parameters
+from app.utils.processors import add_and_modify_parameters, add_log_level_upper
 
 
-def init_logging() -> Optional[Any]:
+def init_logging() -> Any | None:
     try:
         structlog.configure(
             processors=[
@@ -33,7 +40,7 @@ def init_logging() -> Optional[Any]:
                         structlog.processors.CallsiteParameter.PATHNAME,
                         structlog.processors.CallsiteParameter.FUNC_NAME,
                         structlog.processors.CallsiteParameter.LINENO,
-                        structlog.processors.CallsiteParameter.MODULE
+                        structlog.processors.CallsiteParameter.MODULE,
                     ],
                 ),
                 add_and_modify_parameters,
@@ -42,7 +49,7 @@ def init_logging() -> Optional[Any]:
                 structlog.processors.TimeStamper(fmt="iso", utc=True, key="time"),
                 structlog.processors.EventRenamer("msg"),
                 structlog.contextvars.merge_contextvars,
-                structlog.processors.JSONRenderer()
+                structlog.processors.JSONRenderer(),
             ],
             wrapper_class=structlog.make_filtering_bound_logger(LOG_LEVEL),
             context_class=dict,
@@ -82,7 +89,7 @@ def main() -> int:
                 FEEDS_METRICS_INTERVAL_SECONDS,
                 log=logger
             ),
-            log=logger
+            log=logger,
         )
         uvicorn.run(app.fastapi, host=HOST, port=PORT, log_level="info")
     except Exception as e:  # pylint: disable=broad-exception-caught

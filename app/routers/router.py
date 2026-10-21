@@ -54,6 +54,7 @@ class App:
 
         self.fastapi = FastAPI(lifespan=lifespan)
         self.fastapi.add_api_route("/health", self.health, methods=["GET"])
+        self.fastapi.add_api_route("/metrics", self.metrics, methods=["GET"])
         self.fastapi.include_router(TargetsRouter(gvm_targets, log))
         self.fastapi.include_router(PortListsRouter(gvm_port_lists, log))
         self.fastapi.include_router(TasksRouter(gvm_tasks, log))
@@ -62,7 +63,6 @@ class App:
         self.fastapi.include_router(SchedulesRouter(gvm_schedules, log))
         self.fastapi.include_router(ReportsRouter(gvm_reports, log))
         self.fastapi.include_router(FeedsRouter(gvm_feeds, log))
-        self.fastapi.add_api_route("/metrics", self.metrics, methods=["GET"])
 
     @staticmethod
     def health() -> Dict[str, str]:
