@@ -1,4 +1,4 @@
-fastapi==0.156.7
+fastapi==0.156.8
 pydantic==2.14.1
 pydantic_xml==2.21.1
 python-dotenv==1.2.4
