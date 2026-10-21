@@ -55,7 +55,6 @@ class App:
         self.fastapi = FastAPI(lifespan=lifespan)
         self.fastapi.add_api_route("/health", self.health, methods=["GET"])
         self.fastapi.add_api_route("/metrics", self.metrics, methods=["GET"])
-        self.fastapi.add_api_route("/error", self.raise_error, methods=["GET"])
         self.fastapi.include_router(TargetsRouter(gvm_targets, log))
         self.fastapi.include_router(PortListsRouter(gvm_port_lists, log))
         self.fastapi.include_router(TasksRouter(gvm_tasks, log))
@@ -72,7 +71,3 @@ class App:
     @staticmethod
     def metrics() -> Response:
         return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
-
-    def raise_error(self):
-        self._log.error("testing", error=Exception("test error"))
-        raise Exception("test error unrecovered")  # pylint: disable=broad-exception-raised
