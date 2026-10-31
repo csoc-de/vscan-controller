@@ -2,7 +2,7 @@ fastapi==0.162.0
 pydantic==2.14.1
 pydantic_xml==2.22.0
 python-dotenv==1.2.4
-pytest==9.1.1
+pytest==9.2.0
 uvicorn==0.54.0
 python-gvm==27.7.0
 prometheus-client==0.26.0
