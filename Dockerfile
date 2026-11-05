@@ -1,4 +1,4 @@
-FROM python:3.15.1-alpine3.23
+FROM python:3.15.2-alpine3.23
 
 ARG VERSION="nothing"
 ARG COMMIT="nothing"
