@@ -6,5 +6,5 @@ pytest==9.1.1
 uvicorn==0.54.0
 python-gvm==27.7.0
 prometheus-client==0.26.0
-python-multipart==0.0.32
+python-multipart==0.0.33
 structlog==26.1.0
