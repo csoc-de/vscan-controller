@@ -25,7 +25,9 @@ build:
     - docker build --pull .
 
 lint:
-  image: ${HARBOR_HOST}/csoc-registry/ruff:latest
+  image:
+    name: ${HARBOR_HOST}/csoc-registry/ruff:latest
+    entrypoint: [""]
   stage: lint
   needs: []
   script:
