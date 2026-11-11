@@ -1,14 +1,13 @@
 # pylint: disable=raise-missing-from
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import Dict
 
 from fastapi import FastAPI
 from fastapi.responses import Response
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from structlog.stdlib import BoundLogger
 
-from app.config import VERSION, COMMIT, BUILD_AT
+from app.config import BUILD_AT, COMMIT, VERSION
 from app.gvm_tools.configs import GVMConfigs
 from app.gvm_tools.feeds import GVMFeeds
 from app.gvm_tools.port_lists import GVMPortLists
@@ -29,19 +28,18 @@ from app.routers.tasks import TasksRouter
 
 
 class App:
-    # pylint: disable=too-many-positional-arguments
     def __init__(
-            self,
-            gvm_targets: GVMTargets,
-            gvm_port_lists: GVMPortLists,
-            gvm_tasks: GVMTasks,
-            gvm_configs: GVMConfigs,
-            gvm_scanners: GVMScanners,
-            gvm_schedules: GVMSchedules,
-            gvm_reports: GVMReports,
-            gvm_feeds: GVMFeeds,
-            feed_metrics: Metrics,
-            log: BoundLogger
+        self,
+        gvm_targets: GVMTargets,
+        gvm_port_lists: GVMPortLists,
+        gvm_tasks: GVMTasks,
+        gvm_configs: GVMConfigs,
+        gvm_scanners: GVMScanners,
+        gvm_schedules: GVMSchedules,
+        gvm_reports: GVMReports,
+        gvm_feeds: GVMFeeds,
+        feed_metrics: Metrics,
+        log: BoundLogger,
     ) -> None:
         self._feed_metrics = feed_metrics
         self._log = log
@@ -65,7 +63,7 @@ class App:
         self.fastapi.include_router(FeedsRouter(gvm_feeds, log))
 
     @staticmethod
-    def health() -> Dict[str, str]:
+    def health() -> dict[str, str]:
         return {"status": "ok", "version": VERSION, "commit": COMMIT, "build_at": BUILD_AT}
 
     @staticmethod

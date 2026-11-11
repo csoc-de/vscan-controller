@@ -7,11 +7,11 @@ from gvm.transforms import EtreeCheckCommandTransform
 
 class GVMFeeds:
     def __init__(
-            self,
-            socket: UnixSocketConnection,
-            transform: EtreeCheckCommandTransform,
-            user: str,
-            password: str
+        self,
+        socket: UnixSocketConnection,
+        transform: EtreeCheckCommandTransform,
+        user: str,
+        password: str,
     ) -> None:
         self.socket = socket
         self.transform = transform
@@ -19,7 +19,7 @@ class GVMFeeds:
         self.password: str = password
 
     def get_feeds(
-            self,
+        self,
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)

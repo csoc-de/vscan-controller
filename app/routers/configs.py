@@ -81,7 +81,7 @@ class ConfigsRouter(APIRouter):
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         detail="internal server error",
-                    )
+                    ) from e
         except Exception as e:
             self._log.error(
                 "call of adapter or xml conversion of configs failed",
@@ -91,11 +91,9 @@ class ConfigsRouter(APIRouter):
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="internal server error",
-            )
+            ) from e
 
-    async def import_scan_config(
-        self, *, file: Annotated[bytes, File()]
-    ) -> ImportConfigResponse:
+    async def import_scan_config(self, *, file: Annotated[bytes, File()]) -> ImportConfigResponse:
         try:
             resp = self.gvm_configs.import_scan_config(file)
             return {"id": resp.get("id")}
@@ -111,7 +109,7 @@ class ConfigsRouter(APIRouter):
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         detail="internal server error",
-                    )
+                    ) from e
         except Exception as e:
             self._log.error(
                 "call of adapter or xml conversion of configs failed",
@@ -121,4 +119,4 @@ class ConfigsRouter(APIRouter):
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="internal server error",
-            )
+            ) from e

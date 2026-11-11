@@ -9,13 +9,7 @@ from app.models.feeds import Feeds
 
 
 class Metrics:
-    # pylint: disable=too-many-positional-arguments,too-many-instance-attributes
-    def __init__(
-            self,
-            gvm_feeds: GVMFeeds,
-            interval_seconds: int,
-            log: BoundLogger
-    ) -> None:
+    def __init__(self, gvm_feeds: GVMFeeds, interval_seconds: int, log: BoundLogger) -> None:
         self._interval_seconds = interval_seconds
         self._log = log
         self._gvm_feeds = gvm_feeds
@@ -24,12 +18,14 @@ class Metrics:
         self._gvm_feed_version = Gauge(
             "gvm_feed_version",
             "Version of the GVM feed as epoch seconds; 0 if the version could not be parsed",
-            ["feed_name", "feed_type"]
+            ["feed_name", "feed_type"],
         )
 
     def start(self) -> None:
         self._stop_event.clear()
-        thread: threading.Thread = threading.Thread(target=self._run, name="gvm-feed-metrics", daemon=True)
+        thread: threading.Thread = threading.Thread(
+            target=self._run, name="gvm-feed-metrics", daemon=True
+        )
         self._thread = thread
         thread.start()
 
@@ -49,5 +45,5 @@ class Metrics:
             for feed in feeds.feeds:
                 labels = {"feed_name": feed.name or "", "feed_type": feed.type or ""}
                 self._gvm_feed_version.labels(**labels).set(feed.version_as_unix_timestamp())
-        except Exception as e:  # pylint: disable=broad-exception-caught
+        except Exception as e: # noqa: BLE001 # using a blank exception to keep background thread alive
             self._log.warning("updating feed version metrics failed, keeping last values", error=e)

@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from app.models.configs import Config
 
@@ -18,9 +18,12 @@ def test_config_parsing_xml_to_model():
     assert config.id == "daba56c8-73ec-11df-a475-002264764cea"
     assert config.owner.name == "admin"
     assert config.name == "Full and fast"
-    assert config.comment == "Most NVT\\'s; optimized by using previously collected information. Version 20201215."
-    assert config.creation_time == datetime(2026, 4, 24, 13, 19, 31, tzinfo=timezone.utc)
-    assert config.modification_time == datetime(2026, 7, 9, 10, 20, 15, tzinfo=timezone.utc)
+    assert (
+        config.comment
+        == "Most NVT\\'s; optimized by using previously collected information. Version 20201215."
+    )
+    assert config.creation_time == datetime(2026, 4, 24, 13, 19, 31, tzinfo=UTC)
+    assert config.modification_time == datetime(2026, 7, 9, 10, 20, 15, tzinfo=UTC)
     assert config.writable is False
     assert config.in_use is True
     assert config.type == 0

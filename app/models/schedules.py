@@ -1,21 +1,19 @@
-from typing import Optional
-
 from pydantic import BaseModel
-from pydantic_xml import element, attr, wrapped, BaseXmlModel
+from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
 from app.models.base import BaseXmlGvmModel
 
 
 class ScheduleTask(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
-    name: Optional[str] = element(default=None)
-    permissions: Optional[str] = element(default=None)
+    name: str | None = element(default=None)
+    permissions: str | None = element(default=None)
 
 
 class Schedule(BaseXmlGvmModel, search_mode="unordered", tag="schedule"):
     icalendar: str = element()
     timezone: str = element()
-    tasks: Optional[list[ScheduleTask]] = wrapped("tasks", element(tag="task"), default=None)
+    tasks: list[ScheduleTask] | None = wrapped("tasks", element(tag="task"), default=None)
 
 
 # response and request models
@@ -35,11 +33,11 @@ class ScheduleCreate(BaseModel):
     name: str
     icalendar: str
     timezone: str
-    comment: Optional[str] = None
+    comment: str | None = None
 
 
 class ScheduleUpdate(BaseModel):
-    name: Optional[str] = None
-    icalendar: Optional[str] = None
-    timezone: Optional[str] = None
-    comment: Optional[str] = None
+    name: str | None = None
+    icalendar: str | None = None
+    timezone: str | None = None
+    comment: str | None = None

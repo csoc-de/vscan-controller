@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from gvm.connections import UnixSocketConnection
 from gvm.protocols.gmp import GMP
@@ -7,11 +7,11 @@ from gvm.transforms import EtreeCheckCommandTransform
 
 class GVMScanners:
     def __init__(
-            self,
-            socket: UnixSocketConnection,
-            transform: EtreeCheckCommandTransform,
-            user: str,
-            password: str
+        self,
+        socket: UnixSocketConnection,
+        transform: EtreeCheckCommandTransform,
+        user: str,
+        password: str,
     ) -> None:
         self.socket = socket
         self.transform = transform
@@ -19,11 +19,11 @@ class GVMScanners:
         self.password: str = password
 
     def get_scanners(
-            self,
-            *,
-            filter_string: Optional[str] = None,
-            trash: Optional[bool] = None,
-            details: Optional[bool] = None,
+        self,
+        *,
+        filter_string: str | None = None,
+        trash: bool | None = None,
+        details: bool | None = None,
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)

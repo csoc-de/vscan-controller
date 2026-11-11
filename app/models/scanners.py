@@ -1,8 +1,7 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel
-from pydantic_xml import BaseXmlModel, element, attr, wrapped
+from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
 from app.models.base import BaseXmlGvmModel
 
@@ -16,36 +15,36 @@ class ScannerCertificateInfo(BaseXmlModel, search_mode="unordered"):
 
 
 class ScannerCredential(BaseXmlModel, search_mode="unordered", tag="credential"):
-    id: Optional[str] = attr()
-    name: Optional[str] = element(default=None)
-    type: Optional[str] = element(default=None)
-    trash: Optional[bool] = element()
+    id: str | None = attr()
+    name: str | None = element(default=None)
+    type: str | None = element(default=None)
+    trash: bool | None = element()
 
 
 class ScannerTask(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
-    name: Optional[str] = element(default=None)
-    permissions: Optional[str] = element(default=None)
+    name: str | None = element(default=None)
+    permissions: str | None = element(default=None)
 
 
 class ScannerConfig(BaseXmlModel, search_mode="unordered", tag="config"):
     id: str = attr()
-    name: Optional[str] = element(default=None)
-    permissions: Optional[str] = element(default=None)
+    name: str | None = element(default=None)
+    permissions: str | None = element(default=None)
 
 
 class Scanner(BaseXmlGvmModel, search_mode="unordered", tag="scanner"):
-    host: Optional[str] = element(default=None)
-    port: Optional[int] = element()
-    type: Optional[int] = element()
-    ca_pub_info: Optional[ScannerCertificateInfo] = element(default=None, tag="ca_pub_info")
-    certificate_info: Optional[ScannerCertificateInfo] = element(default=None, tag="certificate_info")
-    ca_pub: Optional[str] = element(default=None)
-    relay_host: Optional[str] = element(default=None)
-    relay_port: Optional[int] = element()
-    credential: Optional[ScannerCredential] = element()
-    configs: Optional[list[ScannerConfig]] = wrapped("configs", element(tag="config", default=None))
-    tasks: Optional[list[ScannerTask]] = wrapped("tasks", element(tag="task"), default=None)
+    host: str | None = element(default=None)
+    port: int | None = element()
+    type: int | None = element()
+    ca_pub_info: ScannerCertificateInfo | None = element(default=None, tag="ca_pub_info")
+    certificate_info: ScannerCertificateInfo | None = element(default=None, tag="certificate_info")
+    ca_pub: str | None = element(default=None)
+    relay_host: str | None = element(default=None)
+    relay_port: int | None = element()
+    credential: ScannerCredential | None = element()
+    configs: list[ScannerConfig] | None = wrapped("configs", element(tag="config", default=None))
+    tasks: list[ScannerTask] | None = wrapped("tasks", element(tag="task"), default=None)
 
 
 class GetScannerResponse(BaseModel):

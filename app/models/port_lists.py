@@ -1,7 +1,5 @@
-from typing import Optional
-
 from pydantic import BaseModel
-from pydantic_xml import BaseXmlModel, element, attr, wrapped
+from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
 from app.models.base import BaseXmlGvmModel
 
@@ -22,16 +20,18 @@ class PortListPortRange(BaseXmlModel, search_mode="unordered", tag="port_range")
 
 class PortListTarget(BaseXmlModel, search_mode="unordered", tag="target"):
     id: str = attr()
-    name: Optional[str] = element(default=None)
-    permissions: Optional[str] = element(default=None)
+    name: str | None = element(default=None)
+    permissions: str | None = element(default=None)
 
 
 class PortList(BaseXmlGvmModel, search_mode="unordered", tag="port_list"):
     port_count: PortListPortCount = element()
     predefined: bool = element()
-    port_ranges: Optional[list[PortListPortRange]] = wrapped("port_ranges", element(tag="port_range"), default=None)
-    targets: Optional[list[PortListTarget]] = wrapped("targets", element(tag="target"), default=None)
-    deprecated: Optional[bool] = element(default=None)
+    port_ranges: list[PortListPortRange] | None = wrapped(
+        "port_ranges", element(tag="port_range"), default=None
+    )
+    targets: list[PortListTarget] | None = wrapped("targets", element(tag="target"), default=None)
+    deprecated: bool | None = element(default=None)
 
 
 class GetPortListsResponse(BaseModel):

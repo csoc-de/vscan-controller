@@ -6,9 +6,7 @@ from app.config import VERSION
 
 
 # pylint: disable=unused-argument
-def add_log_level_upper(
-        logger: Any, method_name: str, event_dict: EventDict
-) -> EventDict:
+def add_log_level_upper(logger: Any, method_name: str, event_dict: EventDict) -> EventDict:
     if method_name == "warning":
         method_name = "warn"
 
@@ -29,8 +27,11 @@ def add_and_modify_parameters(logger: str, method_name: str, event_dict: EventDi
         event_dict["source"] = event_dict["exception"]
         del event_dict["exception"]
     else:
-        event_dict["source"] = {"file": event_dict["pathname"], "function": event_dict["func_name"],
-                                "line": event_dict["lineno"]}
+        event_dict["source"] = {
+            "file": event_dict["pathname"],
+            "function": event_dict["func_name"],
+            "line": event_dict["lineno"],
+        }
         del event_dict["pathname"], event_dict["lineno"], event_dict["func_name"]
 
     event_dict["version"] = VERSION

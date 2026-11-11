@@ -5,8 +5,8 @@
 
 ## Make File Commands
 
-`̀make down`    - docker compose down + delete of socket files  
-`make up`      - docker compose up  
+`̀make down` - docker compose down + delete of socket files  
+`make up` - docker compose up  
 `make restart` - make down + make up
 
 ## OpenAPI Spec
@@ -14,3 +14,4 @@
 1. setup development environment
 2. run `main.py`
 3. go with the browser to `http://{.env:HOST}:{.env:PORT}/docs` (default: `http://localhost:8085/docs`)
+

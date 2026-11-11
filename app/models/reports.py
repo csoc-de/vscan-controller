@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional, Annotated
+from typing import Annotated
 
-from lxml.etree import _Element as Element  # pylint: disable=no-name-in-module
+from lxml.etree import _Element as Element
 from pydantic import BaseModel, Field, computed_field, constr
-from pydantic_xml import element, attr, BaseXmlModel, wrapped
+from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
-from app.models.base import Permission, UserTags, Owner
+from app.models.base import Owner, Permission, UserTags
 
 
 class Task(BaseXmlModel, search_mode="unordered", tag="task"):
@@ -40,7 +40,11 @@ class ReportReportFilterKeyword(BaseXmlModel, search_mode="unordered", tag="keyw
     value: str = element()
 
     def __eq__(self, other):
-        return (self.column == other.column) and (self.relation == other.relation) and (self.value == other.value)
+        return (
+            (self.column == other.column)
+            and (self.relation == other.relation)
+            and (self.value == other.value)
+        )
 
 
 class ReportReportFiltersDelta(BaseXmlModel, search_mode="unordered", tag="delta"):
@@ -51,14 +55,14 @@ class ReportReportFiltersDelta(BaseXmlModel, search_mode="unordered", tag="delta
 
 
 class ReportReportFilters(BaseXmlModel, search_mode="unordered", tag="filters"):
-    id: Optional[str] = attr(default=None)
+    id: str | None = attr(default=None)
     term: str = element()
-    phrase: Optional[str] = element(default=None)
-    notes: Optional[int] = element(default=None)
-    overrides: Optional[int] = element(default=None)
-    result_hosts_only: Optional[int] = element(default=None)
-    min_qod: Optional[str] = element(default=None)
-    delta: Optional[ReportReportFiltersDelta] = element(default=None)
+    phrase: str | None = element(default=None)
+    notes: int | None = element(default=None)
+    overrides: int | None = element(default=None)
+    result_hosts_only: int | None = element(default=None)
+    min_qod: str | None = element(default=None)
+    delta: ReportReportFiltersDelta | None = element(default=None)
     filter: list[str] = element()
     keywords: list[ReportReportFilterKeyword] = wrapped("keywords", element(tag="keyword"))
 
@@ -81,7 +85,7 @@ class ReportReportFullFiltered(BaseXmlModel, search_mode="unordered"):
 
 
 class ReportReportResultCountFullFiltered(BaseXmlModel, search_mode="unordered"):
-    deprecated: Optional[str] = None
+    deprecated: str | None = None
     full: int = element()
     filtered: int = element()
 
@@ -105,28 +109,33 @@ class ReportReportTaskTarget(BaseXmlModel, search_mode="unordered", tag="target"
     id: str = attr()
     trash: bool = element()
     name: str = element()
-    comment: Optional[str] = element(default=None)
+    comment: str | None = element(default=None)
 
 
 class ReportReportTask(BaseXmlModel, search_mode="unordered", tag="task"):
     id: str = attr()
     name: str = element()
-    comment: Optional[str] = element(default=None)
+    comment: str | None = element(default=None)
     target: ReportReportTaskTarget = element(tag="target")
     progress: int = element()
-    user_tags: Optional[UserTags] = element(default=None, tag="user_tags")
+    user_tags: UserTags | None = element(default=None, tag="user_tags")
 
 
-class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", arbitrary_types_allowed=True):
-    port: Optional[str] = None
+class ReportReportPortsPort(
+    BaseXmlModel, search_mode="unordered", tag="port", arbitrary_types_allowed=True
+):
+    port: str | None = None
     host: Annotated[Element, Field(exclude=True)] = element(
-        field=Field(exclude=True, default=None))  # field is excluded (fastapi)
-    severity_elem: Annotated[Element, Field(exclude=True)] = element(field=Field(exclude=True, default=None),
-                                                                     tag="severity", default=None)
-    threat_elem: Annotated[Element, Field(exclude=True)] = element(field=Field(exclude=True, default=None),
-                                                                   tag="threat", default=None)
+        field=Field(exclude=True, default=None)
+    )  # field is excluded (fastapi)
+    severity_elem: Annotated[Element, Field(exclude=True)] = element(
+        field=Field(exclude=True, default=None), tag="severity", default=None
+    )
+    threat_elem: Annotated[Element, Field(exclude=True)] = element(
+        field=Field(exclude=True, default=None), tag="threat", default=None
+    )
 
-    @computed_field(return_type=Optional[str])
+    @computed_field(return_type=str | None)
     @property
     def host_name(self):
         return self.host.text
@@ -135,7 +144,7 @@ class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", a
     def host_name(self, name: str):
         self.host.text = name
 
-    @computed_field(return_type=Optional[str])
+    @computed_field(return_type=str | None)
     @property
     def host_port(self):
         if self.port is not None and self.port.strip() != "":
@@ -156,9 +165,9 @@ class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", a
     def host_port(self, port: str):
         self.host.tail = port
 
-    @computed_field(return_type=Optional[float])
+    @computed_field(return_type=float | None)
     @property
-    def severity(self) -> Optional[float]:
+    def severity(self) -> float | None:
         if self.severity_elem is not None and self.severity_elem.text:
             try:
                 return float(self.severity_elem.text.strip())
@@ -166,19 +175,19 @@ class ReportReportPortsPort(BaseXmlModel, search_mode="unordered", tag="port", a
                 return None
         return None
 
-    @computed_field(return_type=Optional[str])
+    @computed_field(return_type=str | None)
     @property
-    def threat(self) -> Optional[str]:
+    def threat(self) -> str | None:
         if self.threat_elem is not None:
             return self.threat_elem.text
         return None
 
 
 class ReportReportPorts(BaseXmlModel, search_mode="unordered", tag="ports"):
-    start: Optional[int] = attr(default=None)
-    max: Optional[int] = attr(default=None)
-    count: Optional[int] = element(default=None)
-    ports: Optional[list[ReportReportPortsPort]] = element(tag="port", default=None)
+    start: int | None = attr(default=None)
+    max: int | None = attr(default=None)
+    count: int | None = element(default=None)
+    ports: list[ReportReportPortsPort] | None = element(tag="port", default=None)
 
 
 class ReportReportResultReport(BaseXmlModel, search_mode="unordered", tag="report"):
@@ -190,14 +199,14 @@ class ReportReportAsset(BaseXmlModel, search_mode="unordered", tag="asset"):
 
 
 class ReportReportResultHost(BaseXmlModel, search_mode="unordered", tag="host"):
-    host: Optional[constr(strip_whitespace=True)] = None  # type: ignore[valid-type]
+    host: constr(strip_whitespace=True) | None = None  # type: ignore[valid-type]
     asset: ReportReportAsset = element(tag="asset")
-    hostname: Optional[str] = element(default=None)
+    hostname: str | None = element(default=None)
 
 
 class ReportReportResultNVTSeverity(BaseXmlModel, search_mode="unordered", tag="severity"):
     type: str = attr()
-    origin: Optional[str] = element(default=None)
+    origin: str | None = element(default=None)
     date: datetime = element()
     score: float = element()
     value: str = element()
@@ -217,8 +226,8 @@ class ReportReportResultNVTReference(BaseXmlModel, search_mode="unordered", tag=
 
 
 class ReportReportResultNVTSolution(BaseXmlModel, search_mode="unordered", tag="solution"):
-    solution: Optional[str] = None
-    type: Optional[str] = attr(default=None)
+    solution: str | None = None
+    type: str | None = attr(default=None)
 
 
 class ReportReportResultNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
@@ -228,15 +237,15 @@ class ReportReportResultNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
     family: str = element()
     cvss_base: float = element()
     severities: ReportReportResultNVTSeverities = element()
-    cpe: Optional[str] = element(default=None)
+    cpe: str | None = element(default=None)
     tags: str = element()
-    refs: Optional[list[ReportReportResultNVTReference]] = wrapped("refs", default=None, tag="ref")
-    solution: Optional[ReportReportResultNVTSolution] = element(tag="solution")
+    refs: list[ReportReportResultNVTReference] | None = wrapped("refs", default=None, tag="ref")
+    solution: ReportReportResultNVTSolution | None = element(tag="solution")
 
 
 class ReportReportResultQOD(BaseXmlModel, search_mode="unordered", tag="qod"):
     value: int = element()
-    type: Optional[str] = element(default=None)
+    type: str | None = element(default=None)
 
 
 class ReportReportResultDeltaNoteNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
@@ -259,10 +268,12 @@ class ReportReportResultDeltaNoteResultNVT(BaseXmlModel, search_mode="unordered"
     type: str = element()
     cvss_base: str = element()
     severities: ReportReportResultNVTSeverities = element()
-    cve: Optional[str] = element(default=None)
+    cve: str | None = element(default=None)
 
 
-class ReportReportResultDeltaNoteOrOverwriteResult(BaseXmlModel, search_mode="unordered", tag="result"):
+class ReportReportResultDeltaNoteOrOverwriteResult(
+    BaseXmlModel, search_mode="unordered", tag="result"
+):
     id: str = attr()
     host: ReportReportResultHost = element()
     port: str = element()
@@ -285,13 +296,13 @@ class ReportReportResultNote(BaseXmlModel, search_mode="unordered", tag="note"):
     in_use: bool = element()
     active: bool = element()
     orphan: bool = element()
-    user_tags: Optional[UserTags] = element(tag="user_tags", default=None)
-    hosts: Optional[str] = element(default=None)
-    port: Optional[str] = element(default=None)
-    severity: Optional[float] = element(default=None)
-    task: Optional[ReportReportResultDeltaNoteTask] = element(default=None)
-    end_time: Optional[datetime] = element(default=None)
-    result: Optional[ReportReportResultDeltaNoteOrOverwriteResult] = element(default=None)
+    user_tags: UserTags | None = element(tag="user_tags", default=None)
+    hosts: str | None = element(default=None)
+    port: str | None = element(default=None)
+    severity: float | None = element(default=None)
+    task: ReportReportResultDeltaNoteTask | None = element(default=None)
+    end_time: datetime | None = element(default=None)
+    result: ReportReportResultDeltaNoteOrOverwriteResult | None = element(default=None)
 
 
 class ReportReportResultOverwrite(BaseXmlModel, search_mode="unordered", tag="overwrite"):
@@ -303,7 +314,7 @@ class ReportReportResultOverwrite(BaseXmlModel, search_mode="unordered", tag="ov
     modification_time: datetime = element()
     writable: bool = element()
     in_use: bool = element()
-    user_tags: Optional[UserTags] = element(tag="user_tags", default=None)
+    user_tags: UserTags | None = element(tag="user_tags", default=None)
     active: bool = element()
     orphan: bool = element()
     text: ReportReportResultDeltaNoteText = element()
@@ -311,18 +322,18 @@ class ReportReportResultOverwrite(BaseXmlModel, search_mode="unordered", tag="ov
     threat: str = element()
     new_severity: str = element()
     new_threat: str = element()
-    hosts: Optional[str] = element(default=None)
-    port: Optional[str] = element(default=None)
-    task: Optional[ReportReportResultDeltaNoteTask] = element(default=None)
-    end_time: Optional[datetime] = element(default=None)
-    result: Optional[ReportReportResultDeltaNoteOrOverwriteResult] = element(default=None)
+    hosts: str | None = element(default=None)
+    port: str | None = element(default=None)
+    task: ReportReportResultDeltaNoteTask | None = element(default=None)
+    end_time: datetime | None = element(default=None)
+    result: ReportReportResultDeltaNoteOrOverwriteResult | None = element(default=None)
 
 
 class ReportReportResultDelta(BaseXmlModel, search_mode="unordered", tag="delta"):
-    result: Optional[ReportReportResult] = element()
+    result: ReportReportResult | None = element()
     diff: str = element()
-    notes: Optional[list[ReportReportResultNote]] = element(tag="note", default=None)
-    overwrites: Optional[list[ReportReportResultOverwrite]] = element(tag="overwrite", default=None)
+    notes: list[ReportReportResultNote] | None = element(tag="note", default=None)
+    overwrites: list[ReportReportResultOverwrite] | None = element(tag="overwrite", default=None)
 
 
 class ReportReportResultDetectionResultDetail(BaseXmlModel, search_mode="unordered", tag="detail"):
@@ -332,8 +343,9 @@ class ReportReportResultDetectionResultDetail(BaseXmlModel, search_mode="unorder
 
 class ReportReportResultDetectionResult(BaseXmlModel, search_mode="unordered", tag="result"):
     id: str = attr()
-    details: Optional[list[ReportReportResultDetectionResultDetail]] = wrapped(path="details", tag="detail",
-                                                                               default=None)
+    details: list[ReportReportResultDetectionResultDetail] | None = wrapped(
+        path="details", tag="detail", default=None
+    )
 
 
 class ReportReportResultDetection(BaseXmlModel, search_mode="unordered", tag="detection"):
@@ -349,40 +361,40 @@ class ReportReportResult(BaseXmlModel, search_mode="unordered", tag="result"):
     name: str = element()
     owner: Owner = element(tag="owner")
     modification_time: datetime = element()
-    comment: Optional[str] = element(default=None)
+    comment: str | None = element(default=None)
     creation_time: datetime = element()
-    detection: Optional[ReportReportResultDetection] = element(default=None)
+    detection: ReportReportResultDetection | None = element(default=None)
     host: ReportReportResultHost = element()
     port: str = element()
     nvt: ReportReportResultNVT = element()
-    report: Optional[ReportReportResultReport] = element(tag="report", default=None)
-    task: Optional[ReportReportTask] = element(tag="task", default=None)
-    path: Optional[str] = element(default=None)
+    report: ReportReportResultReport | None = element(tag="report", default=None)
+    task: ReportReportTask | None = element(tag="task", default=None)
+    path: str | None = element(default=None)
     scan_nvt_version: datetime = element()
     threat: str = element()
     severity: float = element()
     qod: ReportReportResultQOD = element()
-    description: Optional[str] = element(default=None)
-    original_threat: Optional[str] = element(default=None)
-    original_severity: Optional[float] = element(default=None)
-    compliance: Optional[str] = element(default=None)
-    # delta: Optional[ReportReportResultDelta] = element(default=None)
-    notes: Optional[list[ReportReportResultNote]] = element(tag="note", default=None)
-    overwrites: Optional[list[ReportReportResultOverwrite]] = element(tag="overwrite", default=None)
-    tickets: Optional[ReportReportResultTicket] = element(tag="tickets", default=None)
-    user_tags: Optional[UserTags] = element(tag="user_tags", default=None)
+    description: str | None = element(default=None)
+    original_threat: str | None = element(default=None)
+    original_severity: float | None = element(default=None)
+    compliance: str | None = element(default=None)
+    # delta: ReportReportResultDelta | None = element(default=None)
+    notes: list[ReportReportResultNote] | None = element(tag="note", default=None)
+    overwrites: list[ReportReportResultOverwrite] | None = element(tag="overwrite", default=None)
+    tickets: ReportReportResultTicket | None = element(tag="tickets", default=None)
+    user_tags: UserTags | None = element(tag="user_tags", default=None)
 
 
 class ReportReportResults(BaseXmlModel, search_mode="unordered", tag="results"):
     start: int = attr()
     max: int = attr()
-    results: Optional[list[ReportReportResult]] = element(tag="result", default=None)
+    results: list[ReportReportResult] | None = element(tag="result", default=None)
 
 
 class ReportReportHosts(BaseXmlModel, search_mode="unordered", tag="hosts"):
-    start: Optional[int] = attr(default=None)
-    max: Optional[int] = attr(default=None)
-    count: Optional[int] = attr(default=None)
+    start: int | None = attr(default=None)
+    max: int | None = attr(default=None)
+    count: int | None = attr(default=None)
 
 
 class ReportReportCount(BaseXmlModel, search_mode="unordered"):
@@ -426,7 +438,9 @@ class ReportReportHost(BaseXmlModel, search_mode="unordered", tag="host"):
     details: list[ReportReportHostDetail] = element(tag="detail")
 
 
-class ReportReportTLSCertificateCertificate(BaseXmlModel, search_mode="unordered", tag="certificate"):
+class ReportReportTLSCertificateCertificate(
+    BaseXmlModel, search_mode="unordered", tag="certificate"
+):
     format: str = attr()
 
 
@@ -436,95 +450,98 @@ class ReportReportTLSCertificateHost(BaseXmlModel, search_mode="unordered", tag=
 
 
 class ReportReportTLSCertificate(BaseXmlModel, search_mode="unordered", tag="tls_certificate"):
-    name: Optional[str] = element(default=None)
-    certificate: Optional[ReportReportTLSCertificateCertificate] = element(tag="certificate", default=None)
-    sha256_fingerprint: Optional[str] = element(default=None)
-    md5_fingerprint: Optional[str] = element(default=None)
-    valid: Optional[bool] = element(default=None)
-    activation_time: Optional[datetime] = element(default=None)
-    expiration_time: Optional[datetime] = element(default=None)
-    subject_dn: Optional[str] = element(default=None)
-    issuer_dn: Optional[str] = element(default=None)
-    serial: Optional[str] = element(default=None)
-    host: Optional[ReportReportTLSCertificateHost] = element(default=None)
-    ports: Optional[list[str]] = wrapped("ports", element(tag="port"), default=None)
+    name: str | None = element(default=None)
+    certificate: ReportReportTLSCertificateCertificate | None = element(
+        tag="certificate", default=None
+    )
+    sha256_fingerprint: str | None = element(default=None)
+    md5_fingerprint: str | None = element(default=None)
+    valid: bool | None = element(default=None)
+    activation_time: datetime | None = element(default=None)
+    expiration_time: datetime | None = element(default=None)
+    subject_dn: str | None = element(default=None)
+    issuer_dn: str | None = element(default=None)
+    serial: str | None = element(default=None)
+    host: ReportReportTLSCertificateHost | None = element(default=None)
+    ports: list[str] | None = wrapped("ports", element(tag="port"), default=None)
 
 
 class ReportReportErrorNVT(BaseXmlModel, search_mode="unordered", tag="nvt"):
     oid: str = attr()
-    name: Optional[str] = element(default=None)
-    type: Optional[str] = element(default=None)
-    cvss_base: Optional[str] = element(default=None)
+    name: str | None = element(default=None)
+    type: str | None = element(default=None)
+    cvss_base: str | None = element(default=None)
 
 
 class ReportReportError(BaseXmlModel, search_mode="unordered", tag="error"):
-    host: Optional[ReportReportResultHost] = element(tag="host", default=None)
-    port: Optional[str] = element(default=None)
-    description: Optional[str] = element(default=None)
-    nvt: Optional[ReportReportErrorNVT] = element(default=None)
-    scan_nvt_version: Optional[str] = element(default=None)
-    severity: Optional[float] = element(default=None)
+    host: ReportReportResultHost | None = element(tag="host", default=None)
+    port: str | None = element(default=None)
+    description: str | None = element(default=None)
+    nvt: ReportReportErrorNVT | None = element(default=None)
+    scan_nvt_version: str | None = element(default=None)
+    severity: float | None = element(default=None)
 
 
 class ReportReportErrors(BaseXmlModel, search_mode="unordered", tag="errors"):
     count: int = element()
-    errors: Optional[list[ReportReportError]] = element(tag="error", default=None)
+    errors: list[ReportReportError] | None = element(tag="error", default=None)
 
 
 class ReportReport(BaseXmlModel, search_mode="unordered", tag="report"):
     id: str = attr()
-    type: Optional[str] = attr(default=None)
+    type: str | None = attr(default=None)
     gmp: ReportReportGMP = element()
-    report_format_param: Optional[ReportReportFormatParam] = wrapped(
-        "report_format",
-        element(tag="param"),
-        default=None
+    report_format_param: ReportReportFormatParam | None = wrapped(
+        "report_format", element(tag="param"), default=None
     )
     sort_field: ReportReportField = wrapped("sort", element(tag="field"))
     filters: ReportReportFilters = element()
-    delta: Optional[ReportReportDelta] = element(default=None)
-    scan_run_status: Optional[str] = element(tag="scan_run_status")
-    permissions: Optional[list[Permission]] = wrapped("permissions",
-                                                      element(tag="permission", default=None))
-    user_tags: Optional[UserTags] = element(default=None)
-    scan_result_status: Optional[str] = element(default=None)
-    result_count: Optional[ReportReportResultCount] = element(default=None)
-    severity: Optional[ReportReportFullFiltered] = element(tag="severity", default=None)
-    hosts: Optional[ReportReportCount] = element(tag="hosts", default=None)
-    closed_cves: Optional[ReportReportCount] = element(tag="closed_cves", default=None)
-    vulns: Optional[ReportReportCount] = element(tag="vulns", default=None)
-    os: Optional[ReportReportCount] = element(tag="os", default=None)
-    apps: Optional[ReportReportCount] = element(tag="apps", default=None)
-    ssl_certs: Optional[ReportReportCount] = element(tag="ssl_certs", default=None)
-    task: Optional[ReportReportTask] = element(tag="task", default=None)
-    tls_certificates: Optional[ReportReportTLSCertificate] = element(tag="tls_certificates", default=None)
-    timestamp: Optional[datetime] = element(default=None)
-    scan_start: Optional[datetime] = element(default=None)
-    scan_end: Optional[datetime] = element(default=None)
-    timezone: Optional[str] = element(default=None)
-    timezone_abbrev: Optional[str] = element(default=None)
-    ports: Optional[ReportReportPorts] = element(tag="ports", default=None)
-    results: Optional[ReportReportResults] = element(tag="results", default=None)
-    errors: Optional[ReportReportErrors] = element(default=None)
-    report_format: Optional[str] = element(tag="report_format", default=None)
+    delta: ReportReportDelta | None = element(default=None)
+    scan_run_status: str | None = element(tag="scan_run_status")
+    permissions: list[Permission] | None = wrapped(
+        "permissions", element(tag="permission", default=None)
+    )
+    user_tags: UserTags | None = element(default=None)
+    scan_result_status: str | None = element(default=None)
+    result_count: ReportReportResultCount | None = element(default=None)
+    severity: ReportReportFullFiltered | None = element(tag="severity", default=None)
+    hosts: ReportReportCount | None = element(tag="hosts", default=None)
+    closed_cves: ReportReportCount | None = element(tag="closed_cves", default=None)
+    vulns: ReportReportCount | None = element(tag="vulns", default=None)
+    os: ReportReportCount | None = element(tag="os", default=None)
+    apps: ReportReportCount | None = element(tag="apps", default=None)
+    ssl_certs: ReportReportCount | None = element(tag="ssl_certs", default=None)
+    task: ReportReportTask | None = element(tag="task", default=None)
+    tls_certificates: ReportReportTLSCertificate | None = element(
+        tag="tls_certificates", default=None
+    )
+    timestamp: datetime | None = element(default=None)
+    scan_start: datetime | None = element(default=None)
+    scan_end: datetime | None = element(default=None)
+    timezone: str | None = element(default=None)
+    timezone_abbrev: str | None = element(default=None)
+    ports: ReportReportPorts | None = element(tag="ports", default=None)
+    results: ReportReportResults | None = element(tag="results", default=None)
+    errors: ReportReportErrors | None = element(default=None)
+    report_format: str | None = element(tag="report_format", default=None)
 
 
 class Report(BaseXmlModel, search_mode="unordered", tag="report"):
-    id: Optional[str] = attr(default=None)
-    format_id: Optional[str] = attr(default=None)
-    extension: Optional[str] = attr(default=None)
-    config_id: Optional[str] = attr(default=None)
-    content_type: Optional[str] = attr(default=None)
-    type: Optional[str] = attr(default=None)
+    id: str | None = attr(default=None)
+    format_id: str | None = attr(default=None)
+    extension: str | None = attr(default=None)
+    config_id: str | None = attr(default=None)
+    content_type: str | None = attr(default=None)
+    type: str | None = attr(default=None)
     owner: Owner = element()
     name: str = element()
-    comment: Optional[str] = element(default=None)
+    comment: str | None = element(default=None)
     creation_time: datetime = element()
     modification_time: datetime = element()
     writable: bool = element()
     in_use: bool = element()
     task: Task = element()
-    report_format: Optional[ReportFormat] = element(default=None)
+    report_format: ReportFormat | None = element(default=None)
     report: ReportReport = element()
 
 
@@ -542,4 +559,4 @@ class ImportReportResponse(BaseModel):
 
 class ReportImport(BaseModel):
     report: str
-    in_assets: Optional[bool] = None
+    in_assets: bool | None = None

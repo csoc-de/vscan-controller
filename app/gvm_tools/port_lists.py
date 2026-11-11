@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from gvm.connections import UnixSocketConnection
 from gvm.protocols.gmp import GMP
@@ -7,11 +7,11 @@ from gvm.transforms import EtreeCheckCommandTransform
 
 class GVMPortLists:
     def __init__(
-            self,
-            socket: UnixSocketConnection,
-            transform: EtreeCheckCommandTransform,
-            user: str,
-            password: str
+        self,
+        socket: UnixSocketConnection,
+        transform: EtreeCheckCommandTransform,
+        user: str,
+        password: str,
     ) -> None:
         self.socket = socket
         self.transform = transform
@@ -19,11 +19,11 @@ class GVMPortLists:
         self.password: str = password
 
     def get_port_lists(
-            self,
-            *,
-            filter_string: Optional[str] = None,
-            details: Optional[bool] = False,
-            trash: Optional[bool] = False
+        self,
+        *,
+        filter_string: str | None = None,
+        details: bool | None = False,
+        trash: bool | None = False,
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)

@@ -1,6 +1,6 @@
+from collections.abc import Sequence
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Union, Sequence
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -25,38 +25,38 @@ class TaskPreference(BaseXmlModel, search_mode="unordered", tag="preference"):
 
 class TaskConfig(BaseXmlModel, search_mode="unordered", tag="config"):
     id: str = attr()
-    name: Optional[str] = element(default=None)
-    permissions: Optional[str] = element(default=None)
+    name: str | None = element(default=None)
+    permissions: str | None = element(default=None)
     trash: bool = element()
 
 
 class TaskTarget(BaseXmlModel, search_mode="unordered", tag="target"):
     id: str = attr()
     name: str = element()
-    permissions: Optional[str] = element(default=None)
+    permissions: str | None = element(default=None)
     trash: bool = element()
 
 
 class TaskScanner(BaseXmlModel, search_mode="unordered", tag="scanner"):
     id: str = attr()
     name: str = element()
-    permissions: Optional[str] = element(default=None)
+    permissions: str | None = element(default=None)
     type: int = element()
-    trash: Optional[bool] = element(default=None)
+    trash: bool | None = element(default=None)
 
 
 class TaskSchedule(BaseXmlModel, search_mode="unordered", tag="schedule"):
-    id: Optional[str] = attr()
-    name: Optional[str] = element(default=None)
-    icalendar: Optional[str] = element(default=None)
-    timezone: Optional[str] = element(default=None)
-    permissions: Optional[str] = element(default=None)
-    trash: Optional[bool] = element()
+    id: str | None = attr()
+    name: str | None = element(default=None)
+    icalendar: str | None = element(default=None)
+    timezone: str | None = element(default=None)
+    permissions: str | None = element(default=None)
+    trash: bool | None = element()
 
 
 class TaskReportResultCountElement(BaseXmlModel, search_mode="unordered"):
     count: int
-    deprecated: Optional[bool] = attr(default=None)
+    deprecated: bool | None = attr(default=None)
 
 
 class TaskReportResultCount(BaseXmlModel, search_mode="unordered"):
@@ -76,29 +76,29 @@ class TaskReport(BaseXmlModel, search_mode="unordered", tag="report"):
     timestamp: datetime = element()
     scan_start: datetime = element(default=None)
     scan_end: datetime = element(default=None)
-    result_count: Optional[TaskReportResultCount] = element(tag="result_count", default=None)
-    severity: Optional[float] = element(default=None)
+    result_count: TaskReportResultCount | None = element(tag="result_count", default=None)
+    severity: float | None = element(default=None)
 
 
 class TaskReportCount(BaseXmlModel, search_mode="unordered", tag="report_count"):
-    count: Optional[int]
+    count: int | None
     finished: int = element()
 
 
 class TaskObserversGroup(BaseXmlModel, search_mode="unordered", tag="group"):
     id: str = attr()
-    name: Optional[str] = element(default=None)
+    name: str | None = element(default=None)
 
 
 class TaskObserversRule(BaseXmlModel, search_mode="unordered", tag="rule"):
     id: str = attr()
-    name: Optional[str] = element(default=None)
+    name: str | None = element(default=None)
 
 
 class TaskObservers(BaseXmlModel, search_mode="unordered", tag="observers"):
-    user_list: Optional[str] = None
-    groups: Optional[list[TaskObserversGroup]] = element(tag="group", default=None)
-    rules: Optional[list[TaskObserversRule]] = element(tag="rule", default=None)
+    user_list: str | None = None
+    groups: list[TaskObserversGroup] | None = element(tag="group", default=None)
+    rules: list[TaskObserversRule] | None = element(tag="rule", default=None)
 
 
 class Task(BaseXmlGvmModel, search_mode="unordered", tag="task"):
@@ -106,19 +106,19 @@ class Task(BaseXmlGvmModel, search_mode="unordered", tag="task"):
     usage_type: str = element()
     config: TaskConfig = element()
     target: TaskTarget = element()
-    hosts_ordering: Optional[str] = element(default=None)
+    hosts_ordering: str | None = element(default=None)
     scanner: TaskScanner = element()
     status: str = element()
     progress: int = element()
     report_count: TaskReportCount = element()
-    trend: Optional[str] = element(default=None)
+    trend: str | None = element(default=None)
     schedule: TaskSchedule = element()
     schedule_periods: int = element()
-    current_report: Optional[TaskReport] = wrapped("current_report", element(default=None))
-    last_report: Optional[TaskReport] = wrapped("last_report", element(default=None))
-    observers: Optional[TaskObservers] = element(default=None)
-    average_duration: Optional[int] = element(default=None)
-    result_count: Optional[int] = element(default=None)
+    current_report: TaskReport | None = wrapped("current_report", element(default=None))
+    last_report: TaskReport | None = wrapped("last_report", element(default=None))
+    observers: TaskObservers | None = element(default=None)
+    average_duration: int | None = element(default=None)
+    result_count: int | None = element(default=None)
     preferences: list[TaskPreference] = wrapped("preferences", element(tag="preference"))
 
 
@@ -137,29 +137,29 @@ class CreateTaskResponse(BaseModel):
 
 class TaskCreate(BaseModel):
     name: str
-    config_id: Union[str, UUID]
-    target_id: Union[str, UUID]
-    scanner_id: Union[str, UUID]
-    alterable: Optional[bool] = None
-    hosts_ordering: Optional[HostsOrdering] = None
-    schedule_id: Optional[Union[str, UUID]] = None
-    alert_ids: Optional[Sequence[Union[str, UUID]]] = None
-    comment: Optional[str] = None
-    schedule_periods: Optional[int] = None
-    observers: Optional[Sequence[str]] = None
-    preferences: Optional[str] = None
+    config_id: str | UUID
+    target_id: str | UUID
+    scanner_id: str | UUID
+    alterable: bool | None = None
+    hosts_ordering: HostsOrdering | None = None
+    schedule_id: str | UUID | None = None
+    alert_ids: Sequence[str | UUID] | None = None
+    comment: str | None = None
+    schedule_periods: int | None = None
+    observers: Sequence[str] | None = None
+    preferences: str | None = None
 
 
 class TaskUpdate(BaseModel):
-    name: Optional[str] = None
-    config_id: Optional[Union[str, UUID]] = None
-    target_id: Optional[Union[str, UUID]] = None
-    scanner_id: Optional[Union[str, UUID]] = None
-    alterable: Optional[bool] = None
-    hosts_ordering: Optional[HostsOrdering] = None
-    schedule_id: Optional[Union[str, UUID]] = None
-    schedule_periods: Optional[int] = None
-    comment: Optional[str] = None
-    alert_ids: Optional[Sequence[Union[str, UUID]]] = None
-    observers: Optional[Sequence[str]] = None
-    preferences: Optional[str] = None
+    name: str | None = None
+    config_id: str | UUID | None = None
+    target_id: str | UUID | None = None
+    scanner_id: str | UUID | None = None
+    alterable: bool | None = None
+    hosts_ordering: HostsOrdering | None = None
+    schedule_id: str | UUID | None = None
+    schedule_periods: int | None = None
+    comment: str | None = None
+    alert_ids: Sequence[str | UUID] | None = None
+    observers: Sequence[str] | None = None
+    preferences: str | None = None

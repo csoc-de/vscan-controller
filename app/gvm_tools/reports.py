@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Any
 from uuid import UUID
 
 from gvm.connections import UnixSocketConnection
@@ -38,11 +38,11 @@ class ReportFormatType(Enum):
 
 class GVMReports:
     def __init__(
-            self,
-            socket: UnixSocketConnection,
-            transform: EtreeCheckCommandTransform,
-            user: str,
-            password: str
+        self,
+        socket: UnixSocketConnection,
+        transform: EtreeCheckCommandTransform,
+        user: str,
+        password: str,
     ) -> None:
         self.socket = socket
         self.transform = transform
@@ -50,54 +50,65 @@ class GVMReports:
         self.password: str = password
 
     def get_report(
-            self,
-            report_id: Union[str, UUID],
-            *,
-            filter_string: Optional[str] = "levels=hmlg min_qod=0",
-            filter_id: Optional[str] = None,
-            delta_report_id: Optional[Union[str, UUID]] = None,
-            report_format_id: Optional[Union[str, ReportFormatType]] = None,
-            report_config_id: Optional[str] = None,
-            ignore_pagination: Optional[bool] = True,
-            details: Optional[bool] = True,
+        self,
+        report_id: str | UUID,
+        *,
+        filter_string: str | None = "levels=hmlg min_qod=0",
+        filter_id: str | None = None,
+        delta_report_id: str | UUID | None = None,
+        report_format_id: str | ReportFormatType | None = None,
+        report_config_id: str | None = None,
+        ignore_pagination: bool | None = True,
+        details: bool | None = True,
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)
-            return gvm.get_report(report_id, filter_string=filter_string, filter_id=filter_id,
-                                  delta_report_id=delta_report_id, report_format_id=report_format_id,
-                                  report_config_id=report_config_id, ignore_pagination=ignore_pagination,
-                                  details=details)
+            return gvm.get_report(
+                report_id,
+                filter_string=filter_string,
+                filter_id=filter_id,
+                delta_report_id=delta_report_id,
+                report_format_id=report_format_id,
+                report_config_id=report_config_id,
+                ignore_pagination=ignore_pagination,
+                details=details,
+            )
 
     def get_reports(
-            self,
-            *,
-            filter_string: Optional[str] = "levels=hmlg min_qod=0",
-            filter_id: Optional[Union[str, UUID]] = None,
-            note_details: Optional[bool] = None,
-            override_details: Optional[bool] = None,
-            ignore_pagination: Optional[bool] = True,
-            details: Optional[bool] = True,
+        self,
+        *,
+        filter_string: str | None = "levels=hmlg min_qod=0",
+        filter_id: str | UUID | None = None,
+        note_details: bool | None = None,
+        override_details: bool | None = None,
+        ignore_pagination: bool | None = True,
+        details: bool | None = True,
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)
-            return gvm.get_reports(filter_string=filter_string, filter_id=filter_id, note_details=note_details,
-                                   override_details=override_details, ignore_pagination=ignore_pagination,
-                                   details=details)
+            return gvm.get_reports(
+                filter_string=filter_string,
+                filter_id=filter_id,
+                note_details=note_details,
+                override_details=override_details,
+                ignore_pagination=ignore_pagination,
+                details=details,
+            )
 
     def import_report(
-            self,
-            report: str,
-            task_id: Union[str, UUID],
-            *,
-            in_assets: Optional[bool] = None,
+        self,
+        report: str,
+        task_id: str | UUID,
+        *,
+        in_assets: bool | None = None,
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)
             return gvm.import_report(report, task_id, in_assets=in_assets)
 
     def delete_report(
-            self,
-            report_id: Union[str, UUID],
+        self,
+        report_id: str | UUID,
     ) -> Any:
         with GMP(connection=self.socket, transform=self.transform) as gvm:
             gvm.authenticate(self.user, self.password)

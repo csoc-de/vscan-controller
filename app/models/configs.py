@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel
 from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
@@ -61,13 +60,18 @@ class Config(BaseXmlGvmModel, search_mode="unordered", tag="config"):
     predefined: bool = element()
     tasks: list[ConfigTask] | None = wrapped("tasks", element(tag="task"), default=None)
     families: list[ConfigFamily] | None = wrapped("families", element(tag="family"), default=None)
-    preferences: list[ConfigPreference] | None = wrapped("preferences", element(tag="preference"), default=None)
-    nvt_selectors: ConfigNVTSelector | None = wrapped("nvt_selectors", element(tag="nvt_selector"), default=None)
+    preferences: list[ConfigPreference] | None = wrapped(
+        "preferences", element(tag="preference"), default=None
+    )
+    nvt_selectors: ConfigNVTSelector | None = wrapped(
+        "nvt_selectors", element(tag="nvt_selector"), default=None
+    )
     deprecated: bool | None = element(default=None)
 
 
 class GetConfigsResponse(BaseModel):
     configs: list[Config]
+
 
 class ImportConfigResponse(BaseModel):
     id: str

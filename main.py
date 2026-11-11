@@ -31,8 +31,7 @@ from app.utils.processors import add_and_modify_parameters, add_log_level_upper
 
 
 def init_logging() -> Any | None:
-    try:
-        structlog.configure(
+    structlog.configure(
             processors=[
                 add_log_level_upper,
                 structlog.processors.CallsiteParameterAdder(
@@ -41,8 +40,8 @@ def init_logging() -> Any | None:
                         structlog.processors.CallsiteParameter.FUNC_NAME,
                         structlog.processors.CallsiteParameter.LINENO,
                         structlog.processors.CallsiteParameter.MODULE,
-                    ],
-                ),
+                        ],
+                    ),
                 add_and_modify_parameters,
                 structlog.processors.StackInfoRenderer(),
                 structlog.processors.dict_tracebacks,
@@ -50,26 +49,17 @@ def init_logging() -> Any | None:
                 structlog.processors.EventRenamer("msg"),
                 structlog.contextvars.merge_contextvars,
                 structlog.processors.JSONRenderer(),
-            ],
+                ],
             wrapper_class=structlog.make_filtering_bound_logger(LOG_LEVEL),
             context_class=dict,
             logger_factory=structlog.PrintLoggerFactory(),
             cache_logger_on_first_use=True,
-        )
-        return structlog.get_logger()
-    except Exception as e:  # pylint: disable=broad-exception-caught
-        print(f"could not setup logger error: {e}")
-        print(traceback.format_exc())
-        raise e
-
+            )
+    return structlog.get_logger()
 
 def main() -> int:
     try:
         logger = init_logging()
-    except Exception as e:  # pylint: disable=broad-exception-caught
-        print(f"could not setup logger\n ERROR: {e}\n{traceback.format_exc()}")
-        return 1
-    try:
         socket: UnixSocketConnection = UnixSocketConnection(path=GREENBONE_SOCKET_PATH)
         metrics_socket: UnixSocketConnection = UnixSocketConnection(path=GREENBONE_SOCKET_PATH)
         transform: EtreeCheckCommandTransform = EtreeCheckCommandTransform()
@@ -87,12 +77,15 @@ def main() -> int:
             Metrics(
                 GVMFeeds(metrics_socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
                 FEEDS_METRICS_INTERVAL_SECONDS,
-                log=logger
+                log=logger,
             ),
             log=logger,
         )
         uvicorn.run(app.fastapi, host=HOST, port=PORT, log_level="info")
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except KeyError as e:
+        print(f"could not setup logger\n ERROR: {e}\n{traceback.format_exc()}")
+        return 1
+    except Exception as e:  # noqa: BLE001 # top-level guard: log any startup/runtime failure
         logger.error(e, traceback=traceback.format_exc())
         return 1
     return 1

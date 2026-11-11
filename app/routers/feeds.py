@@ -1,6 +1,5 @@
 # pylint: disable=raise-missing-from
 import traceback
-from typing import Dict
 from xml.etree.ElementTree import tostring
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -10,16 +9,12 @@ from structlog.stdlib import BoundLogger
 from app.gvm_tools.feeds import GVMFeeds
 from app.models.feeds import Feed, Feeds, GetFeedsResponse
 from app.routers.auth import authorization
-from app.routers.response import UNAUTHORIZED, INTERNAL_SERVER_ERROR
+from app.routers.response import INTERNAL_SERVER_ERROR, UNAUTHORIZED
 
 
 class FeedsRouter(APIRouter):
     def __init__(self, gvm_feeds: GVMFeeds, log: BoundLogger) -> None:
-        super().__init__(
-            prefix="/v1/feeds",
-            tags=["feeds"],
-            dependencies=[Depends(authorization)]
-        )
+        super().__init__(prefix="/v1/feeds", tags=["feeds"], dependencies=[Depends(authorization)])
         self._gvm_feeds = gvm_feeds
         self._log = log
 
@@ -32,12 +27,12 @@ class FeedsRouter(APIRouter):
             self.get_feeds,
             methods=["GET"],
             response_model=GetFeedsResponse,
-            responses=http_responses
+            responses=http_responses,
         )
 
     async def get_feeds(
-            self,
-    ) -> Dict[str, list[Feed]]:
+        self,
+    ) -> dict[str, list[Feed]]:
         try:
             resp = self._gvm_feeds.get_feeds()
             print(tostring(resp))
@@ -46,16 +41,22 @@ class FeedsRouter(APIRouter):
         except GvmResponseError as e:
             match e.status:
                 case _:
-                    self._log.error("call of adapter failed", error=e, status_code=e.status,
-                                    traceback=traceback.format_exc())
+                    self._log.error(
+                        "call of adapter failed",
+                        error=e,
+                        status_code=e.status,
+                        traceback=traceback.format_exc(),
+                    )
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="internal server error"
-                    )
+                        detail="internal server error",
+                    ) from e
         except Exception as e:
-            self._log.error("call of adapter or xml conversion of feeds failed", error=e,
-                            traceback=traceback.format_exc())
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="internal server error"
+            self._log.error(
+                "call of adapter or xml conversion of feeds failed",
+                error=e,
+                traceback=traceback.format_exc(),
             )
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="internal server error"
+            ) from e

@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from app.models.tasks import Task
 
@@ -19,8 +19,8 @@ def test_task_parsing_xml_to_model():
     assert task.owner.name == "admin"
     assert task.name == "Task:HOME without Gast network:0bc7146f-ec89-4977-83e5-75d33a67ae62"
     assert task.comment == "Scan my home network without gast network"
-    assert task.creation_time == datetime(2026, 7, 20, 10, 17, 54, tzinfo=timezone.utc)
-    assert task.modification_time == datetime(2026, 7, 20, 10, 17, 54, tzinfo=timezone.utc)
+    assert task.creation_time == datetime(2026, 7, 20, 10, 17, 54, tzinfo=UTC)
+    assert task.modification_time == datetime(2026, 7, 20, 10, 17, 54, tzinfo=UTC)
     assert task.writable is True
     assert task.in_use is False
     assert task.alterable is True
@@ -48,7 +48,9 @@ def test_task_parsing_xml_to_model():
 
     # --- Target ---
     assert task.target.id == "70465d32-2f65-4c34-944b-2e8b10432aee"
-    assert task.target.name == "Target:HOME without Gast network:dc4f38be-bd66-4d68-b5f8-ff5cec315cbf"
+    assert (
+        task.target.name == "Target:HOME without Gast network:dc4f38be-bd66-4d68-b5f8-ff5cec315cbf"
+    )
     assert task.target.trash is False
 
     # --- Scanner ---
@@ -59,22 +61,28 @@ def test_task_parsing_xml_to_model():
 
     # --- Schedule ---
     assert task.schedule.id == "22a9fe85-373e-4a32-a46f-589a405d7dc2"
-    assert task.schedule.name == "Schedule:HOME without Gast network:5dd6a4ca-5733-4a5c-a5a7-fa09c83ab966"
+    assert (
+        task.schedule.name
+        == "Schedule:HOME without Gast network:5dd6a4ca-5733-4a5c-a5a7-fa09c83ab966"
+    )
     assert task.schedule.trash is False
     assert task.schedule.timezone == "Europe/Berlin"
     # icalendar ist ein großes iCalendar-Block — evtl. nur auf Existenz prüfen
     assert task.schedule.icalendar is not None
-    assert ("BEGIN:VCALENDAR\\nVERSION:2.0\\nPRODID:-//Greenbone.net//NONSGML Greenbone Security"
-            in task.schedule.icalendar)
     assert (
-            "20260720T131800\\nDURATION:PT2H42M\\nRRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR\\nUID:b867dd24-c20b-4828-adfb-fafb7c9252fa\\nDTSTAMP:20260720T131731Z\\nEND:VEVENT\\nEND:VCALENDAR\\n"
-            in task.schedule.icalendar)
+        "BEGIN:VCALENDAR\\nVERSION:2.0\\nPRODID:-//Greenbone.net//NONSGML Greenbone Security"
+        in task.schedule.icalendar
+    )
+    assert (
+        "20260720T131800\\nDURATION:PT2H42M\\nRRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR\\nUID:b867dd24-c20b-4828-adfb-fafb7c9252fa\\nDTSTAMP:20260720T131731Z\\nEND:VEVENT\\nEND:VCALENDAR\\n"
+        in task.schedule.icalendar
+    )
 
     # --- Last Report ---
     assert task.last_report.id == "1cf07104-5cbd-440c-b06a-4388ecc4d31c"
-    assert task.last_report.timestamp == datetime(2026, 7, 20, 11, 18, 11, tzinfo=timezone.utc)
-    assert task.last_report.scan_start == datetime(2026, 7, 20, 11, 18, 32, tzinfo=timezone.utc)
-    assert task.last_report.scan_end == datetime(2026, 7, 20, 11, 44, 29, tzinfo=timezone.utc)
+    assert task.last_report.timestamp == datetime(2026, 7, 20, 11, 18, 11, tzinfo=UTC)
+    assert task.last_report.scan_start == datetime(2026, 7, 20, 11, 18, 32, tzinfo=UTC)
+    assert task.last_report.scan_end == datetime(2026, 7, 20, 11, 44, 29, tzinfo=UTC)
     assert task.last_report.severity == 7.5
     assert task.last_report.result_count.critical.count == 0
     assert task.last_report.result_count.hole.count == 1

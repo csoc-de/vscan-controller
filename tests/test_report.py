@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from app.models.reports import Report, ReportReportFilterKeyword, ReportReportResultNVTReference
 
@@ -20,8 +20,8 @@ def test_report_parsing_xml_to_model():
     assert report.comment is None
     assert report.writable is False
     assert report.in_use is False
-    assert report.creation_time == datetime(2026, 7, 7, 13, 5, 49, tzinfo=timezone.utc)
-    assert report.modification_time == datetime(2026, 7, 7, 13, 23, 36, tzinfo=timezone.utc)
+    assert report.creation_time == datetime(2026, 7, 7, 13, 5, 49, tzinfo=UTC)
+    assert report.modification_time == datetime(2026, 7, 7, 13, 23, 36, tzinfo=UTC)
 
     assert report.owner.name == "admin"
     assert report.task.id == "6b099e87-69d5-442e-8440-3704c7dfd856"
@@ -36,7 +36,10 @@ def test_report_parsing_xml_to_model():
         assert inner_report.sort_field.order == "descending"
 
     if inner_report.filters:
-        assert inner_report.filters.term == "levels=chml rows=100 min_qod=70 first=1 sort-reverse=severity result_hosts_only=0"
+        assert (
+            inner_report.filters.term
+            == "levels=chml rows=100 min_qod=70 first=1 sort-reverse=severity result_hosts_only=0"
+        )
         assert "Critical" in inner_report.filters.filter
         assert "High" in inner_report.filters.filter
         assert "Medium" in inner_report.filters.filter
@@ -98,11 +101,14 @@ def test_report_parsing_xml_to_model():
     assert inner_report.task.progress == 100
     assert inner_report.task.target.id == "255018b7-0929-449b-9588-2265fa04be91"
     assert inner_report.task.target.trash is False
-    assert inner_report.task.target.name == "Target:Scan local Network:255018b7-0929-449b-9588-2265fa04be91"
+    assert (
+        inner_report.task.target.name
+        == "Target:Scan local Network:255018b7-0929-449b-9588-2265fa04be91"
+    )
     assert inner_report.task.target.comment is None
 
-    assert inner_report.timestamp == datetime(2026, 7, 7, 13, 5, 49, tzinfo=timezone.utc)
-    assert inner_report.scan_start == datetime(2026, 7, 7, 13, 6, 3, tzinfo=timezone.utc)
+    assert inner_report.timestamp == datetime(2026, 7, 7, 13, 5, 49, tzinfo=UTC)
+    assert inner_report.scan_start == datetime(2026, 7, 7, 13, 6, 3, tzinfo=UTC)
     assert inner_report.timezone == "Coordinated Universal Time"
     assert inner_report.timezone_abbrev == "UTC"
 
@@ -141,11 +147,11 @@ def test_report_parsing_xml_to_model():
     assert result_0.id == "5bf060d7-0a86-4cb0-89ff-211e3e245117"
     assert result_0.name == "Redis Server No Password (TCP)"
     assert result_0.owner.name == "admin"
-    assert result_0.modification_time == datetime(2026, 7, 7, 13, 8, 21, tzinfo=timezone.utc)
+    assert result_0.modification_time == datetime(2026, 7, 7, 13, 8, 21, tzinfo=UTC)
     assert result_0.comment is None
-    assert result_0.creation_time == datetime(2026, 7, 7, 13, 8, 21, tzinfo=timezone.utc)
+    assert result_0.creation_time == datetime(2026, 7, 7, 13, 8, 21, tzinfo=UTC)
     assert result_0.port == "6379/tcp"
-    assert result_0.scan_nvt_version == datetime(2025, 11, 25, 5, 40, 35, tzinfo=timezone.utc)
+    assert result_0.scan_nvt_version == datetime(2025, 11, 25, 5, 40, 35, tzinfo=UTC)
     assert result_0.threat == "High"
     assert result_0.severity == 7.5
     assert result_0.description == "Redis Server is not protected with a password.\\n"
@@ -162,13 +168,17 @@ def test_report_parsing_xml_to_model():
     assert result_0.nvt.name == "Redis Server No Password (TCP)"
     assert result_0.nvt.family == "Databases"
     assert result_0.nvt.cvss_base == 7.5
-    assert "cvss_base_vector=AV:N/AC:L/Au:N/C:P/I:P/A:P|summary=The remote Redis" in result_0.nvt.tags
+    assert (
+        "cvss_base_vector=AV:N/AC:L/Au:N/C:P/I:P/A:P|summary=The remote Redis" in result_0.nvt.tags
+    )
     assert "1.3.6.1.4.1.25623.1.0.12288)|solution_type=Workaround" in result_0.nvt.tags
     assert result_0.nvt.refs is None
 
     assert result_0.nvt.severities.score == 7.5
     assert result_0.nvt.severities.severities[0].type == "cvss_base_v2"
-    assert result_0.nvt.severities.severities[0].date == datetime(2015, 6, 5, 13, 48, 46, tzinfo=timezone.utc)
+    assert result_0.nvt.severities.severities[0].date == datetime(
+        2015, 6, 5, 13, 48, 46, tzinfo=UTC
+    )
     assert result_0.nvt.severities.severities[0].score == 7.5
     assert result_0.nvt.severities.severities[0].origin is None
     assert result_0.nvt.severities.severities[0].value == "AV:N/AC:L/Au:N/C:P/I:P/A:P"
@@ -228,8 +238,8 @@ def test_report_parsing_xml_to_model_without_reports():
     assert report.owner.name == "admin"
     assert report.name == "2026-07-30T14:54:16Z"
     assert report.comment is None
-    assert report.creation_time == datetime(2026, 7, 30, 14, 54, 16, tzinfo=timezone.utc)
-    assert report.modification_time == datetime(2026, 7, 30, 14, 55, 11, tzinfo=timezone.utc)
+    assert report.creation_time == datetime(2026, 7, 30, 14, 54, 16, tzinfo=UTC)
+    assert report.modification_time == datetime(2026, 7, 30, 14, 55, 11, tzinfo=UTC)
 
     # --- Task ---
     assert report.task.id == "2783024a-925f-4ff9-8399-01051e794905"
@@ -246,8 +256,10 @@ def test_report_parsing_xml_to_model_without_reports():
     assert inner_report.sort_field.order == "descending"
 
     assert inner_report.filters.id == "0"
-    assert (inner_report.filters.term ==
-            "apply_overrides=0 levels=chml rows=1000 min_qod=70 first=1 sort-reverse=severity result_hosts_only=0 notes=1 overrides=1")
+    assert (
+        inner_report.filters.term
+        == "apply_overrides=0 levels=chml rows=1000 min_qod=70 first=1 sort-reverse=severity result_hosts_only=0 notes=1 overrides=1"
+    )
     assert inner_report.filters.filter[0] == "Critical"
     assert inner_report.filters.filter[1] == "High"
     assert inner_report.filters.filter[2] == "Medium"
@@ -324,8 +336,8 @@ def test_report_parsing_xml_to_model_without_reports():
     assert inner_report.task.target.comment == "Test TEst Test"
     assert inner_report.task.progress == 0
 
-    assert inner_report.timestamp == datetime(2026, 7, 30, 14, 54, 16, tzinfo=timezone.utc)
-    assert inner_report.scan_start == datetime(2026, 7, 30, 14, 54, 33, tzinfo=timezone.utc)
+    assert inner_report.timestamp == datetime(2026, 7, 30, 14, 54, 16, tzinfo=UTC)
+    assert inner_report.scan_start == datetime(2026, 7, 30, 14, 54, 33, tzinfo=UTC)
     assert inner_report.timezone == "Coordinated Universal Time"
     assert inner_report.timezone_abbrev == "UTC"
 
@@ -369,7 +381,7 @@ def test_report_parsing_xml_to_model_without_reports():
     assert inner_report.tls_certificates.sha256_fingerprint is None
 
     # --- Scan End ---
-    assert inner_report.scan_end == datetime(2026, 7, 30, 14, 55, 12, tzinfo=timezone.utc)
+    assert inner_report.scan_end == datetime(2026, 7, 30, 14, 55, 12, tzinfo=UTC)
 
     # --- Errors ---
     assert inner_report.errors.count == 0
@@ -395,8 +407,8 @@ def test_report_parsing_xml_to_model_2():
     assert report.owner.name == "admin"
     assert report.name == "2026-08-05T13:18:38Z"
     assert report.comment is None
-    assert report.creation_time == datetime(2026, 8, 5, 13, 18, 38, tzinfo=timezone.utc)
-    assert report.modification_time == datetime(2026, 8, 5, 13, 27, 51, tzinfo=timezone.utc)
+    assert report.creation_time == datetime(2026, 8, 5, 13, 18, 38, tzinfo=UTC)
+    assert report.modification_time == datetime(2026, 8, 5, 13, 27, 51, tzinfo=UTC)
 
     # --- Task (outer) ---
     assert report.task.id == "35a782b4-902d-4876-944c-fe9b74a33351"
@@ -410,8 +422,10 @@ def test_report_parsing_xml_to_model_2():
 
     # --- Filters ---
     assert inner_report.filters.id == ""
-    assert (inner_report.filters.term ==
-            "apply_overrides=0 levels=hmlg min_qod=0 first=1 rows=10 sort=name")
+    assert (
+        inner_report.filters.term
+        == "apply_overrides=0 levels=hmlg min_qod=0 first=1 rows=10 sort=name"
+    )
     assert inner_report.filters.filter[0] == "High"
     assert inner_report.filters.filter[1] == "Medium"
     assert inner_report.filters.filter[2] == "Low"
@@ -471,8 +485,8 @@ def test_report_parsing_xml_to_model_2():
     assert inner_report.task.target.comment is None
     assert inner_report.task.progress == 22
 
-    assert inner_report.timestamp == datetime(2026, 8, 5, 13, 18, 38, tzinfo=timezone.utc)
-    assert inner_report.scan_start == datetime(2026, 8, 5, 13, 18, 52, tzinfo=timezone.utc)
+    assert inner_report.timestamp == datetime(2026, 8, 5, 13, 18, 38, tzinfo=UTC)
+    assert inner_report.scan_start == datetime(2026, 8, 5, 13, 18, 52, tzinfo=UTC)
     assert inner_report.timezone == "Coordinated Universal Time"
     assert inner_report.timezone_abbrev == "UTC"
 
