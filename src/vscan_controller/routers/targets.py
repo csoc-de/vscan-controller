@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.targets import GVMTargets
-from app.models.targets import (
+from vscan_controller.gvm_tools.targets import GVMTargets
+from vscan_controller.models.targets import (
     CreateTargetResponse,
     GetTargetResponse,
     GetTargetsResponse,
@@ -15,8 +15,13 @@ from app.models.targets import (
     TargetCreate,
     TargetUpdate,
 )
-from app.routers.auth import authorization
-from app.routers.response import BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, UNAUTHORIZED
+from vscan_controller.routers.auth import authorization
+from vscan_controller.routers.response import (
+    BAD_REQUEST,
+    INTERNAL_SERVER_ERROR,
+    NOT_FOUND,
+    UNAUTHORIZED,
+)
 
 
 class TargetsRouter(APIRouter):

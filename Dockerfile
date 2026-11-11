@@ -1,19 +1,18 @@
 FROM python:3.15.2-alpine3.23
 
-ARG VERSION="nothing"
-ARG COMMIT="nothing"
-ARG BUILD_AT="nothing"
+ARG VERSION="<version>"
+ARG COMMIT="<commit>"
+ARG BUILD_AT="<built_at>"
 
-WORKDIR /app
+WORKDIR /data
 COPY . .
 
 RUN chmod +x ./entrypoint.sh
 
-RUN echo "VERSION = ${VERSION}" > build_info.py
-RUN echo "COMMIT = ${COMMIT}" >> build_info.py
-RUN echo "BUILD_AT = ${BUILD_AT}" >> build_info.py
+RUN printf 'VERSION = "%s"\nCOMMIT = "%s"\nBUILD_AT = "%s"\n' \
+    "${VERSION}" "${COMMIT}" "${BUILD_AT}" > ./src/vscan_controller/build_info.py
 
 RUN pip3 install --upgrade pip --no-warn-script-location
-RUN pip3 install -r ./requirements.txt --no-warn-script-location --no-cache-dir
+RUN pip3 install . --no-warn-script-location --no-cache-dir
 
 CMD ["/bin/sh", "entrypoint.sh"]

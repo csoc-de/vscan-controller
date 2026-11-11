@@ -1,7 +1,7 @@
 import os
 from datetime import UTC, datetime
 
-from app.models.schedules import Schedule
+from vscan_controller.models.schedules import Schedule
 
 
 def test_schedule_parsing_xml_to_model():

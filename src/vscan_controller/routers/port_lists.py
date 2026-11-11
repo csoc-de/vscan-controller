@@ -6,10 +6,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.port_lists import GVMPortLists
-from app.models.port_lists import GetPortListsResponse, PortList
-from app.routers.auth import authorization
-from app.routers.response import INTERNAL_SERVER_ERROR, UNAUTHORIZED
+from vscan_controller.gvm_tools.port_lists import GVMPortLists
+from vscan_controller.models.port_lists import GetPortListsResponse, PortList
+from vscan_controller.routers.auth import authorization
+from vscan_controller.routers.response import INTERNAL_SERVER_ERROR, UNAUTHORIZED
 
 
 class PortListsRouter(APIRouter):

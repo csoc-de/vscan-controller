@@ -1,7 +1,11 @@
 import os
 from datetime import UTC, datetime
 
-from app.models.reports import Report, ReportReportFilterKeyword, ReportReportResultNVTReference
+from vscan_controller.models.reports import (
+    Report,
+    ReportReportFilterKeyword,
+    ReportReportResultNVTReference,
+)
 
 
 def test_report_parsing_xml_to_model():

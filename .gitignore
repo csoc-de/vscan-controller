@@ -9,4 +9,6 @@ testdb.db
 .coverage
 sbom.xml
 
+src/vscan_controller/build_info.py
+
 __pycache__

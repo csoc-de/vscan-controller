@@ -7,14 +7,14 @@ from fastapi import APIRouter, Depends, File, HTTPException, status
 from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.configs import GVMConfigs
-from app.models.configs import (
+from vscan_controller.gvm_tools.configs import GVMConfigs
+from vscan_controller.models.configs import (
     Config,
     GetConfigsResponse,
     ImportConfigResponse,
 )
-from app.routers.auth import authorization
-from app.routers.response import INTERNAL_SERVER_ERROR, UNAUTHORIZED
+from vscan_controller.routers.auth import authorization
+from vscan_controller.routers.response import INTERNAL_SERVER_ERROR, UNAUTHORIZED
 
 
 class ConfigsRouter(APIRouter):

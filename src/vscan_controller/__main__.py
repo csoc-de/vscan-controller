@@ -8,7 +8,7 @@ from gvm.connections import UnixSocketConnection
 from gvm.protocols.gmp import GMP
 from gvm.transforms import EtreeCheckCommandTransform
 
-from app.config import (
+from vscan_controller.config import (
     FEEDS_METRICS_INTERVAL_SECONDS,
     GREENBONE_PASSWORD,
     GREENBONE_SOCKET_PATH,
@@ -17,17 +17,17 @@ from app.config import (
     LOG_LEVEL,
     PORT,
 )
-from app.gvm_tools.configs import GVMConfigs
-from app.gvm_tools.feeds import GVMFeeds
-from app.gvm_tools.port_lists import GVMPortLists
-from app.gvm_tools.reports import GVMReports
-from app.gvm_tools.scanners import GVMScanners
-from app.gvm_tools.schedules import GVMSchedules
-from app.gvm_tools.targets import GVMTargets
-from app.gvm_tools.tasks import GVMTasks
-from app.metrics import Metrics
-from app.routers.router import App
-from app.utils.processors import add_and_modify_parameters, add_log_level_upper
+from vscan_controller.gvm_tools.configs import GVMConfigs
+from vscan_controller.gvm_tools.feeds import GVMFeeds
+from vscan_controller.gvm_tools.port_lists import GVMPortLists
+from vscan_controller.gvm_tools.reports import GVMReports
+from vscan_controller.gvm_tools.scanners import GVMScanners
+from vscan_controller.gvm_tools.schedules import GVMSchedules
+from vscan_controller.gvm_tools.targets import GVMTargets
+from vscan_controller.gvm_tools.tasks import GVMTasks
+from vscan_controller.metrics import Metrics
+from vscan_controller.routers.router import App
+from vscan_controller.utils.processors import add_and_modify_parameters, add_log_level_upper
 
 
 def init_logging() -> Any | None:

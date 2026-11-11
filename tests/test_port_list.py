@@ -1,7 +1,7 @@
 import os
 from datetime import UTC, datetime
 
-from app.models.port_lists import PortList
+from vscan_controller.models.port_lists import PortList
 
 
 def test_port_list_parsing_xml_to_model():

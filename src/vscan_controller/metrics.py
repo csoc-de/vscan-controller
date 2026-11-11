@@ -4,8 +4,8 @@ from xml.etree.ElementTree import tostring
 from prometheus_client import Gauge
 from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.feeds import GVMFeeds
-from app.models.feeds import Feeds
+from vscan_controller.gvm_tools.feeds import GVMFeeds
+from vscan_controller.models.feeds import Feeds
 
 
 class Metrics:

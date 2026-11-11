@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.config import API_KEY
+from vscan_controller.config import API_KEY
 
 _default_http_auth_credentials = Depends(HTTPBearer())
 

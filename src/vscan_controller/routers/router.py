@@ -7,24 +7,24 @@ from fastapi.responses import Response
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from structlog.stdlib import BoundLogger
 
-from app.config import BUILD_AT, COMMIT, VERSION
-from app.gvm_tools.configs import GVMConfigs
-from app.gvm_tools.feeds import GVMFeeds
-from app.gvm_tools.port_lists import GVMPortLists
-from app.gvm_tools.reports import GVMReports
-from app.gvm_tools.scanners import GVMScanners
-from app.gvm_tools.schedules import GVMSchedules
-from app.gvm_tools.targets import GVMTargets
-from app.gvm_tools.tasks import GVMTasks
-from app.metrics import Metrics
-from app.routers.configs import ConfigsRouter
-from app.routers.feeds import FeedsRouter
-from app.routers.port_lists import PortListsRouter
-from app.routers.reports import ReportsRouter
-from app.routers.scanners import ScannersRouter
-from app.routers.schedules import SchedulesRouter
-from app.routers.targets import TargetsRouter
-from app.routers.tasks import TasksRouter
+from vscan_controller.config import BUILD_AT, COMMIT, VERSION
+from vscan_controller.gvm_tools.configs import GVMConfigs
+from vscan_controller.gvm_tools.feeds import GVMFeeds
+from vscan_controller.gvm_tools.port_lists import GVMPortLists
+from vscan_controller.gvm_tools.reports import GVMReports
+from vscan_controller.gvm_tools.scanners import GVMScanners
+from vscan_controller.gvm_tools.schedules import GVMSchedules
+from vscan_controller.gvm_tools.targets import GVMTargets
+from vscan_controller.gvm_tools.tasks import GVMTasks
+from vscan_controller.metrics import Metrics
+from vscan_controller.routers.configs import ConfigsRouter
+from vscan_controller.routers.feeds import FeedsRouter
+from vscan_controller.routers.port_lists import PortListsRouter
+from vscan_controller.routers.reports import ReportsRouter
+from vscan_controller.routers.scanners import ScannersRouter
+from vscan_controller.routers.schedules import SchedulesRouter
+from vscan_controller.routers.targets import TargetsRouter
+from vscan_controller.routers.tasks import TasksRouter
 
 
 class App:

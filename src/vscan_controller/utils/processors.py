@@ -2,7 +2,7 @@ from typing import Any
 
 from structlog.types import EventDict
 
-from app.config import VERSION
+from vscan_controller.config import VERSION
 
 
 # pylint: disable=unused-argument

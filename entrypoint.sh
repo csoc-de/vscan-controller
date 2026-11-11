@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$DEV" = "true" ]; then
-  python3 ./main.py --dev
+  vscan-controller --dev
 else
-  python3 ./main.py
+  vscan-controller
 fi

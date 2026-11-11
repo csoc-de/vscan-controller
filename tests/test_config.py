@@ -1,7 +1,7 @@
 import os
 from datetime import UTC, datetime
 
-from app.models.configs import Config
+from vscan_controller.models.configs import Config
 
 
 def test_config_parsing_xml_to_model():

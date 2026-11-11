@@ -6,7 +6,7 @@ from argparse import ArgumentError, ArgumentParser
 from dotenv import load_dotenv
 
 try:
-    from app.build_info import BUILD_AT, COMMIT, VERSION
+    from vscan_controller.build_info import BUILD_AT, COMMIT, VERSION
 except ImportError:
     VERSION = "<version>"
     COMMIT = "<commit>"

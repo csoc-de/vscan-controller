@@ -7,7 +7,7 @@ from lxml.etree import _Element as Element
 from pydantic import BaseModel, Field, computed_field, constr
 from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
-from app.models.base import Owner, Permission, UserTags
+from vscan_controller.models.base import Owner, Permission, UserTags
 
 
 class Task(BaseXmlModel, search_mode="unordered", tag="task"):

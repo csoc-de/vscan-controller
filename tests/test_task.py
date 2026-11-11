@@ -1,7 +1,7 @@
 import os
 from datetime import UTC, datetime
 
-from app.models.tasks import Task
+from vscan_controller.models.tasks import Task
 
 
 def test_task_parsing_xml_to_model():

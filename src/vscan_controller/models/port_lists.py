@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
-from app.models.base import BaseXmlGvmModel
+from vscan_controller.models.base import BaseXmlGvmModel
 
 
 class PortListPortCount(BaseXmlModel, search_mode="unordered", tag="port_count"):

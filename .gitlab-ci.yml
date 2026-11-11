@@ -51,8 +51,7 @@ unit:
   stage: test
   needs: []
   before_script:
-    - pip install pytest pytest-cov
-    - pip install -r requirements.txt
+    - pip install . --group dev
   script:
     - pytest --cov=. --cov-report term-missing --cov-report html:coverage.html --cov-report xml:coverage.xml --junitxml=report.xml
   coverage: /TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/

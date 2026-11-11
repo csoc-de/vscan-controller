@@ -1,7 +1,7 @@
 import os
 from datetime import UTC, datetime
 
-from app.models.scanners import Scanner
+from vscan_controller.models.scanners import Scanner
 
 
 def test_scanner_parsing_xml_to_model():

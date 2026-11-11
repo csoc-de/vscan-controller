@@ -6,10 +6,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.feeds import GVMFeeds
-from app.models.feeds import Feed, Feeds, GetFeedsResponse
-from app.routers.auth import authorization
-from app.routers.response import INTERNAL_SERVER_ERROR, UNAUTHORIZED
+from vscan_controller.gvm_tools.feeds import GVMFeeds
+from vscan_controller.models.feeds import Feed, Feeds, GetFeedsResponse
+from vscan_controller.routers.auth import authorization
+from vscan_controller.routers.response import INTERNAL_SERVER_ERROR, UNAUTHORIZED
 
 
 class FeedsRouter(APIRouter):

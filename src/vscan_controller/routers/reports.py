@@ -6,10 +6,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from gvm.errors import GvmResponseError
 from structlog.stdlib import BoundLogger
 
-from app.gvm_tools.reports import GVMReports
-from app.models.reports import GetReportResponse, GetReportsResponse, Report
-from app.routers.auth import authorization
-from app.routers.response import INTERNAL_SERVER_ERROR, NOT_FOUND, UNAUTHORIZED
+from vscan_controller.gvm_tools.reports import GVMReports
+from vscan_controller.models.reports import GetReportResponse, GetReportsResponse, Report
+from vscan_controller.routers.auth import authorization
+from vscan_controller.routers.response import INTERNAL_SERVER_ERROR, NOT_FOUND, UNAUTHORIZED
 
 
 class ReportsRouter(APIRouter):

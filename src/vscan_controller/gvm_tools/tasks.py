@@ -7,7 +7,7 @@ from gvm.protocols.gmp import GMP
 from gvm.transforms import EtreeCheckCommandTransform
 from gvm.utils import SupportsStr
 
-from app.models.tasks import HostsOrdering
+from vscan_controller.models.tasks import HostsOrdering
 
 
 class GVMTasks:

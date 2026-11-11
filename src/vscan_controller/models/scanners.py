@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
-from app.models.base import BaseXmlGvmModel
+from vscan_controller.models.base import BaseXmlGvmModel
 
 
 class ScannerCertificateInfo(BaseXmlModel, search_mode="unordered"):
