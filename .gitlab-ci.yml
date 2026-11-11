@@ -27,7 +27,7 @@ build:
 .ruff:
   stage: style
   image:
-    name: ${HARBOR_HOST}/csoc-registry/ruff:latest
+    name: ${HARBOR_HOST}/csoc-registry/ruff:0.17.4
     entrypoint: [""]
   before_script:
     - ruff --version
