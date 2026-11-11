@@ -35,12 +35,16 @@ build:
 lint:
   extends: .ruff
   script:
-    - ruff check --output-format gitlab
+    - ruff check --output-format gitlab --output-file code-quality-report.json
+    - cat code-quality-report.json
+  artifacts:
+    reports:
+      codequality: $CI_PROJECT_DIR/code-quality-report.json
 
 format:
   extends: .ruff
   script:
-    - ruff formate --check --output-format gitlab
+    - ruff format --check --output-format gitlab
 
 unit:
   image: ${HARBOR_HOST}/dockerhub/library/python:latest
