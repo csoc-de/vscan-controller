@@ -32,30 +32,31 @@ from app.utils.processors import add_and_modify_parameters, add_log_level_upper
 
 def init_logging() -> Any | None:
     structlog.configure(
-            processors=[
-                add_log_level_upper,
-                structlog.processors.CallsiteParameterAdder(
-                    [
-                        structlog.processors.CallsiteParameter.PATHNAME,
-                        structlog.processors.CallsiteParameter.FUNC_NAME,
-                        structlog.processors.CallsiteParameter.LINENO,
-                        structlog.processors.CallsiteParameter.MODULE,
-                        ],
-                    ),
-                add_and_modify_parameters,
-                structlog.processors.StackInfoRenderer(),
-                structlog.processors.dict_tracebacks,
-                structlog.processors.TimeStamper(fmt="iso", utc=True, key="time"),
-                structlog.processors.EventRenamer("msg"),
-                structlog.contextvars.merge_contextvars,
-                structlog.processors.JSONRenderer(),
+        processors=[
+            add_log_level_upper,
+            structlog.processors.CallsiteParameterAdder(
+                [
+                    structlog.processors.CallsiteParameter.PATHNAME,
+                    structlog.processors.CallsiteParameter.FUNC_NAME,
+                    structlog.processors.CallsiteParameter.LINENO,
+                    structlog.processors.CallsiteParameter.MODULE,
                 ],
-            wrapper_class=structlog.make_filtering_bound_logger(LOG_LEVEL),
-            context_class=dict,
-            logger_factory=structlog.PrintLoggerFactory(),
-            cache_logger_on_first_use=True,
-            )
+            ),
+            add_and_modify_parameters,
+            structlog.processors.StackInfoRenderer(),
+            structlog.processors.dict_tracebacks,
+            structlog.processors.TimeStamper(fmt="iso", utc=True, key="time"),
+            structlog.processors.EventRenamer("msg"),
+            structlog.contextvars.merge_contextvars,
+            structlog.processors.JSONRenderer(),
+        ],
+        wrapper_class=structlog.make_filtering_bound_logger(LOG_LEVEL),
+        context_class=dict,
+        logger_factory=structlog.PrintLoggerFactory(),
+        cache_logger_on_first_use=True,
+    )
     return structlog.get_logger()
+
 
 def main() -> int:
     try:

@@ -45,5 +45,5 @@ class Metrics:
             for feed in feeds.feeds:
                 labels = {"feed_name": feed.name or "", "feed_type": feed.type or ""}
                 self._gvm_feed_version.labels(**labels).set(feed.version_as_unix_timestamp())
-        except Exception as e: # noqa: BLE001 # using a blank exception to keep background thread alive
+        except Exception as e:  # noqa: BLE001 # using a blank exception to keep background thread alive
             self._log.warning("updating feed version metrics failed, keeping last values", error=e)
