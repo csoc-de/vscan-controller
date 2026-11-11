@@ -10,7 +10,7 @@ variables:
 
 stages:
   - build
-  - lint
+  - style
   - test
   - check
   - deploy
@@ -24,15 +24,22 @@ build:
   script:
     - docker build --pull .
 
+.ruff:
+  stage:
+    - style
+  image: ${HARBOR_HOST}/csoc-registry/ruff:latest
+  before_script:
+    - ruff --version
+
 lint:
-  image:
-    name: ${HARBOR_HOST}/csoc-registry/ruff:latest
-    entrypoint: [""]
-  stage: lint
-  needs: []
+  extends: .ruff
   script:
     - ruff check --output-format gitlab
-    - ruff format --check --output-format gitlab
+
+format:
+  extends: .ruff
+  script:
+    - ruff formate --check --output-format gitlab
 
 unit:
   image: ${HARBOR_HOST}/dockerhub/library/python:latest
