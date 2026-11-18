@@ -53,7 +53,7 @@ unit:
   before_script:
     - pip install . --group dev
   script:
-    - pytest --cov=. --cov-report term-missing --cov-report html:coverage.html --cov-report xml:coverage.xml --junitxml=report.xml
+    - pytest --cov=vscan_controller --cov-report term-missing --cov-report html:coverage.html --cov-report xml:coverage.xml --junitxml=report.xml
   coverage: /TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/
   artifacts:
     when: always
