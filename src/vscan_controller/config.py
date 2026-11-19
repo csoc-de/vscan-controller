@@ -2,15 +2,16 @@ import os
 import sys
 import traceback
 from argparse import ArgumentError, ArgumentParser
+from importlib.metadata import version
 
 from dotenv import load_dotenv
 
 try:
-    from vscan_controller.build_info import BUILD_AT, COMMIT, VERSION
+    from vscan_controller.build_info import BUILD_AT, COMMIT
 except ImportError:
-    VERSION = "<version>"
     COMMIT = "<commit>"
     BUILD_AT = "<build_at>"
+
 
 try:
     parser = ArgumentParser()
@@ -39,6 +40,7 @@ else:
         print(f"could not read env vars\n ERROR: {e}\n{traceback.format_exc()}")
         sys.exit(-1)
 
+VERSION = version("vscan-controller")
 HOST: str = os.getenv("HOST", "0.0.0.0")
 PORT: int = int(os.getenv("PORT", "8080"))
 GREENBONE_SOCKET_PATH: str = os.getenv("GREENBONE_SOCKET_PATH", "/run/gvmd/gvmd.sock")

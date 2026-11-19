@@ -13,6 +13,8 @@ RUN printf 'VERSION = "%s"\nCOMMIT = "%s"\nBUILD_AT = "%s"\n' \
     "${VERSION}" "${COMMIT}" "${BUILD_AT}" > ./src/vscan_controller/build_info.py
 
 RUN pip3 install --upgrade pip --no-warn-script-location
-RUN pip3 install . --no-warn-script-location --no-cache-dir
+
+RUN if [ -n "$VERSION" ]; then export SETUPTOOL_SCM_PRETEND_VERSION="$VERSION"; fi; \
+    pip3 install . --no-warn-script-location --no-cache-dir
 
 CMD ["/bin/sh", "entrypoint.sh"]
