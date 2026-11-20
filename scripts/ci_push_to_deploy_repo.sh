@@ -1,9 +1,9 @@
 #!/bin/bash
 
-DEPLOY_REPO="csoc/dev/vscanner/vscanner-deployment"
-DEPLOY_DIR="vscanner-deployment"
-STAGE_FILE="./inventories/stage/group_vars/vscanners.yml"
-PROD_FILE="./inventories/prod/group_vars/vscanners.yml"
+DEPLOY_REPO="csoc/dev/sensor/sensor-deployment"
+DEPLOY_DIR="sensor-deployment"
+STAGE_FILE="./inventories/stage/group_vars/sensors.yml"
+PROD_FILE="./inventories/prod/group_vars/sensors.yml"
 
 function apply_changes() {
   echo -n "Applying changes..."
@@ -91,7 +91,7 @@ glab repo clone ${DEPLOY_REPO} || exit 6
 cd ${DEPLOY_DIR} || exit 7
 git fetch || exit 8
 
-MERGE_REQUESTS=$(glab mr list --search "VScanner Update" --output=json | jq -r .)
+MERGE_REQUESTS=$(glab mr list --search "Sensor Update" --output=json | jq -r .)
 MR_COUNT=$(echo -n "${MERGE_REQUESTS}" | jq length)
 
 if [[ "${MR_COUNT}" -eq "0" ]]; then
