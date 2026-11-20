@@ -47,7 +47,7 @@ function create_new_mr() {
   fi
 
   echo -n "Creating new merge request..."
-  git push origin HEAD:update -o merge_request.create -o merge_request.target=master -o merge_request.title="VScanner Update"
+  git push origin HEAD:update -o merge_request.create -o merge_request.target=master -o merge_request.title="Sensor Update"
   if [[ "$?" -ne "0" ]]; then
     echo "FAILED"
     return 3
