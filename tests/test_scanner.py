@@ -1,7 +1,7 @@
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from app.models.scanners import Scanner
+from vscan_controller.models.scanners import Scanner
 
 
 def test_scanner_parsing_xml_to_model():
@@ -19,8 +19,8 @@ def test_scanner_parsing_xml_to_model():
     assert scanner.owner.name is None
     assert scanner.name == "OpenVAS Default"
     assert scanner.comment is None
-    assert scanner.creation_time == datetime(2026, 4, 24, 12, 36, 46, tzinfo=timezone.utc)
-    assert scanner.modification_time == datetime(2026, 4, 24, 12, 36, 46, tzinfo=timezone.utc)
+    assert scanner.creation_time == datetime(2026, 4, 24, 12, 36, 46, tzinfo=UTC)
+    assert scanner.modification_time == datetime(2026, 4, 24, 12, 36, 46, tzinfo=UTC)
     assert scanner.writable is True
     assert scanner.in_use is True
     assert scanner.ca_pub is None

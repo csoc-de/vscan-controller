@@ -1,0 +1,40 @@
+[project]
+name = "vscan-controller"
+description = "REST API controller for Greenbone Vulnerability Manager (GVM)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
+dependencies = [
+  "fastapi==0.165.0",
+  "prometheus-client==0.26.0",
+  "pydantic==2.14.3",
+  "pydantic_xml==2.22.0",
+  "python-dotenv==1.2.4",
+  "python-gvm==27.7.0",
+  "python-multipart==0.0.34",
+  "structlog==26.1.0",
+  "uvicorn==0.54.0",
+]
+# version = "1.0.0"
+dynamic = ["version"]
+
+[project.scripts]
+vscan-controller = "vscan_controller.__main__:main"
+
+[dependency-groups]
+dev = [
+  "pytest==9.2.0",
+  "pytest-cov==7.1.0",
+]
+sbom = ["cyclonedx-bom==8.0.1"]
+
+[build-system]
+requires = ["setuptools>=77", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

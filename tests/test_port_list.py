@@ -1,7 +1,7 @@
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from app.models.port_lists import PortList
+from vscan_controller.models.port_lists import PortList
 
 
 def test_port_list_parsing_xml_to_model():
@@ -19,8 +19,8 @@ def test_port_list_parsing_xml_to_model():
     assert port_list.owner.name == "admin"
     assert port_list.name == "All IANA assigned TCP"
     assert port_list.comment == "Version 20200827."
-    assert port_list.creation_time == datetime(2026, 4, 24, 12, 36, 48, tzinfo=timezone.utc)
-    assert port_list.modification_time == datetime(2026, 7, 9, 10, 20, 5, tzinfo=timezone.utc)
+    assert port_list.creation_time == datetime(2026, 4, 24, 12, 36, 48, tzinfo=UTC)
+    assert port_list.modification_time == datetime(2026, 7, 9, 10, 20, 5, tzinfo=UTC)
     assert port_list.writable is False
     assert port_list.in_use is True
     assert port_list.predefined is True

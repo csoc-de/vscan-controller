@@ -1,0 +1,96 @@
+import sys
+import traceback
+from typing import Any
+
+import structlog
+import uvicorn
+from gvm.connections import UnixSocketConnection
+from gvm.protocols.gmp import GMP
+from gvm.transforms import EtreeCheckCommandTransform
+
+from vscan_controller.config import (
+    FEEDS_METRICS_INTERVAL_SECONDS,
+    GREENBONE_PASSWORD,
+    GREENBONE_SOCKET_PATH,
+    GREENBONE_USER,
+    HOST,
+    LOG_LEVEL,
+    PORT,
+)
+from vscan_controller.gvm_tools.configs import GVMConfigs
+from vscan_controller.gvm_tools.feeds import GVMFeeds
+from vscan_controller.gvm_tools.port_lists import GVMPortLists
+from vscan_controller.gvm_tools.reports import GVMReports
+from vscan_controller.gvm_tools.scanners import GVMScanners
+from vscan_controller.gvm_tools.schedules import GVMSchedules
+from vscan_controller.gvm_tools.targets import GVMTargets
+from vscan_controller.gvm_tools.tasks import GVMTasks
+from vscan_controller.metrics import Metrics
+from vscan_controller.routers.router import App
+from vscan_controller.utils.processors import add_and_modify_parameters, add_log_level_upper
+
+
+def init_logging() -> Any | None:
+    structlog.configure(
+        processors=[
+            add_log_level_upper,
+            structlog.processors.CallsiteParameterAdder(
+                [
+                    structlog.processors.CallsiteParameter.PATHNAME,
+                    structlog.processors.CallsiteParameter.FUNC_NAME,
+                    structlog.processors.CallsiteParameter.LINENO,
+                    structlog.processors.CallsiteParameter.MODULE,
+                ],
+            ),
+            add_and_modify_parameters,
+            structlog.processors.StackInfoRenderer(),
+            structlog.processors.dict_tracebacks,
+            structlog.processors.TimeStamper(fmt="iso", utc=True, key="time"),
+            structlog.processors.EventRenamer("msg"),
+            structlog.contextvars.merge_contextvars,
+            structlog.processors.JSONRenderer(),
+        ],
+        wrapper_class=structlog.make_filtering_bound_logger(LOG_LEVEL),
+        context_class=dict,
+        logger_factory=structlog.PrintLoggerFactory(),
+        cache_logger_on_first_use=True,
+    )
+    return structlog.get_logger()
+
+
+def main() -> int:
+    try:
+        logger = init_logging()
+        socket: UnixSocketConnection = UnixSocketConnection(path=GREENBONE_SOCKET_PATH)
+        metrics_socket: UnixSocketConnection = UnixSocketConnection(path=GREENBONE_SOCKET_PATH)
+        transform: EtreeCheckCommandTransform = EtreeCheckCommandTransform()
+        with GMP(connection=socket) as gmp:
+            print(gmp.get_version())
+        app = App(
+            GVMTargets(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            GVMPortLists(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            GVMTasks(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            GVMConfigs(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            GVMScanners(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            GVMSchedules(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            GVMReports(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            GVMFeeds(socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+            Metrics(
+                GVMFeeds(metrics_socket, transform, GREENBONE_USER, GREENBONE_PASSWORD),
+                FEEDS_METRICS_INTERVAL_SECONDS,
+                log=logger,
+            ),
+            log=logger,
+        )
+        uvicorn.run(app.fastapi, host=HOST, port=PORT, log_level="info")
+    except KeyError as e:
+        print(f"could not setup logger\n ERROR: {e}\n{traceback.format_exc()}")
+        return 1
+    except Exception as e:  # noqa: BLE001 # top-level guard: log any startup/runtime failure
+        logger.error(e, traceback=traceback.format_exc())
+        return 1
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -8,5 +8,9 @@ testdb.db
 .env
 .coverage
 sbom.xml
+*.egg-info
+build
+
+src/vscan_controller/build_info.py
 
 __pycache__

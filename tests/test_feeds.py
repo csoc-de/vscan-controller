@@ -1,6 +1,6 @@
 import os
 
-from app.models.feeds import Feeds
+from vscan_controller.models.feeds import Feeds
 
 
 def test_port_list_parsing_xml_to_model():

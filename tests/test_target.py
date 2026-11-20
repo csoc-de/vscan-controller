@@ -1,7 +1,7 @@
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from app.models.targets import Target
+from vscan_controller.models.targets import Target
 
 
 def test_target_parsing_xml_to_model():
@@ -19,8 +19,8 @@ def test_target_parsing_xml_to_model():
     assert target.owner.name == "admin"
     assert target.name == "Target:HOME without Gast network:dc4f38be-bd66-4d68-b5f8-ff5cec315cbf"
     assert target.comment == "It scan my home network without gast network"
-    assert target.creation_time == datetime(2026, 7, 20, 10, 12, 9, tzinfo=timezone.utc)
-    assert target.modification_time == datetime(2026, 7, 20, 10, 12, 9, tzinfo=timezone.utc)
+    assert target.creation_time == datetime(2026, 7, 20, 10, 12, 9, tzinfo=UTC)
+    assert target.modification_time == datetime(2026, 7, 20, 10, 12, 9, tzinfo=UTC)
     assert target.writable is True
     assert target.in_use is True
     assert target.hosts == ["192.168.0.101"]
