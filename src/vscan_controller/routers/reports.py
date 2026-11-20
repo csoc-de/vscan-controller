@@ -58,6 +58,20 @@ class ReportsRouter(APIRouter):
             responses=http_responses,
         )
 
+        # DELETE Report
+        http_responses = {}
+        http_responses.update(UNAUTHORIZED)
+        http_responses.update(INTERNAL_SERVER_ERROR)
+        http_responses.update(NOT_FOUND)
+        self.add_api_route(
+            "/{uuid}",
+            self.delete_report,
+            methods=["DELETE"],
+            status_code=204,
+            response_model=None,
+            responses=http_responses,
+        )
+
     async def get_report(self, uuid: str) -> dict[str, Report]:
         try:
             resp = self.gvm_reports.get_report(uuid)
@@ -167,6 +181,36 @@ class ReportsRouter(APIRouter):
                     ) from e
         except Exception as e:
             self._log.error("import failed", error=e, traceback=traceback.format_exc())
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="internal server error"
+            ) from e
+
+    async def delete_report(self, uuid: str) -> None:
+        try:
+            _ = self.gvm_reports.delete_report(uuid)
+        except GvmResponseError as e:
+            match e.status:
+                case "404":
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND, detail="report not found"
+                    )
+                case _:
+                    self._log.error(
+                        "call of adapter failed",
+                        error=e,
+                        status_code=e.status,
+                        traceback=traceback.format_exc(),
+                    )
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="internal server error",
+                    )
+        except Exception as e:
+            self._log.error(
+                "call of adapter or delete of report failed",
+                error=e,
+                traceback=traceback.format_exc(),
+            )
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="internal server error"
             ) from e
